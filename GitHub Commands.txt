@@ -1,0 +1,25 @@
+Clone repository: fetch repository and clone to computer
+
+git clone <Project Address>
+example:
+git clone https://github.com/bureyburey/ASES.git
+
+Add existing project to GitHub:
+https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/
+
+go to project folder
+Initialize new git repository:
+git init
+add all repository files:
+git add .
+commit files that were staged in local repository:
+git commit -m "First Commit"
+copy remote repository URL from GitHub:
+git remote add origin <remote repository URL>
+verify the remote URL:
+git remote -v
+Push the project to GitHub:
+git push origin master
+
+Push to remote:
+https://help.github.com/articles/pushing-to-a-remote/
