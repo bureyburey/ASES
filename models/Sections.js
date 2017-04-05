@@ -3,7 +3,7 @@ var AutoIncrement = require('mongoose-sequence'); // require auto-increment plug
 // IMPLEMENT AUTO-INCREMENT FOR FIELD num
 
 var SectionSchema = new mongoose.Schema({
-    num: { type: Number, default: 1 },
+    num: { type: Number, default: 1, unique: true },
     name: String,
     slug: String,
     staffGroups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'StaffGroup' }],

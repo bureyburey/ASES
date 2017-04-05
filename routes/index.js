@@ -217,18 +217,6 @@ router.get('/sections', function (req, res, next) {
     res.json(sections);
   });
 
-
-
-  // Section.find(function (err, sections) {
-  //   if (err) { return next(err); }
-
-  //   res.json(sections);
-  // });
-
-
-
-
-
 });
 // add a new section
 router.post('/sections', auth, function (req, res, next) {
@@ -343,13 +331,20 @@ router.put('/formatcriterias/:formatcriteria/edit', auth, function (req, res, ne
   console.log("INVOKED: router.put(/formatcriteria/" + req.formatCriteria._id + "/edit)");
   req.formatCriteria.edit(req.body, function (err, formatCriteria) {
     if (err) { return next(err); }
-    res.json(formatCriteria);
+    // populate the section field of the returned saved object (needed as it is passed back to the client side)
+    FormatCriteria.populate(formatCriteria, { path: "section" }, function (err, formatCriteria) {
+      if (err) { return next(err); }
+
+      res.json(formatCriteria);
+    });
+
+    // res.json(formatCriteria);
   });
 });
 // delete a section
-router.put('/formatcriterias/:format_criteria/delete', auth, function (req, res, next) {
+router.put('/formatcriterias/:formatcriteria/delete', auth, function (req, res, next) {
   console.log("INVOKED: router.put(/formatcriterias/" + req.formatCriteria._id + "/delete)");
-
+  console.log(JSON.stringify(req.formatCriteria));
   req.formatCriteria.remove(function (err) {
     if (err) { return next(err) };
     res.json("format criteria deleted");

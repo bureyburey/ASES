@@ -3,7 +3,7 @@ var AutoIncrement = require('mongoose-sequence'); // require auto-increment plug
 // IMPLEMENT AUTO-INCREMENT FOR FIELD num
 
 var StaffGroupSchema = new mongoose.Schema({
-    group: { type: Number, default: 1 },
+    group: { type: Number, default: 1, unique: true },
     name: String,
     slug: String,
     dateCreated: { type: Date, default: Date.now },
@@ -20,6 +20,6 @@ StaffGroupSchema.methods.edit = function (params, cb) {
     this.save(cb);
 };
 
-StaffGroupSchema.plugin(AutoIncrement, {inc_field: 'group'});
+StaffGroupSchema.plugin(AutoIncrement, { inc_field: 'group' });
 
 mongoose.model('StaffGroup', StaffGroupSchema);

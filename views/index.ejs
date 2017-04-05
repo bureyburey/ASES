@@ -176,16 +176,6 @@
     </script>
 
 
-
-
-
-
-
-
-
-
-
-
     <script type="text/ng-template" id="/sections.html">
         <div>
             <div class="page-header">
@@ -244,11 +234,12 @@
         <br />
         </span>
 
-        
-        <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
-        <!--NEED TO MAKE CHANGES TO NG-CLICK HERE-->
-            <input type="checkbox" ng-checked="staffGroupIndex(staffGroup, section.staffGroups) > -1" ng-click="toggleCheck(staffGroup, section.staffGroups)" ng-disabled="!edit"/>                        <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
-        </div>
+
+                    <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+                        <!--NEED TO MAKE CHANGES TO NG-CLICK HERE-->
+                        <input type="checkbox" ng-checked="staffGroupIndex(staffGroup, section.staffGroups) > -1" ng-click="toggleCheck(staffGroup, section.staffGroups)"
+                            ng-disabled="!edit" /> <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
+                    </div>
                     <span>
         <label>תאריך הוספה:</label> {{section.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
         <br />
@@ -265,8 +256,6 @@
         <br />
         </span>
                     </span>
-
-
                 </div>
             </div>
 
@@ -274,6 +263,8 @@
 
         </div>
     </script>
+
+
 
 
     <script type="text/ng-template" id="/format_criterias.html">
@@ -304,9 +295,23 @@
                 <div class="form-group">
                     <input type="num" class="form-control" placeholder="משקל" ng-model="weight" ng-required="true"></input>
                 </div>
+
+
+
+
+
+
                 <div>
-                    <label>תחום פעילות: <select ng-model="section" ng-options="(section.num+'.'+section.name) for section in sections"></select></label>
+                    <label>תחום פעילות: <select ng-model="section" ng-options="(section.num+'.'+section.name) for section in sections" value="{{section}}">
+                        <option value="">נא לבחור תחום פעילות</option>
+                    </select></label>
                 </div>
+
+
+
+
+
+
 
                 <div>
                     <input type="button" class="btn btn-info" ng-click="addNewField()" value="הוספת שדה">
@@ -316,11 +321,9 @@
                             <select ng-model="selectedDataType.value" ng-change="updateDataType($index, selectedDataType.value.value)" ng-options="dataType.placeholder for dataType in dataTypes">
                                 <option value="">סוג הקלט:</option>
                             </select>
-
-
                             <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
-        <span class="glyphicon glyphicon-minus"></span> הסרת שדה
-      </button>
+                            <span class="glyphicon glyphicon-minus"></span> הסרת שדה
+                            </button>
                         </fieldset>
                     </div>
                 </div>
@@ -352,20 +355,42 @@
         </span>
 
 
-
-
-
                 <span>
         <label class="label-field">משקל: </label>
         <input class="editable-field" ng-model="formatCriteria.weight" ng-disabled="!edit" value="{{formatCriteria.weight}}" />
         <br />
       </span>
 
-                <span>
+
+
+        <span>
         <label class="label-field">תחום פעילות: </label>
-        <input class="editable-field" ng-model="formatCriteria.section.num+'.'+formatCriteria.section.name" ng-disabled="!edit" value="{{formatCriteria.section.num+'.'+formatCriteria.section.name}}" />
+        <input class="editable-field" ng-model="formatCriteria.section.num+'.'+formatCriteria.section.name" ng-disabled="true" value="{{formatCriteria.section.num+'.'+formatCriteria.section.name}}" />
         <br />
-      </span>
+        </span>
+
+
+
+            <div>
+                <label>שינוי תחום פעילות: 
+                    <select ng-model="formatCriteria.section" ng-options="(section.num+'.'+section.name) for section in sections" ng-disabled="!edit" value="{{section}}">
+                    </select>
+                </label>
+            </div>
+
+
+                <!--<div>
+                    <fieldset data-ng-repeat="dataField in formatCriteria.fields track by $index">
+                <input ng-model="formatCriteria.fields[$index]" />
+                <select ng-model="selectedDataType.value" ng-change="updateDataType($index, selectedDataType.value.value)" ng-options="dataType.placeholder for dataType in dataTypes">
+                    <option value="">סוג הקלט:</option>
+                </select>
+                <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
+                <span class="glyphicon glyphicon-minus"></span> הסרת שדה
+                </button>
+                </fieldset>
+                </div>-->
+
 
 
                 <label class="label-field">שדות: </label>
@@ -381,7 +406,7 @@
 
 
 
-                <span>
+        <span>
        <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
        <br />
       </span>
@@ -393,7 +418,7 @@
                 <span>
         <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
 
-        <!--<button ng-click="editCriteria($index, section)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>-->
+        <button ng-click="editFormatCriteria($index, formatCriteria)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
         <button ng-click="deleteFormatCriteria(formatCriteria)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
         <br />
       </span>

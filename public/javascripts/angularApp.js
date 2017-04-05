@@ -396,7 +396,7 @@ app.controller('SectionsCtrl', [
             });
         }
 
-        $scope.buildStaffGroupsList = function(groupsList){
+        $scope.buildStaffGroupsList = function (groupsList) {
             selectedStaffGroups = [];
             for (i = 0; i < groupsList.length; i++) {
                 selectedStaffGroups.push(groupsList[i]._id);
@@ -483,6 +483,8 @@ app.controller('FormatCriteriaCtrl', [
 
 
         $scope.addFormatCriteria = function () {
+            if ($scope.name === '' || $scope.name.length === 0) { return; }
+
             // alert($scope.fieldSet.selectedDataType+"\n"+$scope.fieldSet.fields);
             fieldsData = [];
             for (i = 0; i < $scope.fieldSet.selectedDataType.length; i++) {
@@ -498,7 +500,7 @@ app.controller('FormatCriteriaCtrl', [
             // alert($scope.selectedDataType);
             // alert($scope.selectedSection._id);
 
-            if ($scope.name === '') { return; }
+
 
             formatCriterias.create({
                 num: $scope.num,
@@ -514,15 +516,19 @@ app.controller('FormatCriteriaCtrl', [
         };
 
         $scope.editFormatCriteria = function (index, formatCriteria) {
+            // alert(JSON.stringify(formatCriteria.section, null, 2));
+
             // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
             formatCriterias.update(formatCriteria, {
                 _id: formatCriteria._id,
-                // num: $scope.sections[index].num,
-                // name: $scope.sections[index].name,
-                // slug: $scope.sections[index].slug,
-                // dateCreated: section.dateCreated,
-                // dateModified: new Date()
+                num: formatCriteria.num,
+                name: formatCriteria.name,
+                slug: formatCriteria.slug,
+                weight: formatCriteria.weight,
+                section: formatCriteria.section,
+                fields: formatCriteria.fields,
+                dateModified: new Date()
             });
         }
 
