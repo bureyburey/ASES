@@ -11,6 +11,8 @@ var StaffGroupSchema = new mongoose.Schema({
 });
 
 StaffGroupSchema.methods.edit = function (params, cb) {
+    // this: StaffGroup object in database
+    // params: edited object to be saved
     this.group = params.group || this.group;
     this.name = params.name || this.name;
     this.slug = params.slug;

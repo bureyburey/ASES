@@ -188,6 +188,7 @@ router.param('staffgroup', function (req, res, next, id) {
 // edit a staff group
 router.put('/staffgroups/:staffgroup/edit', auth, function (req, res, next) {
   console.log("INVOKED: router.put(/staffgroups/" + req.staffGroup._id + "/edit)");
+  console.log("request body: " + JSON.stringify(req.body));
   req.staffGroup.edit(req.body, function (err, staffGroup) {
     if (err) { return next(err); }
     res.json(staffGroup);
@@ -237,14 +238,12 @@ router.post('/sections', auth, function (req, res, next) {
   section.save(function (err, section) {
     if (err) { return next(err); }
 
-
+    // populate section before returning
     Section.populate(section, { path: "staffGroups" }, function (err, section) {
       if (err) { return next(err); }
 
       res.json(section);
     });
-
-    // res.json(section);
   });
 });
 // preloading section
@@ -265,7 +264,12 @@ router.put('/sections/:section/edit', auth, function (req, res, next) {
   console.log("INVOKED: router.put(/sections/" + req.section._id + "/edit)");
   req.section.edit(req.body, function (err, section) {
     if (err) { return next(err); }
-    res.json(section);
+    // populate secion before returning
+    Section.populate(section, { path: "staffGroups" }, function (err, section) {
+      if (err) { return next(err); }
+
+      res.json(section);
+    });
   });
 });
 // delete a section

@@ -15,6 +15,7 @@ SectionSchema.methods.edit = function (params, cb) {
     this.num = params.num || this.num;
     this.name = params.name || this.name;
     this.slug = params.slug;
+    this.staffGroups = params.staffGroups || this.staffGroups;
     this.dateModified = new Date();
     this.save(cb);
 };

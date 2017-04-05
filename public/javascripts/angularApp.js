@@ -12,7 +12,7 @@ app.config([
                 controller: 'MainCtrl'
             })
             .state('message_board', {
-                url: '/message_board',
+                url: '/message_board', // 
                 templateUrl: '/message_board.html',
                 controller: 'MsgBoardCtrl',
                 resolve: {
@@ -139,7 +139,6 @@ app.factory('staffGroups', ['$http', 'auth', function ($http, auth) {
     };
     return obj;
 }]);
-
 
 
 app.factory('sections', ['$http', 'auth', function ($http, auth) {
@@ -342,14 +341,15 @@ app.controller('StaffGroupsCtrl', [
         };
 
         $scope.editStaffGroup = function (index, staffGroup) {
-            if ($scope.staffGroups[index].name === '' || $scope.staffGroups[index].name.length === 0) { return; }
+            // alert(JSON.stringify(staffGroup));
+            if (staffGroup.name === '' || staffGroup.name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
             staffGroups.update(staffGroup, {
                 _id: staffGroup._id,
-                group: $scope.staffGroups[index].group,
-                name: $scope.staffGroups[index].name,
-                slug: $scope.staffGroups[index].slug,
-                dateCreated: staffGroups.dateCreated,
+                group: staffGroup.group,
+                name: staffGroup.name,
+                slug: staffGroup.slug,
+                dateCreated: staffGroup.dateCreated,
                 dateModified: new Date()
             });
         }
@@ -362,8 +362,6 @@ app.controller('StaffGroupsCtrl', [
 ]);
 
 
-
-// REQUIRE CHANGES TO LOAD STAFF GROUPS!!!!
 app.controller('SectionsCtrl', [
     '$scope',
     'staffGroups',
@@ -374,31 +372,48 @@ app.controller('SectionsCtrl', [
         $scope.sections = sections.sections;
         $scope.isLoggedIn = auth.isLoggedIn;
 
-
         // for dynamic selection of staff groups
         $scope.checkedStaffGroups = [];
-        $scope.toggleCheck = function (staffGroup) {
-            if ($scope.checkedStaffGroups.indexOf(staffGroup) === -1) {
+
+        $scope.toggleCheck = function (staffGroup, staffGroupsUser) {
+            // assign the checked groups array to the argument array or the global checked groups (prioritize argument array)
+            $scope.checkedStaffGroups = staffGroupsUser || $scope.checkedStaffGroups;
+            // find the index of the staff group by its _id
+            staffGroupIndex = $scope.staffGroupIndex(staffGroup, $scope.checkedStaffGroups);
+            if (staffGroupIndex === -1) {
+                // group was not found --> add it to the list
                 $scope.checkedStaffGroups.push(staffGroup);
             } else {
-                $scope.checkedStaffGroups.splice($scope.checkedStaffGroups.indexOf(staffGroup), 1);
+                // remove the group from the checked array
+                $scope.checkedStaffGroups.splice(staffGroupIndex, 1);
             }
         };
 
+        $scope.staffGroupIndex = function (staffGroup, staffGroupsUser) {
+            // returns index of staffGroup in staffGroupsUser list, -1 if not exists
+            return staffGroupsUser.findIndex(function (staffGroupUser) {
+                return staffGroup._id === staffGroupUser._id;
+            });
+        }
+
+        $scope.buildStaffGroupsList = function(groupsList){
+            selectedStaffGroups = [];
+            for (i = 0; i < groupsList.length; i++) {
+                selectedStaffGroups.push(groupsList[i]._id);
+            }
+            return selectedStaffGroups;
+        }
+
         $scope.addSection = function () {
+            // alert(JSON.stringify($scope.checkedStaffGroups, null,2));
             if ($scope.name === '' || $scope.name.length === 0) { return; }
 
-
-            selectedStaffGroups = [];
-            for (i = 0; i < $scope.checkedStaffGroups.length; i++) {
-                selectedStaffGroups.push($scope.checkedStaffGroups[i]._id);
-            }
-
+            // build IDs of selected sections
             sections.create({
                 num: $scope.num,
                 name: $scope.name,
                 slug: $scope.slug,
-                staffGroups: selectedStaffGroups
+                staffGroups: $scope.buildStaffGroupsList($scope.checkedStaffGroups)
             });
             $scope.num = '';
             $scope.name = '';
@@ -407,13 +422,16 @@ app.controller('SectionsCtrl', [
         };
 
         $scope.editSection = function (index, section) {
-            if ($scope.sections[index].name === '' || $scope.sections[index].name.length === 0) { return; }
+
+            // alert(JSON.stringify(section.staffGroups,null,2));
+            if (section.name === '' || section.name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
             sections.update(section, {
                 _id: section._id,
-                num: $scope.sections[index].num,
-                name: $scope.sections[index].name,
-                slug: $scope.sections[index].slug,
+                num: section.num,
+                name: section.name,
+                slug: section.slug,
+                staffGroups: $scope.buildStaffGroupsList(section.staffGroups),
                 dateCreated: section.dateCreated,
                 dateModified: new Date()
             });
@@ -425,8 +443,6 @@ app.controller('SectionsCtrl', [
         }
     }
 ]);
-
-
 
 
 // MISSING IMPLEMENTATION!!!!
