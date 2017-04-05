@@ -41,3 +41,14 @@ li a:hover:not(.active) {
 .editable-field{
   width:80%;
 }
+
+
+
+/*input.ng-invalid {
+    background-color: pink;
+    outline-color: red;
+}
+input.ng-valid {
+    background-color: lightgreen;
+    outline-color: lightgreen;
+}*/

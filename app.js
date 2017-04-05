@@ -10,6 +10,7 @@ var passport = require('passport');
 require('./models/Posts');
 require('./models/Comments');
 require('./models/Users');
+require('./models/StaffGroups');
 require('./models/Sections');
 require('./models/FormatCriterias');
 

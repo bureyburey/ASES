@@ -22,13 +22,27 @@ app.config([
                     }]
                 }
             })
+            .state('staff_groups', {
+                url: '/staff_groups',
+                templateUrl: '/staff_groups.html',
+                controller: 'StaffGroupsCtrl',
+                resolve: {
+                    // make sure to sections posts on startup
+                    staffGroupsPromise: ['staffGroups', function (staffGroups) {
+                        return staffGroups.getAll();
+                    }]
+                }
+            })
             .state('sections', {
                 url: '/sections',
                 templateUrl: '/sections.html',
                 controller: 'SectionsCtrl',
                 resolve: {
-                    // make sure to sections posts on startup
-                    postPromise: ['sections', function (sections) {
+                    // make sure to load staff groups and sections on startup
+                    staffGroupsPromise: ['staffGroups', function (staffGroups) {
+                        return staffGroups.getAll();
+                    }],
+                    sectionsPromise: ['sections', function (sections) {
                         return sections.getAll();
                     }]
                 }
@@ -48,7 +62,6 @@ app.config([
                     }]
                 }
             })
-
             .state('posts', {
                 url: '/posts/{id}',
                 templateUrl: '/posts.html',
@@ -85,6 +98,50 @@ app.config([
 
 
 // SERVICE FACTORIES START
+app.factory('staffGroups', ['$http', 'auth', function ($http, auth) {
+    var obj = {
+        staffGroups: []
+    };
+    obj.getAll = function () {
+        // get all sections from server and deep copy the data
+        return $http.get('/staffgroups').success(function (data) {
+            angular.copy(data, obj.staffGroups);
+        });
+    };
+    obj.create = function (staffGroup) {
+        // create a new section and upload to server
+        return $http.post('/staffgroups', staffGroup, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function (data) {
+            obj.staffGroups.push(data);
+        });
+    };
+    obj.get = function (id) {
+        // get a section from the server
+        return $http.get('/staffgroups/' + id).then(function (res) {
+            return res.data;
+        });
+    };
+    obj.update = function (staffGroup, staffGroupEdit) {
+        return $http.put('/staffgroups/' + staffGroup._id + '/edit', staffGroupEdit, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function (data) {
+            obj.staffGroups[obj.staffGroups.indexOf(staffGroup)] = data;
+        });
+    };
+    obj.delete = function (staffGroup) {
+
+        return $http.put('/staffgroups/' + staffGroup._id + '/delete', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function (data) {
+            obj.staffGroups.splice(obj.staffGroups.indexOf(staffGroup), 1);
+        });
+    };
+    return obj;
+}]);
+
+
+
 app.factory('sections', ['$http', 'auth', function ($http, auth) {
     var obj = {
         sections: []
@@ -135,13 +192,13 @@ app.factory('formatCriterias', ['$http', 'auth', function ($http, auth) {
     // ALL METHODS NEED TO BE IMPLEMENTED IN ROUTES!!!!
     obj.getAll = function () {
         // get all format criterias from server and deep copy the data
-        return $http.get('/format_criterias').success(function (data) {
+        return $http.get('/formatcriterias').success(function (data) {
             angular.copy(data, obj.formatCriterias);
         });
     };
     obj.create = function (formatCriteria) {
         // create a new format criteria and upload to server
-        return $http.post('/format_criterias', formatCriteria, {
+        return $http.post('/formatcriterias', formatCriteria, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function (data) {
             obj.formatCriterias.push(data);
@@ -149,19 +206,19 @@ app.factory('formatCriterias', ['$http', 'auth', function ($http, auth) {
     };
     obj.get = function (id) {
         // get a format criterias from the server
-        return $http.get('/format_criterias/' + id).then(function (res) {
+        return $http.get('/formatcriterias/' + id).then(function (res) {
             return res.data;
         });
     };
     obj.update = function (formatCriteria, formatCriteriaEdit) {
-        return $http.put('/format_criterias/' + formatCriteria._id + '/edit', formatCriteriaEdit, {
+        return $http.put('/formatcriterias/' + formatCriteria._id + '/edit', formatCriteriaEdit, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function (data) {
             obj.formatCriterias[obj.formatCriterias.indexOf(formatCriteria)] = data;
         });
     };
     obj.delete = function (formatCriteria) {
-        return $http.put('/format_criterias/' + formatCriteria._id + '/delete', null, {
+        return $http.put('/formatcriterias/' + formatCriteria._id + '/delete', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function (data) {
             obj.formatCriterias.splice(obj.formatCriterias.indexOf(formatCriteria), 1);
@@ -264,24 +321,89 @@ app.factory('auth', ['$http', '$window', function ($http, $window) {
 
 
 // APP CONTROLLERS START
+app.controller('StaffGroupsCtrl', [
+    '$scope',
+    'staffGroups',
+    'auth',
+    function ($scope, staffGroups, auth) {
+        $scope.staffGroups = staffGroups.staffGroups;
+        $scope.isLoggedIn = auth.isLoggedIn;
+
+        $scope.addStaffGroup = function () {
+            if ($scope.name === '' || $scope.name.length === 0) { return; }
+            staffGroups.create({
+                group: $scope.group,
+                name: $scope.name,
+                slug: $scope.slug
+            });
+            $scope.group = '';
+            $scope.name = '';
+            $scope.slug = '';
+        };
+
+        $scope.editStaffGroup = function (index, staffGroup) {
+            if ($scope.staffGroups[index].name === '' || $scope.staffGroups[index].name.length === 0) { return; }
+            if (!confirm("החל שינויים?")) { return; }
+            staffGroups.update(staffGroup, {
+                _id: staffGroup._id,
+                group: $scope.staffGroups[index].group,
+                name: $scope.staffGroups[index].name,
+                slug: $scope.staffGroups[index].slug,
+                dateCreated: staffGroups.dateCreated,
+                dateModified: new Date()
+            });
+        }
+
+        $scope.deleteStaffGroup = function (staffGroup) {
+            if (!confirm("מחק קבוצה?")) { return; }
+            staffGroups.delete(staffGroup);
+        }
+    }
+]);
+
+
+
+// REQUIRE CHANGES TO LOAD STAFF GROUPS!!!!
 app.controller('SectionsCtrl', [
     '$scope',
+    'staffGroups',
     'sections',
     'auth',
-    function ($scope, sections, auth) {
+    function ($scope, staffGroups, sections, auth) {
+        $scope.staffGroups = staffGroups.staffGroups;
         $scope.sections = sections.sections;
         $scope.isLoggedIn = auth.isLoggedIn;
 
+
+        // for dynamic selection of staff groups
+        $scope.checkedStaffGroups = [];
+        $scope.toggleCheck = function (staffGroup) {
+            if ($scope.checkedStaffGroups.indexOf(staffGroup) === -1) {
+                $scope.checkedStaffGroups.push(staffGroup);
+            } else {
+                $scope.checkedStaffGroups.splice($scope.checkedStaffGroups.indexOf(staffGroup), 1);
+            }
+        };
+
         $scope.addSection = function () {
             if ($scope.name === '' || $scope.name.length === 0) { return; }
+
+
+            selectedStaffGroups = [];
+            for (i = 0; i < $scope.checkedStaffGroups.length; i++) {
+                selectedStaffGroups.push($scope.checkedStaffGroups[i]._id);
+            }
+
             sections.create({
                 num: $scope.num,
                 name: $scope.name,
-                slug: $scope.slug
+                slug: $scope.slug,
+                staffGroups: selectedStaffGroups
             });
             $scope.num = '';
             $scope.name = '';
             $scope.slug = '';
+            $scope.checkedStaffGroups = [];
         };
 
         $scope.editSection = function (index, section) {
@@ -304,6 +426,10 @@ app.controller('SectionsCtrl', [
     }
 ]);
 
+
+
+
+// MISSING IMPLEMENTATION!!!!
 app.controller('FormatCriteriaCtrl', [
     '$scope',
     'sections',
@@ -357,7 +483,7 @@ app.controller('FormatCriteriaCtrl', [
             // alert($scope.selectedSection._id);
 
             if ($scope.name === '') { return; }
-            
+
             formatCriterias.create({
                 num: $scope.num,
                 name: $scope.name,

@@ -21,5 +21,10 @@ git remote -v
 Push the project to GitHub:
 git push origin master
 
+Pull from remote:
+git pull <remote repository URL>
+example:
+git pull https://github.com/bureyburey/ASES.git
+
 Push to remote:
 https://help.github.com/articles/pushing-to-a-remote/

@@ -18,6 +18,7 @@
             <li ng-show="isLoggedIn()"><a class="ng-binding">{{currentUser()}}</a></li>
             <li ng-show="isLoggedIn()"><a href="/#/home">תפריט ראשי</a></li>
             <li ng-show="isLoggedIn()"><a href="/#/message_board">לוח הודעות</a></li>
+            <li ng-show="isLoggedIn()"><a href="/#/staff_groups">ניהול קבוצות חברי סגל</a></li>
             <li ng-show="isLoggedIn()"><a href="/#/sections">ניהול תחומי פעילות</a></li>
             <li ng-show="isLoggedIn()"><a href="/#/format_criterias">ניהול קריטריונים להערכה</a></li>
             <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">התנתקות</a></li>
@@ -68,18 +69,14 @@
               {{post.title}}
             </span>
             </span>
-            <span ng-show="post.author">
-        posted by <a>{{post.author}}</a> |
-      </span>
-            <span>
-        <a href="#/posts/{{post._id}}">Comments</a>
-      </span>
+            <span ng-show="post.author">posted by <a>{{post.author}}</a> |</span>
+            <span><a href="#/posts/{{post._id}}">Comments</a></span>
             <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
                 <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span> {{comment.upvotes}}
                 - by {{comment.author}}
                 <span style="font-size:20px; margin-left:10px;">
-      {{comment.body}}
-    </span>
+                    {{comment.body}}
+                </span>
             </div>
         </div>
         <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
@@ -93,6 +90,92 @@
             <button type="submit" class="btn btn-primary">Post</button>
         </form>
     </script>
+
+
+
+
+    <script type="text/ng-template" id="/staff_groups.html">
+        <div>
+            <div class="page-header">
+                <h1>ASES - ניהול קבוצות חברי סגל</h1>
+            </div>
+            <!-- rest of template -->
+            <div ng-hide="isLoggedIn()">
+                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section
+                    manager.
+                </h3>
+            </div>
+
+            <form ng-submit="addStaffGroup()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                <h3>הוספת קבוצה חדשה</h3>
+
+                <!--<div class="form-group">
+                    <input type="num" class="form-control" placeholder="מספר" ng-model="group"></input>
+                </div>-->
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
+                </div>
+                <button type="submit" class="btn btn-primary">הוספה</button>
+            </form>
+
+            <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+
+                <div>
+                    <span style="font-size:20px; margin-left:10px;">
+      <span>
+        <label class="label-field">מזהה קבוצה: </label>
+        <input class="editable-field" ng-model="staffGroup.group" ng-disabled="!edit" value="{{staffGroup.group}}">
+        <br />
+      </span>
+                    <span>
+        <label class="label-field">שם: </label>
+        <input class="editable-field" ng-model="staffGroup.name" ng-disabled="!edit" value="{{staffGroup.name}}">
+        <br />
+      </span>
+                    <span ng-show="staffGroup.slug || edit">
+        <label class="label-field">תיאור: </label>
+        <input class="editable-field" ng-model="staffGroup.slug" ng-disabled="!edit" value="{{staffGroup.slug}}">
+        <br />
+        </span>
+                    <span>
+       <label>תאריך הוספה:</label> {{staffGroup.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
+       <br />
+      </span>
+                    <span ng-hide="staffGroup.dateCreated===staffGroup.dateModified">
+         <label>נערך לאחרונה:</label> {{staffGroup.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
+         <br />
+      </span>
+
+                    <span>
+        <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
+        <button ng-click="editStaffGroup($index, staffGroup)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
+        <button ng-click="deleteStaffGroup(staffGroup)" class="btn btn-danger" ng-disabled="!edit">מחק קבוצה זו</button>
+        <br />
+      </span>
+                    </span>
+
+                    <!--</form>-->
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </script>
+
+
+
+
+
+
+
+
+
+
 
 
     <script type="text/ng-template" id="/sections.html">
@@ -111,64 +194,78 @@
                 <h3>הוספת תחום פעילות חדש</h3>
 
                 <!--<div class="form-group">
-          <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
-        </div>-->
+                    <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
+                </div>-->
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="שם" ng-model="name"></input>
+                    <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
                 </div>
+                <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+                    <input type="checkbox" ng-checked="checkedStaffGroups.indexOf(staffGroup) != -1" ng-click="toggleCheck(staffGroup)" />
+                    <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
+                </div>
+
                 <button type="submit" class="btn btn-primary">הוספה</button>
             </form>
 
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            <br />
+
+
+            <!-- EXISTING SECTIONS -->
             <div ng-repeat="section in sections | orderBy:'num'">
 
-                <!--<form ng-submit="editSection($event, section)" style="margin-top:30px;">-->
 
-                <span style="font-size:20px; margin-left:10px;">
-      <span>
-        <label class="label-field">מספר:</label> <input class="editable-field" ng-model="section.num" ng-disabled="!edit" value="{{section.num}}">
+                <div>
+                    <span style="font-size:20px; margin-left:10px;">
+                    <span>
+                    <label class="label-field">מספר: </label>
+                    <input class="editable-field" ng-model="section.num" ng-disabled="!edit" value="{{section.num}}">
+                    <br />
+                    </span>
+                    <span>
+        <label class="label-field">שם: </label>
+        <input class="editable-field" ng-model="section.name" ng-disabled="!edit" value="{{section.name}}">
         <br />
       </span>
-                <span>
-        <label class="label-field">שם:</label> <input class="editable-field" ng-model="section.name" ng-disabled="!edit" value="{{section.name}}">
-        <br />
-      </span>
-                <span ng-show="section.slug || edit">
-        <label class="label-field">תיאור:</label> <input class="editable-field" ng-model="section.slug" ng-disabled="!edit" value="{{section.slug}}">
+                    <span ng-show="section.slug || edit">
+        <label class="label-field">תיאור: </label>
+        <input class="editable-field" ng-model="section.slug" ng-disabled="!edit" value="{{section.slug}}">
         <br />
         </span>
-                <span>
-       <label>תאריך הוספה:</label> {{section.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
-       <br />
-      </span>
-                <span ng-hide="section.dateCreated===section.dateModified">
+        <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+        <!--NEED TO MAKE CHANGES TO NG-CLICK HERE-->
+            <input type="checkbox" ng-checked="section.staffGroup._id === staffGroup._id" ng-click="toggleCheck(staffGroup)" />                        <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
+        </div>
+
+
+                    <span>
+        <label>תאריך הוספה:</label> {{section.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
+        <br />
+        </span>
+                    <span ng-hide="section.dateCreated===section.dateModified">
          <label>נערך לאחרונה:</label> {{section.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
          <br />
       </span>
 
-                <span>
+                    <span>
         <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
-        <!--<button type="submit" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>-->
         <button ng-click="editSection($index, section)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
         <button ng-click="deleteSection(section)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
         <br />
-      </span>
-                </span>
-
-                <!--</form>-->
+        </span>
+                    </span>
 
 
+                </div>
             </div>
 
 
 
         </div>
     </script>
-
-
-
 
 
     <script type="text/ng-template" id="/format_criterias.html">
@@ -188,16 +285,16 @@
 
 
                 <!--<div class="form-group">
-          <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
-        </div>-->
+                    <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
+                </div>-->
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="שם" ng-model="name"></input>
+                    <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
                 </div>
                 <div class="form-group">
-                    <input type="num" class="form-control" placeholder="משקל" ng-model="weight"></input>
+                    <input type="num" class="form-control" placeholder="משקל" ng-model="weight" ng-required="true"></input>
                 </div>
                 <div>
                     <label>תחום פעילות: <select ng-model="section" ng-options="(section.num+'.'+section.name) for section in sections"></select></label>
@@ -225,19 +322,24 @@
             </form>
 
 
+
+            <!-- EXISTING Format Criterias -->
             <div ng-repeat="formatCriteria in formatCriterias | orderBy:'num'">
 
                 <span style="font-size:20px; margin-left:10px;">
       <span>
-        <label class="label-field">מספר: </label><input class="editable-field" ng-model="formatCriteria.num" ng-disabled="!edit" value="{{formatCriteria.num}}">
+        <label class="label-field">מספר: </label>
+        <input class="editable-field" ng-model="formatCriteria.num" ng-disabled="!edit" value="{{formatCriteria.num}}">
         <br />
       </span>
                 <span>
-        <label class="label-field">שם: </label><input class="editable-field" ng-model="formatCriteria.name" ng-disabled="!edit" value="{{formatCriteria.name}}">
+        <label class="label-field">שם: </label>
+        <input class="editable-field" ng-model="formatCriteria.name" ng-disabled="!edit" value="{{formatCriteria.name}}">
         <br />
       </span>
                 <span ng-show="formatCriteria.slug || edit">
-        <label class="label-field">תיאור: </label><input class="editable-field" ng-model="formatCriteria.slug" ng-disabled="!edit" value="{{formatCriteria.slug}}">
+        <label class="label-field">תיאור: </label>
+        <input class="editable-field" ng-model="formatCriteria.slug" ng-disabled="!edit" value="{{formatCriteria.slug}}">
         <br />
         </span>
 
@@ -246,12 +348,14 @@
 
 
                 <span>
-        <label class="label-field">משקל: </label><input class="editable-field" ng-model="formatCriteria.weight" ng-disabled="!edit" value="{{formatCriteria.weight}}" />
+        <label class="label-field">משקל: </label>
+        <input class="editable-field" ng-model="formatCriteria.weight" ng-disabled="!edit" value="{{formatCriteria.weight}}" />
         <br />
       </span>
 
                 <span>
-        <label class="label-field">תחום פעילות: </label><input class="editable-field" ng-model="formatCriteria.section.name" ng-disabled="!edit" value="{{formatCriteria.section.name}}" />
+        <label class="label-field">תחום פעילות: </label>
+        <input class="editable-field" ng-model="formatCriteria.section.num+'.'+formatCriteria.section.name" ng-disabled="!edit" value="{{formatCriteria.section.num+'.'+formatCriteria.section.name}}" />
         <br />
       </span>
 
@@ -301,26 +405,17 @@
         </div>
         <div class="page-header">
             <h3>
-                <a ng-show="post.link" href="{{post.link}}">
-        {{post.title}}
-      </a>
-                <span ng-hide="post.link">
-        {{post.title}}
-      </span>
+                <a ng-show="post.link" href="{{post.link}}">{{post.title}}</a>
+                <span ng-hide="post.link">{{post.title}}</span>
             </h3>
         </div>
-
         <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
             <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span> {{comment.upvotes}}
             - by {{comment.author}}
-            <span style="font-size:20px; margin-left:10px;">
-      {{comment.body}}
-    </span>
+            <span style="font-size:20px; margin-left:10px;">{{comment.body}}
         </div>
-
         <form ng-submit="addComment()" ng-show="isLoggedIn()" style="margin-top:30px;">
             <h3>Add a new comment</h3>
-
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
             </div>
@@ -371,8 +466,6 @@
             <button type="submit" class="btn btn-primary">Log In</button>
         </form>
     </script>
-
-
 
 </body>
 

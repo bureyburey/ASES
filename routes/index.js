@@ -11,6 +11,7 @@ var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
 
+var StaffGroup = mongoose.model('StaffGroup');
 var Section = mongoose.model('Section');
 var FormatCriteria = mongoose.model('FormatCriteria');
 
@@ -149,23 +150,101 @@ router.post('/login', function (req, res, next) {
 });
 //////////////// REGISTERATION+AUTHENTICATION API ENDS
 
+
+
+//////////////// STAFF GROUP API START
+// fetch all staff groups
+router.get('/staffgroups', function (req, res, next) {
+  console.log("INVOKED: router.get(staffgroups)");
+  StaffGroup.find(function (err, staffGroups) {
+    if (err) { return next(err); }
+
+    // console.log("Found "+staffGroups.length+" records");
+    res.json(staffGroups);
+  });
+});
+// add a new staff groups
+router.post('/staffgroups', auth, function (req, res, next) {
+  console.log("INVOKED: router.post(staffgroups)");
+  var staffGroup = new StaffGroup(req.body);
+  staffGroup.save(function (err, staffGroup) {
+    if (err) { return next(err); }
+    res.json(staffGroup);
+  });
+});
+// preloading staff groups
+router.param('staffgroup', function (req, res, next, id) {
+  console.log("INVOKED: router.param(staffgroup)");
+  var query = StaffGroup.findById(id);
+
+  query.exec(function (err, staffGroup) {
+    if (err) { return next(err); }
+    if (!staffGroup) { return next(new Error('can\'t find staff group')); }
+    // save the found staff group to the request
+    req.staffGroup = staffGroup;
+    return next();
+  });
+});
+// edit a staff group
+router.put('/staffgroups/:staffgroup/edit', auth, function (req, res, next) {
+  console.log("INVOKED: router.put(/staffgroups/" + req.staffGroup._id + "/edit)");
+  req.staffGroup.edit(req.body, function (err, staffGroup) {
+    if (err) { return next(err); }
+    res.json(staffGroup);
+  });
+});
+// delete a staff group
+router.put('/staffgroups/:staffgroup/delete', auth, function (req, res, next) {
+  console.log("INVOKED: router.put(/sections/" + req.staffGroup._id + "/delete)");
+
+  req.staffGroup.remove(function (err) {
+    if (err) { return next(err) };
+    res.json("staff group deleted");
+  });
+});
+//////////////// STAFF GROUP API END
+
+
 //////////////// SECTION API START
 // fetch all sections
 router.get('/sections', function (req, res, next) {
   console.log("INVOKED: router.get(sections)");
-  Section.find(function (err, sections) {
+
+  Section.find({}).populate('staffGroups').exec(function (err, sections) {
     if (err) { return next(err); }
 
     res.json(sections);
   });
+
+
+
+  // Section.find(function (err, sections) {
+  //   if (err) { return next(err); }
+
+  //   res.json(sections);
+  // });
+
+
+
+
+
 });
 // add a new section
 router.post('/sections', auth, function (req, res, next) {
   console.log("INVOKED: router.post(sections)");
   var section = new Section(req.body);
+  console.log(req.body);
   section.save(function (err, section) {
     if (err) { return next(err); }
-    res.json(section);
+
+
+    Section.populate(section, { path: "staffGroups" }, function (err, section) {
+      if (err) { return next(err); }
+
+      res.json(section);
+    });
+
+    // res.json(section);
   });
 });
 // preloading section
@@ -205,8 +284,8 @@ router.put('/sections/:section/delete', auth, function (req, res, next) {
 
 //////////////// FormatCriteria API START
 // fetch all format criterias with sections refrences populated
-router.get('/format_criterias', function (req, res, next) {
-  console.log("INVOKED: router.get(format_criterias)");
+router.get('/formatcriterias', function (req, res, next) {
+  console.log("INVOKED: router.get(formatcriterias)");
 
   FormatCriteria.find({}).populate('section').exec(function (err, formatCriteria) {
     if (err) { return next(err); }
@@ -225,8 +304,8 @@ router.get('/format_criterias', function (req, res, next) {
 // });
 
 // add a new section
-router.post('/format_criterias', auth, function (req, res, next) {
-  console.log("INVOKED: router.post(format_criterias)");
+router.post('/formatcriterias', auth, function (req, res, next) {
+  console.log("INVOKED: router.post(formatcriterias)");
   // create new FormCriteria object
   var formatCriteria = new FormatCriteria(req.body);
 
@@ -243,29 +322,29 @@ router.post('/format_criterias', auth, function (req, res, next) {
   });
 });
 // preloading format criteria
-router.param('format_criteria', function (req, res, next, id) {
-  console.log("INVOKED: router.param(format_criteria)");
+router.param('formatcriteria', function (req, res, next, id) {
+  console.log("INVOKED: router.param(formatcriteria)");
   var query = FormatCriteria.findById(id);
 
   query.exec(function (err, formatCriteria) {
     if (err) { return next(err); }
-    if (!formatCriteria) { return next(new Error('can\'t find format_criteria')); }
+    if (!formatCriteria) { return next(new Error('can\'t find formatcriteria')); }
     // save the found section to the request
     req.formatCriteria = formatCriteria;
     return next();
   });
 });
 // edit a section
-router.put('/format_criterias/:format_criteria/edit', auth, function (req, res, next) {
-  console.log("INVOKED: router.put(/format_criteria/" + req.formatCriteria._id + "/edit)");
+router.put('/formatcriterias/:formatcriteria/edit', auth, function (req, res, next) {
+  console.log("INVOKED: router.put(/formatcriteria/" + req.formatCriteria._id + "/edit)");
   req.formatCriteria.edit(req.body, function (err, formatCriteria) {
     if (err) { return next(err); }
     res.json(formatCriteria);
   });
 });
 // delete a section
-router.put('/format_criterias/:format_criteria/delete', auth, function (req, res, next) {
-  console.log("INVOKED: router.put(/format_criterias/" + req.formatCriteria._id + "/delete)");
+router.put('/formatcriterias/:format_criteria/delete', auth, function (req, res, next) {
+  console.log("INVOKED: router.put(/formatcriterias/" + req.formatCriteria._id + "/delete)");
 
   req.formatCriteria.remove(function (err) {
     if (err) { return next(err) };
