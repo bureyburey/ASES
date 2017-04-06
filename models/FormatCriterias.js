@@ -14,8 +14,8 @@ var FormatCriteriaSchema = new mongoose.Schema({
     dateModified: { type: Date, default: Date.now }
 });
 
-FormatCriteriaSchema.methods.edit = function (params, cb) {
-    this.num = params.nam || this.num;
+FormatCriteriaSchema.methods.edit = function(params, cb) {
+    this.num = params.num || this.num;
     this.name = params.name || this.name;
     this.slug = params.slug;
     this.weight = params.weight || this.weight;

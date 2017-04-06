@@ -3,7 +3,7 @@ var app = angular.module('ases', ['ui.router']);
 app.config([
     '$stateProvider',
     '$urlRouterProvider',
-    function ($stateProvider, $urlRouterProvider) {
+    function($stateProvider, $urlRouterProvider) {
 
         $stateProvider
             .state('home', {
@@ -17,7 +17,7 @@ app.config([
                 controller: 'MsgBoardCtrl',
                 resolve: {
                     // make sure to load posts on startup
-                    postPromise: ['posts', function (posts) {
+                    postPromise: ['posts', function(posts) {
                         return posts.getAll();
                     }]
                 }
@@ -28,7 +28,7 @@ app.config([
                 controller: 'StaffGroupsCtrl',
                 resolve: {
                     // make sure to sections posts on startup
-                    staffGroupsPromise: ['staffGroups', function (staffGroups) {
+                    staffGroupsPromise: ['staffGroups', function(staffGroups) {
                         return staffGroups.getAll();
                     }]
                 }
@@ -39,10 +39,10 @@ app.config([
                 controller: 'SectionsCtrl',
                 resolve: {
                     // make sure to load staff groups and sections on startup
-                    staffGroupsPromise: ['staffGroups', function (staffGroups) {
+                    staffGroupsPromise: ['staffGroups', function(staffGroups) {
                         return staffGroups.getAll();
                     }],
-                    sectionsPromise: ['sections', function (sections) {
+                    sectionsPromise: ['sections', function(sections) {
                         return sections.getAll();
                     }]
                 }
@@ -53,11 +53,11 @@ app.config([
                 controller: 'FormatCriteriaCtrl',
                 resolve: {
                     // make sure to load sections on startup
-                    sectionsPromise: ['sections', function (sections) {
+                    sectionsPromise: ['sections', function(sections) {
                         return sections.getAll();
                     }],
                     // make sure to load criteria formats on startup
-                    formatCriteriaPromise: ['formatCriterias', function (formatCriterias) {
+                    formatCriteriaPromise: ['formatCriterias', function(formatCriterias) {
                         return formatCriterias.getAll();
                     }]
                 }
@@ -67,7 +67,7 @@ app.config([
                 templateUrl: '/posts.html',
                 controller: 'PostsCtrl',
                 resolve: {
-                    post: ['$stateParams', 'posts', function ($stateParams, posts) {
+                    post: ['$stateParams', 'posts', function($stateParams, posts) {
                         return posts.get($stateParams.id);
                     }]
                 }
@@ -76,7 +76,7 @@ app.config([
                 url: '/login',
                 templateUrl: '/login.html',
                 controller: 'AuthCtrl',
-                onEnter: ['$state', 'auth', function ($state, auth) {
+                onEnter: ['$state', 'auth', function($state, auth) {
                     if (auth.isLoggedIn()) {
                         $state.go('home');
                     }
@@ -86,7 +86,7 @@ app.config([
                 url: '/register',
                 templateUrl: '/register.html',
                 controller: 'AuthCtrl',
-                onEnter: ['$state', 'auth', function ($state, auth) {
+                onEnter: ['$state', 'auth', function($state, auth) {
                     if (auth.isLoggedIn()) {
                         $state.go('home');
                     }
@@ -94,46 +94,47 @@ app.config([
             });
 
         $urlRouterProvider.otherwise('home');
-    }]);
+    }
+]);
 
 
 // SERVICE FACTORIES START
-app.factory('staffGroups', ['$http', 'auth', function ($http, auth) {
+app.factory('staffGroups', ['$http', 'auth', function($http, auth) {
     var obj = {
         staffGroups: []
     };
-    obj.getAll = function () {
+    obj.getAll = function() {
         // get all sections from server and deep copy the data
-        return $http.get('/staffgroups').success(function (data) {
+        return $http.get('/staffgroups').success(function(data) {
             angular.copy(data, obj.staffGroups);
         });
     };
-    obj.create = function (staffGroup) {
+    obj.create = function(staffGroup) {
         // create a new section and upload to server
         return $http.post('/staffgroups', staffGroup, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.staffGroups.push(data);
         });
     };
-    obj.get = function (id) {
+    obj.get = function(id) {
         // get a section from the server
-        return $http.get('/staffgroups/' + id).then(function (res) {
+        return $http.get('/staffgroups/' + id).then(function(res) {
             return res.data;
         });
     };
-    obj.update = function (staffGroup, staffGroupEdit) {
+    obj.update = function(staffGroup, staffGroupEdit) {
         return $http.put('/staffgroups/' + staffGroup._id + '/edit', staffGroupEdit, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.staffGroups[obj.staffGroups.indexOf(staffGroup)] = data;
         });
     };
-    obj.delete = function (staffGroup) {
+    obj.delete = function(staffGroup) {
 
         return $http.put('/staffgroups/' + staffGroup._id + '/delete', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.staffGroups.splice(obj.staffGroups.indexOf(staffGroup), 1);
         });
     };
@@ -141,42 +142,42 @@ app.factory('staffGroups', ['$http', 'auth', function ($http, auth) {
 }]);
 
 
-app.factory('sections', ['$http', 'auth', function ($http, auth) {
+app.factory('sections', ['$http', 'auth', function($http, auth) {
     var obj = {
         sections: []
     };
-    obj.getAll = function () {
+    obj.getAll = function() {
         // get all sections from server and deep copy the data
-        return $http.get('/sections').success(function (data) {
+        return $http.get('/sections').success(function(data) {
             angular.copy(data, obj.sections);
         });
     };
-    obj.create = function (section) {
+    obj.create = function(section) {
         // create a new section and upload to server
         return $http.post('/sections', section, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.sections.push(data);
         });
     };
-    obj.get = function (id) {
+    obj.get = function(id) {
         // get a section from the server
-        return $http.get('/sections/' + id).then(function (res) {
+        return $http.get('/sections/' + id).then(function(res) {
             return res.data;
         });
     };
-    obj.update = function (section, sectionEdit) {
+    obj.update = function(section, sectionEdit) {
         return $http.put('/sections/' + section._id + '/edit', sectionEdit, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.sections[obj.sections.indexOf(section)] = data;
         });
     };
-    obj.delete = function (section) {
+    obj.delete = function(section) {
 
         return $http.put('/sections/' + section._id + '/delete', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.sections.splice(obj.sections.indexOf(section), 1);
         });
     };
@@ -184,104 +185,104 @@ app.factory('sections', ['$http', 'auth', function ($http, auth) {
 }]);
 
 // MISSING IMPLEMENTETIONS!!!!
-app.factory('formatCriterias', ['$http', 'auth', function ($http, auth) {
+app.factory('formatCriterias', ['$http', 'auth', function($http, auth) {
     var obj = {
         formatCriterias: []
     };
     // ALL METHODS NEED TO BE IMPLEMENTED IN ROUTES!!!!
-    obj.getAll = function () {
+    obj.getAll = function() {
         // get all format criterias from server and deep copy the data
-        return $http.get('/formatcriterias').success(function (data) {
+        return $http.get('/formatcriterias').success(function(data) {
             angular.copy(data, obj.formatCriterias);
         });
     };
-    obj.create = function (formatCriteria) {
+    obj.create = function(formatCriteria) {
         // create a new format criteria and upload to server
         return $http.post('/formatcriterias', formatCriteria, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.formatCriterias.push(data);
         });
     };
-    obj.get = function (id) {
+    obj.get = function(id) {
         // get a format criterias from the server
-        return $http.get('/formatcriterias/' + id).then(function (res) {
+        return $http.get('/formatcriterias/' + id).then(function(res) {
             return res.data;
         });
     };
-    obj.update = function (formatCriteria, formatCriteriaEdit) {
+    obj.update = function(formatCriteria, formatCriteriaEdit) {
         return $http.put('/formatcriterias/' + formatCriteria._id + '/edit', formatCriteriaEdit, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.formatCriterias[obj.formatCriterias.indexOf(formatCriteria)] = data;
         });
     };
-    obj.delete = function (formatCriteria) {
+    obj.delete = function(formatCriteria) {
         return $http.put('/formatcriterias/' + formatCriteria._id + '/delete', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.formatCriterias.splice(obj.formatCriterias.indexOf(formatCriteria), 1);
         });
     };
     return obj;
 }]);
 
-app.factory('posts', ['$http', 'auth', function ($http, auth) {
+app.factory('posts', ['$http', 'auth', function($http, auth) {
     var obj = {
         posts: []
     };
 
-    obj.getAll = function () {
+    obj.getAll = function() {
         // get all posts from server and deep copy the data
-        return $http.get('/posts').success(function (data) {
+        return $http.get('/posts').success(function(data) {
             angular.copy(data, obj.posts);
         });
     };
-    obj.create = function (post) {
+    obj.create = function(post) {
         return $http.post('/posts', post, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             obj.posts.push(data);
         });
     };
-    obj.upvote = function (post) {
+    obj.upvote = function(post) {
         return $http.put('/posts/' + post._id + '/upvote', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             post.upvotes += 1;
         });
     };
-    obj.get = function (id) {
-        return $http.get('/posts/' + id).then(function (res) {
+    obj.get = function(id) {
+        return $http.get('/posts/' + id).then(function(res) {
             return res.data;
         });
     };
-    obj.addComment = function (id, comment) {
+    obj.addComment = function(id, comment) {
         return $http.post('/posts/' + id + '/comments', comment, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         });
     };
-    obj.upvoteComment = function (post, comment) {
+    obj.upvoteComment = function(post, comment) {
         return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
-        }).success(function (data) {
+        }).success(function(data) {
             comment.upvotes += 1;
         });
     };
     return obj;
 }]);
 
-app.factory('auth', ['$http', '$window', function ($http, $window) {
+app.factory('auth', ['$http', '$window', function($http, $window) {
     var auth = {};
-    auth.saveToken = function (token) {
+    auth.saveToken = function(token) {
         $window.localStorage['ases-token'] = token;
     };
 
-    auth.getToken = function () {
+    auth.getToken = function() {
         return $window.localStorage['ases-token'];
     }
 
-    auth.isLoggedIn = function () {
+    auth.isLoggedIn = function() {
         var token = auth.getToken();
 
         if (token) {
@@ -293,7 +294,7 @@ app.factory('auth', ['$http', '$window', function ($http, $window) {
         }
     };
 
-    auth.currentUser = function () {
+    auth.currentUser = function() {
         if (auth.isLoggedIn()) {
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
@@ -301,17 +302,17 @@ app.factory('auth', ['$http', '$window', function ($http, $window) {
             return payload.username;
         }
     };
-    auth.register = function (user) {
-        return $http.post('/register', user).success(function (data) {
+    auth.register = function(user) {
+        return $http.post('/register', user).success(function(data) {
             auth.saveToken(data.token);
         });
     };
-    auth.logIn = function (user) {
-        return $http.post('/login', user).success(function (data) {
+    auth.logIn = function(user) {
+        return $http.post('/login', user).success(function(data) {
             auth.saveToken(data.token);
         });
     };
-    auth.logOut = function () {
+    auth.logOut = function() {
         $window.localStorage.removeItem('ases-token');
     };
     return auth;
@@ -324,11 +325,11 @@ app.controller('StaffGroupsCtrl', [
     '$scope',
     'staffGroups',
     'auth',
-    function ($scope, staffGroups, auth) {
+    function($scope, staffGroups, auth) {
         $scope.staffGroups = staffGroups.staffGroups;
         $scope.isLoggedIn = auth.isLoggedIn;
 
-        $scope.addStaffGroup = function () {
+        $scope.addStaffGroup = function() {
             if ($scope.name === '' || $scope.name.length === 0) { return; }
             staffGroups.create({
                 group: $scope.group,
@@ -340,7 +341,7 @@ app.controller('StaffGroupsCtrl', [
             $scope.slug = '';
         };
 
-        $scope.editStaffGroup = function (index, staffGroup) {
+        $scope.editStaffGroup = function(index, staffGroup) {
             // alert(JSON.stringify(staffGroup));
             if (staffGroup.name === '' || staffGroup.name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
@@ -354,7 +355,7 @@ app.controller('StaffGroupsCtrl', [
             });
         }
 
-        $scope.deleteStaffGroup = function (staffGroup) {
+        $scope.deleteStaffGroup = function(staffGroup) {
             if (!confirm("מחק קבוצה?")) { return; }
             staffGroups.delete(staffGroup);
         }
@@ -367,7 +368,7 @@ app.controller('SectionsCtrl', [
     'staffGroups',
     'sections',
     'auth',
-    function ($scope, staffGroups, sections, auth) {
+    function($scope, staffGroups, sections, auth) {
         $scope.staffGroups = staffGroups.staffGroups;
         $scope.sections = sections.sections;
         $scope.isLoggedIn = auth.isLoggedIn;
@@ -375,7 +376,7 @@ app.controller('SectionsCtrl', [
         // for dynamic selection of staff groups
         $scope.checkedStaffGroups = [];
 
-        $scope.toggleCheck = function (staffGroup, staffGroupsUser) {
+        $scope.toggleCheck = function(staffGroup, staffGroupsUser) {
             // assign the checked groups array to the argument array or the global checked groups (prioritize argument array)
 
             arrRefrence = staffGroupsUser || $scope.checkedStaffGroups;
@@ -401,14 +402,14 @@ app.controller('SectionsCtrl', [
             // }
         };
 
-        $scope.staffGroupIndex = function (staffGroup, staffGroupsUser) {
+        $scope.staffGroupIndex = function(staffGroup, staffGroupsUser) {
             // returns index of staffGroup in staffGroupsUser list, -1 if not exists
-            return staffGroupsUser.findIndex(function (staffGroupUser) {
+            return staffGroupsUser.findIndex(function(staffGroupUser) {
                 return staffGroup._id === staffGroupUser._id;
             });
         }
 
-        $scope.buildStaffGroupsList = function (groupsList) {
+        $scope.buildStaffGroupsList = function(groupsList) {
             selectedStaffGroups = [];
             for (i = 0; i < groupsList.length; i++) {
                 selectedStaffGroups.push(groupsList[i]._id);
@@ -416,7 +417,7 @@ app.controller('SectionsCtrl', [
             return selectedStaffGroups;
         }
 
-        $scope.addSection = function () {
+        $scope.addSection = function() {
             // alert(JSON.stringify($scope.checkedStaffGroups, null,2));
             if ($scope.name === '' || $scope.name.length === 0) { return; }
 
@@ -433,7 +434,7 @@ app.controller('SectionsCtrl', [
             $scope.checkedStaffGroups = [];
         };
 
-        $scope.editSection = function (index, section) {
+        $scope.editSection = function(index, section) {
 
             // alert(JSON.stringify(section.staffGroups,null,2));
             if (section.name === '' || section.name.length === 0) { return; }
@@ -449,7 +450,7 @@ app.controller('SectionsCtrl', [
             });
         }
 
-        $scope.deleteSection = function (section) {
+        $scope.deleteSection = function(section) {
             if (!confirm("מחק פעילות?")) { return; }
             sections.delete(section);
         }
@@ -463,7 +464,7 @@ app.controller('FormatCriteriaCtrl', [
     'sections',
     'formatCriterias',
     'auth',
-    function ($scope, sections, formatCriterias, auth) {
+    function($scope, sections, formatCriterias, auth) {
         $scope.formatCriterias = formatCriterias.formatCriterias;
         $scope.sections = sections.sections;
         $scope.isLoggedIn = auth.isLoggedIn;
@@ -471,15 +472,15 @@ app.controller('FormatCriteriaCtrl', [
         // dynamic adding of fields
         // mapping of available fields name and their data type
         $scope.dataTypes = [
-            { id: 0, placeholder: "טקסט", dataType: "String" },
-            { id: 1, placeholder: "קישור אינטרנטי", dataType: "String" },
-            { id: 2, placeholder: "מספר", dataType: "Number" },
-            { id: 3, placeholder: "תאריך", dataType: "Date" }
+            { id: 1, placeholder: "טקסט", dataType: "String" },
+            { id: 2, placeholder: "קישור אינטרנטי", dataType: "String" },
+            { id: 3, placeholder: "מספר", dataType: "Number" },
+            { id: 4, placeholder: "תאריך", dataType: "Date" }
         ];
 
         $scope.fields = [];
 
-        $scope.updateDataType = function (index, dataType, fieldsUser) {
+        $scope.updateDataType = function(index, dataType, fieldsUser) {
             arrRefrence = fieldsUser || $scope.fields;
 
 
@@ -490,7 +491,7 @@ app.controller('FormatCriteriaCtrl', [
 
         };
 
-        $scope.addNewField = function (fieldsUser) {
+        $scope.addNewField = function(fieldsUser) {
             arrRefrence = fieldsUser || $scope.fields;
             arrRefrence.push({
                 id: 0,
@@ -499,12 +500,12 @@ app.controller('FormatCriteriaCtrl', [
             });
         };
 
-        $scope.removeField = function (i, fieldsUser) {
+        $scope.removeField = function(i, fieldsUser) {
             arrRefrence = fieldsUser || $scope.fields;
             arrRefrence.splice(i, 1);
         };
 
-        $scope.buildFieldsData = function (fieldsDataList) {
+        $scope.buildFieldsData = function(fieldsDataList) {
             fieldsData = [];
             for (i = 0; i < fieldsDataList.length; i++) {
                 fieldsData.push({
@@ -519,13 +520,13 @@ app.controller('FormatCriteriaCtrl', [
         }
 
 
-        $scope.getSectionIndexByNum = function (num) {
-            return $scope.sections.findIndex(function (section) {
+        $scope.getSectionIndexByNum = function(num) {
+            return $scope.sections.findIndex(function(section) {
                 return section.num === num;
             });
         }
 
-        $scope.addFormatCriteria = function () {
+        $scope.addFormatCriteria = function() {
             if ($scope.name === '' || $scope.name.length === 0) { return; }
 
             formatCriterias.create({
@@ -541,7 +542,7 @@ app.controller('FormatCriteriaCtrl', [
             // $scope.slug = '';
         };
 
-        $scope.editFormatCriteria = function (index, formatCriteria) {
+        $scope.editFormatCriteria = function(index, formatCriteria) {
             alert(JSON.stringify(formatCriteria, null, 2));
 
             // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
@@ -558,7 +559,7 @@ app.controller('FormatCriteriaCtrl', [
             });
         }
 
-        $scope.deleteFormatCriteria = function (formatCriteria) {
+        $scope.deleteFormatCriteria = function(formatCriteria) {
             if (!confirm("מחק קריטריון הערכה?")) { return; }
             formatCriterias.delete(formatCriteria);
         }
@@ -568,7 +569,7 @@ app.controller('FormatCriteriaCtrl', [
 app.controller('MainCtrl', [
     '$scope',
     'auth',
-    function ($scope, auth) {
+    function($scope, auth) {
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.currentUser = auth.currentUser;
     }
@@ -578,11 +579,11 @@ app.controller('MsgBoardCtrl', [
     '$scope',
     'posts',
     'auth',
-    function ($scope, posts, auth) {
+    function($scope, posts, auth) {
         $scope.posts = posts.posts;
         $scope.isLoggedIn = auth.isLoggedIn;
 
-        $scope.addPost = function () {
+        $scope.addPost = function() {
             if (!$scope.title || $scope.title === '') { return; }
             posts.create({
                 author: auth.currentUser,
@@ -593,7 +594,7 @@ app.controller('MsgBoardCtrl', [
             $scope.link = '';
         };
 
-        $scope.incrementUpvotes = function (post) {
+        $scope.incrementUpvotes = function(post) {
             posts.upvote(post);
         };
     }
@@ -604,21 +605,21 @@ app.controller('PostsCtrl', [
     'posts',
     'post',
     'auth',
-    function ($scope, posts, post, auth) {
+    function($scope, posts, post, auth) {
         $scope.post = post;
         $scope.isLoggedIn = auth.isLoggedIn;
 
-        $scope.addComment = function () {
+        $scope.addComment = function() {
             if ($scope.body === '') { return; }
             posts.addComment(post._id, {
                 body: $scope.body,
                 author: auth.currentUser,
-            }).success(function (comment) {
+            }).success(function(comment) {
                 $scope.post.comments.push(comment);
             });
             $scope.body = '';
         };
-        $scope.incrementUpvotes = function (comment) {
+        $scope.incrementUpvotes = function(comment) {
             posts.upvoteComment(post, comment);
         };
     }
@@ -628,21 +629,21 @@ app.controller('AuthCtrl', [
     '$scope',
     '$state',
     'auth',
-    function ($scope, $state, auth) {
+    function($scope, $state, auth) {
         $scope.user = {};
 
-        $scope.register = function () {
-            auth.register($scope.user).error(function (error) {
+        $scope.register = function() {
+            auth.register($scope.user).error(function(error) {
                 $scope.error = error;
-            }).then(function () {
+            }).then(function() {
                 $state.go('home');
             });
         };
 
-        $scope.logIn = function () {
-            auth.logIn($scope.user).error(function (error) {
+        $scope.logIn = function() {
+            auth.logIn($scope.user).error(function(error) {
                 $scope.error = error;
-            }).then(function () {
+            }).then(function() {
                 $state.go('home');
             });
         };
@@ -652,7 +653,7 @@ app.controller('AuthCtrl', [
 app.controller('NavCtrl', [
     '$scope',
     'auth',
-    function ($scope, auth) {
+    function($scope, auth) {
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.currentUser = auth.currentUser;
         $scope.logOut = auth.logOut;
