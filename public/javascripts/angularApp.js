@@ -377,16 +377,28 @@ app.controller('SectionsCtrl', [
 
         $scope.toggleCheck = function (staffGroup, staffGroupsUser) {
             // assign the checked groups array to the argument array or the global checked groups (prioritize argument array)
-            $scope.checkedStaffGroups = staffGroupsUser || $scope.checkedStaffGroups;
-            // find the index of the staff group by its _id
-            staffGroupIndex = $scope.staffGroupIndex(staffGroup, $scope.checkedStaffGroups);
+
+            arrRefrence = staffGroupsUser || $scope.checkedStaffGroups;
+            staffGroupIndex = $scope.staffGroupIndex(staffGroup, arrRefrence);
             if (staffGroupIndex === -1) {
                 // group was not found --> add it to the list
-                $scope.checkedStaffGroups.push(staffGroup);
+                arrRefrence.push(staffGroup);
             } else {
                 // remove the group from the checked array
-                $scope.checkedStaffGroups.splice(staffGroupIndex, 1);
+                arrRefrence.splice(staffGroupIndex, 1);
             }
+
+
+            // $scope.checkedStaffGroups = staffGroupsUser || $scope.checkedStaffGroups;
+            // // find the index of the staff group by its _id
+            // staffGroupIndex = $scope.staffGroupIndex(staffGroup, $scope.checkedStaffGroups);
+            // if (staffGroupIndex === -1) {
+            //     // group was not found --> add it to the list
+            //     $scope.checkedStaffGroups.push(staffGroup);
+            // } else {
+            //     // remove the group from the checked array
+            //     $scope.checkedStaffGroups.splice(staffGroupIndex, 1);
+            // }
         };
 
         $scope.staffGroupIndex = function (staffGroup, staffGroupsUser) {
@@ -457,50 +469,64 @@ app.controller('FormatCriteriaCtrl', [
         $scope.isLoggedIn = auth.isLoggedIn;
 
         // dynamic adding of fields
+        // mapping of available fields name and their data type
         $scope.dataTypes = [
-            { id: 1, placeholder: "טקסט", value: "String" },
-            { id: 2, placeholder: "קישור אינטרנטי", value: "String" },
-            { id: 3, placeholder: "מספר", value: "Number" },
-            { id: 4, placeholder: "תאריך", value: "Date" }
+            { id: 0, placeholder: "טקסט", dataType: "String" },
+            { id: 1, placeholder: "קישור אינטרנטי", dataType: "String" },
+            { id: 2, placeholder: "מספר", dataType: "Number" },
+            { id: 3, placeholder: "תאריך", dataType: "Date" }
         ];
-        $scope.fieldSet = {
-            selectedDataType: [],
-            fields: []
+
+        $scope.fields = [];
+
+        $scope.updateDataType = function (index, dataType, fieldsUser) {
+            arrRefrence = fieldsUser || $scope.fields;
+
+
+            // alert(dataType);
+            // alert(JSON.stringify(arrRefrence, null, 2));
+
+            // arrRefrence[i].dataType = dataType;
+
         };
-        $scope.updateDataType = function (index, dataType) {
-            $scope.fieldSet.selectedDataType[index] = dataType;
+
+        $scope.addNewField = function (fieldsUser) {
+            arrRefrence = fieldsUser || $scope.fields;
+            arrRefrence.push({
+                id: 0,
+                name: "",
+                dataType: ""
+            });
+        };
+
+        $scope.removeField = function (i, fieldsUser) {
+            arrRefrence = fieldsUser || $scope.fields;
+            arrRefrence.splice(i, 1);
+        };
+
+        $scope.buildFieldsData = function (fieldsDataList) {
+            fieldsData = [];
+            for (i = 0; i < fieldsDataList.length; i++) {
+                fieldsData.push({
+                    id: fieldsDataList[i].dataType.id || fieldsDataList[i].id,
+                    name: fieldsDataList[i].name,
+                    placeholder: fieldsDataList[i].dataType.placeholder || fieldsDataList[i].placeholder,
+                    dataType: fieldsDataList[i].dataType.dataType || fieldsDataList[i].dataType
+                });
+            }
+            alert("Sending to server: \n" + JSON.stringify(fieldsData, null, 2));
+            return fieldsData;
         }
-        $scope.fieldSet.fields = [];
-        $scope.addNewField = function () {
-            $scope.fieldSet.fields.push('');
-            $scope.fieldSet.selectedDataType.push(undefined);
-        };
-        $scope.removeField = function (i) {
-            $scope.fieldSet.fields.splice(i, 1);
-            $scope.fieldSet.selectedDataType.splice(i, 1);
-        };
 
 
+        $scope.getSectionIndexByNum = function (num) {
+            return $scope.sections.findIndex(function (section) {
+                return section.num === num;
+            });
+        }
 
         $scope.addFormatCriteria = function () {
             if ($scope.name === '' || $scope.name.length === 0) { return; }
-
-            // alert($scope.fieldSet.selectedDataType+"\n"+$scope.fieldSet.fields);
-            fieldsData = [];
-            for (i = 0; i < $scope.fieldSet.selectedDataType.length; i++) {
-                fieldsData.push({
-                    name: $scope.fieldSet.fields[i],
-                    dataType: $scope.fieldSet.selectedDataType[i]
-                });
-                // if($scope.fieldSet.selectedDataType[i] === undefined)
-                //     alert("{" + $scope.fieldSet.selectedDataType[i] + "," + $scope.fieldSet.fields[i] + "}");
-            }
-            // alert($scope.fieldSet.fields);
-            // alert($scope.fieldSet.selectedDataType);
-            // alert($scope.selectedDataType);
-            // alert($scope.selectedSection._id);
-
-
 
             formatCriterias.create({
                 num: $scope.num,
@@ -508,7 +534,7 @@ app.controller('FormatCriteriaCtrl', [
                 slug: $scope.slug,
                 weight: $scope.weight,
                 section: $scope.section,
-                fields: fieldsData
+                fields: $scope.buildFieldsData($scope.fields)
             });
             // $scope.num = '';
             // $scope.name = '';
@@ -516,7 +542,7 @@ app.controller('FormatCriteriaCtrl', [
         };
 
         $scope.editFormatCriteria = function (index, formatCriteria) {
-            // alert(JSON.stringify(formatCriteria.section, null, 2));
+            alert(JSON.stringify(formatCriteria, null, 2));
 
             // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
@@ -527,7 +553,7 @@ app.controller('FormatCriteriaCtrl', [
                 slug: formatCriteria.slug,
                 weight: formatCriteria.weight,
                 section: formatCriteria.section,
-                fields: formatCriteria.fields,
+                fields: $scope.buildFieldsData(formatCriteria.fields),
                 dateModified: new Date()
             });
         }

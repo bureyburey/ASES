@@ -266,7 +266,7 @@
 
 
 
-
+    <!-- MISSING IMPLEMENTATION OF EDITABLE FIELDS -->
     <script type="text/ng-template" id="/format_criterias.html">
         <div>
             <div class="page-header">
@@ -313,12 +313,37 @@
 
 
 
-                <div>
+                <!--<div>
+                     ng-click activate function in controller which adds a new field 
+
+
                     <input type="button" class="btn btn-info" ng-click="addNewField()" value="הוספת שדה">
                     <div>
+                         generate fields for each element in fieldSet.fields in the controller 
+
+
                         <fieldset data-ng-repeat="field in fieldSet.fields track by $index">
                             <input ng-model="fieldSet.fields[$index]" />
                             <select ng-model="selectedDataType.value" ng-change="updateDataType($index, selectedDataType.value.value)" ng-options="dataType.placeholder for dataType in dataTypes">
+                                <option value="">סוג הקלט:</option>
+                            </select>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
+                            <span class="glyphicon glyphicon-minus"></span> הסרת שדה
+                            </button>
+                        </fieldset>
+                    </div>
+                </div>-->
+
+
+                <div>
+                    <!-- ng-click activate function in controller which adds a new field -->
+                    <input type="button" class="btn btn-info" ng-click="addNewField()" value="הוספת שדה">
+                    <div>
+                        <!-- generate fields for each element in fields in the controller -->
+                        <fieldset data-ng-repeat="field in fields track by $index">
+                            <!-- input model according to fields name -->
+                            <input ng-model="field.name" />
+                            <select ng-model="field.dataType" ng-change="updateDataType($index, dataType)" ng-options="dataType.placeholder for dataType in dataTypes">
                                 <option value="">סוג הקלט:</option>
                             </select>
                             <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
@@ -362,51 +387,34 @@
       </span>
 
 
-
-        <span>
-        <label class="label-field">תחום פעילות: </label>
-        <input class="editable-field" ng-model="formatCriteria.section.num+'.'+formatCriteria.section.name" ng-disabled="true" value="{{formatCriteria.section.num+'.'+formatCriteria.section.name}}" />
-        <br />
-        </span>
-
-
-
-            <div>
-                <label>שינוי תחום פעילות: 
-                    <select ng-model="formatCriteria.section" ng-options="(section.num+'.'+section.name) for section in sections" ng-disabled="!edit" value="{{section}}">
+                <div>
+                    <label> תחום פעילות: 
+                    <select ng-model="formatCriteria.section" ng-init="formatCriteria.section=sections[getSectionIndexByNum(formatCriteria.section.num)]" ng-options="(section.num+'.'+section.name) for section in sections" ng-disabled="!edit" value="{{section}}">
                     </select>
                 </label>
-            </div>
-
-
-                <!--<div>
-                    <fieldset data-ng-repeat="dataField in formatCriteria.fields track by $index">
-                <input ng-model="formatCriteria.fields[$index]" />
-                <select ng-model="selectedDataType.value" ng-change="updateDataType($index, selectedDataType.value.value)" ng-options="dataType.placeholder for dataType in dataTypes">
-                    <option value="">סוג הקלט:</option>
-                </select>
-                <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
-                <span class="glyphicon glyphicon-minus"></span> הסרת שדה
-                </button>
-                </fieldset>
-                </div>-->
-
-
-
-                <label class="label-field">שדות: </label>
-                <div data-ng-repeat="dataField in formatCriteria.fields">
-                    <span>
-        <label class="label-field"></label>
-        <input class="editable-field" ng-model="dataField.name" ng-disabled="!edit" value="{{dataField}}" />
-                <br />
-                </span>
                 </div>
 
 
+                <div>
+                    <!-- ng-click activate function in controller which adds a new field -->
+                    <input type="button" class="btn btn-info" ng-click="addNewField(formatCriteria.fields)" value="הוספת שדה">
+                    <div>
+                        <!-- generate fields for each element in fields in the controller -->
+                        <fieldset ng-model="fieldUser" data-ng-repeat="fieldUser in formatCriteria.fields track by $index">
+                            <!-- input model according to fields name -->
+                            <input ng-model="fieldUser.name" />
+                            <select ng-model="fieldUser.dataType" ng-init="fieldUser.dataType=dataTypes[fieldUser.id]" ng-change="updateDataType($index, dataType.dataType, formatCriteria.fields)"
+                                ng-options="dataType.placeholder for dataType in dataTypes track by dataType.id">
+                                <option value="">סוג הקלט:</option>
+                            </select>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index,formatCriteria.fields)">
+                            <span class="glyphicon glyphicon-minus"></span> הסרת שדה
+                            </button>
+                        </fieldset>
+                    </div>
+                </div>
 
-
-
-        <span>
+                <span>
        <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
        <br />
       </span>

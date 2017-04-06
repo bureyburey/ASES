@@ -9,7 +9,7 @@ var FormatCriteriaSchema = new mongoose.Schema({
     slug: String,
     weight: { type: mongoose.Schema.Types.Double, default: 1 },
     section: { type: mongoose.Schema.Types.ObjectId, ref: 'Section' },
-    fields: [{ name: String, dataType: String }],
+    fields: [{ id: Number, name: String, placeholder: String, dataType: String }],
     dateCreated: { type: Date, default: Date.now },
     dateModified: { type: Date, default: Date.now }
 });
@@ -20,6 +20,7 @@ FormatCriteriaSchema.methods.edit = function (params, cb) {
     this.slug = params.slug;
     this.weight = params.weight || this.weight;
     this.section = params.section || this.section;
+    this.fields = params.fields || this.fields;
     this.dateModified = new Date();
     this.save(cb);
 };
