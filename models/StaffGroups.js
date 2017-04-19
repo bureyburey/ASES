@@ -10,7 +10,7 @@ var StaffGroupSchema = new mongoose.Schema({
     dateModified: { type: Date, default: Date.now }
 });
 
-StaffGroupSchema.methods.edit = function (params, cb) {
+StaffGroupSchema.methods.edit = function(params, cb) {
     // this: StaffGroup object in database
     // params: edited object to be saved
     this.group = params.group || this.group;
@@ -20,6 +20,6 @@ StaffGroupSchema.methods.edit = function (params, cb) {
     this.save(cb);
 };
 
-StaffGroupSchema.plugin(AutoIncrement, { inc_field: 'group' });
+StaffGroupSchema.plugin(AutoIncrement, { id: 'staff_group_seq', inc_field: 'group' });
 
 mongoose.model('StaffGroup', StaffGroupSchema);

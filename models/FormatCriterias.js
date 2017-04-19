@@ -9,7 +9,7 @@ var FormatCriteriaSchema = new mongoose.Schema({
     slug: String,
     weight: { type: mongoose.Schema.Types.Double, default: 1 },
     section: { type: mongoose.Schema.Types.ObjectId, ref: 'Section' },
-    fields: [{ id: Number, name: String, placeholder: String, dataType: String }],
+    fields: [{ id: Number, name: String, dataType: String }], // id: data type id, name: name of field, dataType: type of data to be stored
     dateCreated: { type: Date, default: Date.now },
     dateModified: { type: Date, default: Date.now }
 });
@@ -28,4 +28,7 @@ FormatCriteriaSchema.methods.edit = function(params, cb) {
 // unsure if this will work
 FormatCriteriaSchema.plugin(AutoIncrement, { id: 'format_criteria_seq', inc_field: 'num', reference_fields: ['section'] });
 
+
 mongoose.model('FormatCriteria', FormatCriteriaSchema);
+
+// exports.FormatCriteriaSchema = mongoose.model('FormatCriteria', FormatCriteriaSchema);

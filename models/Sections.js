@@ -11,7 +11,7 @@ var SectionSchema = new mongoose.Schema({
     dateModified: { type: Date, default: Date.now }
 });
 
-SectionSchema.methods.edit = function (params, cb) {
+SectionSchema.methods.edit = function(params, cb) {
     this.num = params.num || this.num;
     this.name = params.name || this.name;
     this.slug = params.slug;
@@ -20,6 +20,6 @@ SectionSchema.methods.edit = function (params, cb) {
     this.save(cb);
 };
 
-SectionSchema.plugin(AutoIncrement, { inc_field: 'num' });
+SectionSchema.plugin(AutoIncrement, { id: 'section_seq', inc_field: 'num' });
 
 mongoose.model('Section', SectionSchema);

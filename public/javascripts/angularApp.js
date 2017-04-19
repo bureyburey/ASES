@@ -57,8 +57,26 @@ app.config([
                         return sections.getAll();
                     }],
                     // make sure to load criteria formats on startup
-                    formatCriteriaPromise: ['formatCriterias', function(formatCriterias) {
+                    formatCriteriasPromise: ['formatCriterias', function(formatCriterias) {
                         return formatCriterias.getAll();
+                    }]
+                }
+            })
+            .state('format_forms', {
+                url: '/format_forms',
+                templateUrl: '/format_forms.html',
+                controller: 'FormatFormCtrl',
+                resolve: {
+                    sectionsPromise: ['sections', function(sections) {
+                        return sections.getAll();
+                    }],
+                    // make sure to load criterias formats on startup
+                    formatCriteriasPromise: ['formatCriterias', function(formatCriterias) {
+                        return formatCriterias.getAll();
+                    }],
+                    // make sure to load format forms on startup
+                    formatFormsPromise: ['formatForms', function(formatForms) {
+                        return formatForms.getAll();
                     }]
                 }
             })
@@ -184,7 +202,6 @@ app.factory('sections', ['$http', 'auth', function($http, auth) {
     return obj;
 }]);
 
-// MISSING IMPLEMENTETIONS!!!!
 app.factory('formatCriterias', ['$http', 'auth', function($http, auth) {
     var obj = {
         formatCriterias: []
@@ -222,6 +239,47 @@ app.factory('formatCriterias', ['$http', 'auth', function($http, auth) {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
             obj.formatCriterias.splice(obj.formatCriterias.indexOf(formatCriteria), 1);
+        });
+    };
+    return obj;
+}]);
+
+app.factory('formatForms', ['$http', 'auth', function($http, auth) {
+    var obj = {
+        formatForms: []
+    };
+    obj.getAll = function() {
+        // get all format criterias from server and deep copy the data
+        return $http.get('/formatforms').success(function(data) {
+            angular.copy(data, obj.formatForms);
+        });
+    };
+    obj.create = function(formatForm) {
+        // create a new format criteria and upload to server
+        return $http.post('/formatforms', formatForm, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.formatForms.push(data);
+        });
+    };
+    obj.get = function(id) {
+        // get a format criterias from the server
+        return $http.get('/formatforms/' + id).then(function(res) {
+            return res.data;
+        });
+    };
+    obj.update = function(formatForm, formatFormEdit) {
+        return $http.put('/formatforms/' + formatForm._id + '/edit', formatFormEdit, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.formatForms[obj.formatForms.indexOf(formatForm)] = data;
+        });
+    };
+    obj.delete = function(formatForm) {
+        return $http.put('/formatforms/' + formatForm._id + '/delete', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.formatForms.splice(obj.formatForms.indexOf(formatForm), 1);
         });
     };
     return obj;
@@ -362,7 +420,6 @@ app.controller('StaffGroupsCtrl', [
     }
 ]);
 
-
 app.controller('SectionsCtrl', [
     '$scope',
     'staffGroups',
@@ -457,8 +514,6 @@ app.controller('SectionsCtrl', [
     }
 ]);
 
-
-// MISSING IMPLEMENTATION!!!!
 app.controller('FormatCriteriaCtrl', [
     '$scope',
     'sections',
@@ -470,10 +525,10 @@ app.controller('FormatCriteriaCtrl', [
         $scope.isLoggedIn = auth.isLoggedIn;
 
         // dynamic adding of fields
-        // mapping of available fields name and their data type
+        // mapping of available pre-defined field names and their data types
         $scope.dataTypes = [
             { id: 1, placeholder: "טקסט", dataType: "String" },
-            { id: 2, placeholder: "קישור אינטרנטי", dataType: "String" },
+            { id: 2, placeholder: "קישור אינטרנטי", dataType: "Link" },
             { id: 3, placeholder: "מספר", dataType: "Number" },
             { id: 4, placeholder: "תאריך", dataType: "Date" }
         ];
@@ -481,14 +536,12 @@ app.controller('FormatCriteriaCtrl', [
         $scope.fields = [];
 
         $scope.updateDataType = function(index, dataType, fieldsUser) {
-            arrRefrence = fieldsUser || $scope.fields;
-
+            // arrRefrence = fieldsUser || $scope.fields;
 
             // alert(dataType);
             // alert(JSON.stringify(arrRefrence, null, 2));
 
             // arrRefrence[i].dataType = dataType;
-
         };
 
         $scope.addNewField = function(fieldsUser) {
@@ -511,7 +564,7 @@ app.controller('FormatCriteriaCtrl', [
                 fieldsData.push({
                     id: fieldsDataList[i].dataType.id || fieldsDataList[i].id,
                     name: fieldsDataList[i].name,
-                    placeholder: fieldsDataList[i].dataType.placeholder || fieldsDataList[i].placeholder,
+                    // placeholder: fieldsDataList[i].dataType.placeholder || fieldsDataList[i].placeholder,
                     dataType: fieldsDataList[i].dataType.dataType || fieldsDataList[i].dataType
                 });
             }
@@ -562,6 +615,97 @@ app.controller('FormatCriteriaCtrl', [
         $scope.deleteFormatCriteria = function(formatCriteria) {
             if (!confirm("מחק קריטריון הערכה?")) { return; }
             formatCriterias.delete(formatCriteria);
+        }
+    }
+]);
+
+
+app.controller('FormatFormCtrl', [
+    '$scope',
+    'sections',
+    'formatCriterias',
+    'formatForms',
+    'auth',
+    function($scope, sections, formatCriterias, formatForms, auth) {
+        $scope.sections = sections.sections;
+        $scope.formatCriterias = formatCriterias.formatCriterias;
+        $scope.formatForms = formatForms.formatForms;
+        $scope.isLoggedIn = auth.isLoggedIn;
+
+
+        $scope.checkedFormatCriterias = [];
+
+        $scope.toggleCheck = function(formatCriteria, formatCriteriaUser) {
+            // assign the checked groups array to the argument array or the global checked groups (prioritize argument array)
+            arrRefrence = formatCriteriaUser || $scope.checkedFormatCriterias;
+            formatCriteriaIndex = $scope.formatCriteriaIndex(formatCriteria, arrRefrence);
+            if (formatCriteriaIndex === -1) {
+                // group was not found --> add it to the list
+                arrRefrence.push(formatCriteria);
+            } else {
+                // remove the group from the checked array
+                arrRefrence.splice(formatCriteriaIndex, 1);
+            }
+            alert(JSON.stringify(arrRefrence, null, 2));
+        };
+
+        $scope.formatCriteriaIndex = function(formatCriteria, formatCriteriasUser) {
+            // returns index of criteriaFormat in formatCriteriasUser list, -1 if not exists
+            return formatCriteriasUser.findIndex(function(formatCriteriaUser) {
+                return formatCriteria._id === formatCriteriaUser._id;
+            });
+        }
+
+        // alert(JSON.stringify($scope.formatCriterias, null, 2));
+
+        $scope.toggle = function(element) {
+            element.toggle = !element.toggle;
+        }
+
+        $scope.buildFormatCriteriasData = function(criteriasDataList) {
+            formatCriteriasData = [];
+            for (i = 0; i < criteriasDataList.length; i++) {
+                formatCriteriasData.push(criteriasDataList[i]._id);
+            }
+            alert("Sending to server: \n" + JSON.stringify(formatCriteriasData, null, 2));
+            return formatCriteriasData;
+        }
+
+        $scope.addFormatForm = function() {
+
+            if ($scope.name === '' || $scope.name.length === 0) { return; }
+
+            formatForms.create({
+                num: $scope.num,
+                name: $scope.name,
+                slug: $scope.slug,
+                // formatCriterias: $scope.checkedFormatCriterias
+                formatCriterias: $scope.buildFormatCriteriasData($scope.checkedFormatCriterias)
+            });
+            // $scope.num = '';
+            // $scope.name = '';
+            // $scope.slug = '';
+        };
+
+        // REQUIRED IMPLEMENTETION FOR EDITING
+        $scope.editFormatForm = function(index, formatForm) {
+            alert(JSON.stringify(formatForm, null, 2));
+
+            // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
+            if (!confirm("החל שינויים?")) { return; }
+            formatForms.update(formatForm, {
+                _id: formatForm._id,
+                num: formatForm.num,
+                name: formatForm.name,
+                slug: formatForm.slug,
+                formatCriterias: $scope.buildFormatCriteriasData(formatForm.formatCriterias),
+                dateModified: new Date()
+            });
+        }
+
+        $scope.deleteFormatForm = function(formatForm) {
+            if (!confirm("מחק טופס?")) { return; }
+            formatForms.delete(formatForm);
         }
     }
 ]);
