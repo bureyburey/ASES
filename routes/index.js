@@ -360,6 +360,7 @@ router.put('/formatcriterias/:formatcriteria/delete', auth, function(req, res, n
 router.get('/formatforms', function(req, res, next) {
     console.log("INVOKED: router.get(formatforms)");
 
+    // deep populate format criteria and each format criteria section
     FormatForm.find({}).
     populate({ path: 'formatCriterias', populate: { path: 'section', model: 'Section' } }).
     exec(function(err, formatForms) {

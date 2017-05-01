@@ -159,7 +159,6 @@ app.factory('staffGroups', ['$http', 'auth', function($http, auth) {
     return obj;
 }]);
 
-
 app.factory('sections', ['$http', 'auth', function($http, auth) {
     var obj = {
         sections: []
@@ -646,7 +645,6 @@ app.controller('FormatFormCtrl', [
                 // remove the group from the checked array
                 arrRefrence.splice(formatCriteriaIndex, 1);
             }
-            alert(JSON.stringify(arrRefrence, null, 2));
         };
 
         $scope.formatCriteriaIndex = function(formatCriteria, formatCriteriasUser) {
@@ -655,8 +653,6 @@ app.controller('FormatFormCtrl', [
                 return formatCriteria._id === formatCriteriaUser._id;
             });
         }
-
-        // alert(JSON.stringify($scope.formatCriterias, null, 2));
 
         $scope.toggle = function(element) {
             element.toggle = !element.toggle;
@@ -679,7 +675,6 @@ app.controller('FormatFormCtrl', [
                 num: $scope.num,
                 name: $scope.name,
                 slug: $scope.slug,
-                // formatCriterias: $scope.checkedFormatCriterias
                 formatCriterias: $scope.buildFormatCriteriasData($scope.checkedFormatCriterias)
             });
             // $scope.num = '';
