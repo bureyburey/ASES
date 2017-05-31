@@ -1,47 +1,67 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    /*padding: 50px;*/
+    font: 14px Calibri, "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: black;
+    /*background: linear-gradient( 45deg, #5d9634, #5d9634 50%, #538c2b 50%, #538c2b);*/
+    background: linear-gradient(to right, lightblue, white, lightblue);
+    /* Standard syntax */
+    /*background-size: 20px 10px;*/
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
 }
+
 .glyphicon-thumbs-up {
     cursor: pointer
 }
+
+
 /*NAVIGATION BAR CSS*/
+
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     width: 15%;
     background-color: #f1f1f1;
-    height: 100%; /* Full height */
-    position: fixed; /* Make it stick, even on scroll */
-    overflow: auto; /* Enable scrolling if the sidenav has too much content */
+    height: 100%;
+    /* Full height */
+    position: fixed;
+    /* Make it stick, even on scroll */
+    overflow: auto;
+    /* Enable scrolling if the sidenav has too much content */
+    /*background: linear-gradient(to right, #C1E1A6, #C1E1A6);*/
+    /*background: linear-gradient(to right, lightblue, black);*/
+    background: #303641;
 }
+
 li a {
     display: block;
-    color: #000;
+    /*color: #000;*/
     padding: 8px 16px;
     text-decoration: none;
+    border: 1px solid lightblue;
+    color: white;
 }
+
 li a.active {
     background-color: #4CAF50;
     color: white;
 }
+
 li a:hover:not(.active) {
     background-color: #00B7FF;
     color: white;
 }
 
-.label-field{
-  width:10%;
-}
-.editable-field{
-  width:80%;
+.label-field {
+    width: 10%;
 }
 
+.editable-field {
+    width: 80%;
+}
 
 
 /*input.ng-invalid {

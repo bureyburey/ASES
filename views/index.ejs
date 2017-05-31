@@ -27,9 +27,12 @@
                             choose state by matching URL ->
                                 return templateUrl   
             -->
-            <li ng-show="isLoggedIn()"><a class="ng-binding">{{currentUser()}}</a></li>
+            <li style="padding:10px;">
+                <center><img src="/images/logo.png" /></center>
+            </li>
+            <li ng-show="isLoggedIn()"><a class="ng-binding">מחובר כ -  {{currentUser()}}</a></li>
             <li ng-show="isLoggedIn()"><a href="/#/home">תפריט ראשי</a></li>
-            <li ng-show="isLoggedIn()"><a href="/#/message_board">לוח הודעות</a></li>
+            <!--<li ng-show="isLoggedIn()"><a href="/#/message_board">לוח הודעות</a></li>-->
             <li ng-show="isLoggedIn()"><a href="/#/staff_groups">ניהול קבוצות חברי סגל</a></li>
             <li ng-show="isLoggedIn()"><a href="/#/sections">ניהול תחומי פעילות</a></li>
             <li ng-show="isLoggedIn()"><a href="/#/format_criterias">ניהול קריטריונים להערכה</a></li>
@@ -402,7 +405,7 @@
         <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
 
         <button ng-click="editFormatCriteria($index, formatCriteria)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-        <button ng-click="deleteFormatCriteria(formatCriteria)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
+        <button ng-click="deleteFormatCriteria(formatCriteria)" class="btn btn-danger" ng-disabled="!edit">מחק קריטריון הערכה זה</button>
         <br />
       </span>
                 </span>
@@ -494,11 +497,13 @@
         </span>
 
 
-                    <div ng-repeat="section in sections">
-                        {{section.num+'.'+section.name}}
-                        <button type="button" ng-click="toggle(section)" ng-show="!section.toggle" class="btn-primary">הצג קריטריונים</button>
-                        <button type="button" ng-click="toggle(section)" ng-show="section.toggle" class="btn-warning">הסתר קריטריונים</button>
-                        <div ng-if="section.num===formatCriteriaUser.section.num" ng-hide="!section.toggle" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'section.num'">
+
+
+                    <div ng-repeat="sectionUser in sections">
+                        {{sectionUser.num+'.'+sectionUser.name}}
+                        <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
+                        <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
+                        <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
                             <!--{{formatCriteriaUser}}-->
                             <div>
                                 <input type="checkbox" ng-disabled="!edit" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" /> {{formatCriteriaUser.name}}
@@ -506,6 +511,21 @@
                         </div>
                         <hr>
                     </div>
+
+
+
+                    <!--<div ng-repeat="sectionUser in sections">
+                        {{sectionUser.num+'.'+sectionUser.name}}
+                        <button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
+                        <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>
+                        <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-hide="!sectionUser.toggle" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
+                            {{formatCriteriaUser}}
+                            <div>
+                                <input type="checkbox" ng-disabled="!edit" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" /> {{formatCriteriaUser.name}}
+                            </div>
+                        </div>
+                        <hr>
+                    </div>-->
 
 
                     <span>
@@ -521,7 +541,7 @@
         <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
 
         <button ng-click="editFormatForm($index, formatForm)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-        <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
+        <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק טופס זה</button>
         <br />
       </span>
                     </span>

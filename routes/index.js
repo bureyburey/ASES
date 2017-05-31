@@ -11,10 +11,13 @@ var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
 
+var Status = mongoose.model('Status');
+
 var StaffGroup = mongoose.model('StaffGroup');
 var Section = mongoose.model('Section');
 var FormatCriteria = mongoose.model('FormatCriteria');
 var FormatForm = mongoose.model('FormatForm');
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

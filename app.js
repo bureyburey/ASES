@@ -15,7 +15,7 @@ require('./models/StaffGroups');
 require('./models/Sections');
 require('./models/FormatCriterias');
 require('./models/FormatForms');
-
+require('./models/Statuses');
 
 require('./config/passport');
 mongoose.connect('mongodb://localhost/ases');

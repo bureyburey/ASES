@@ -567,7 +567,7 @@ app.controller('FormatCriteriaCtrl', [
                     dataType: fieldsDataList[i].dataType.dataType || fieldsDataList[i].dataType
                 });
             }
-            alert("Sending to server: \n" + JSON.stringify(fieldsData, null, 2));
+            // alert("Sending to server: \n" + JSON.stringify(fieldsData, null, 2));
             return fieldsData;
         }
 
@@ -595,7 +595,7 @@ app.controller('FormatCriteriaCtrl', [
         };
 
         $scope.editFormatCriteria = function(index, formatCriteria) {
-            alert(JSON.stringify(formatCriteria, null, 2));
+            // alert(JSON.stringify(formatCriteria, null, 2));
 
             // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
@@ -655,7 +655,13 @@ app.controller('FormatFormCtrl', [
         }
 
         $scope.toggle = function(element) {
+            if (element.toggle === undefined) { element.toggle = false; }
             element.toggle = !element.toggle;
+        }
+
+        $scope.sectionsUser = function(sectionUser) {
+            sectionUser.sections = angular.copy($scope.sections);
+            return sectionUser.sections;
         }
 
         $scope.buildFormatCriteriasData = function(criteriasDataList) {
@@ -663,7 +669,7 @@ app.controller('FormatFormCtrl', [
             for (i = 0; i < criteriasDataList.length; i++) {
                 formatCriteriasData.push(criteriasDataList[i]._id);
             }
-            alert("Sending to server: \n" + JSON.stringify(formatCriteriasData, null, 2));
+            // alert("Sending to server: \n" + JSON.stringify(formatCriteriasData, null, 2));
             return formatCriteriasData;
         }
 
@@ -684,7 +690,7 @@ app.controller('FormatFormCtrl', [
 
         // REQUIRED IMPLEMENTETION FOR EDITING
         $scope.editFormatForm = function(index, formatForm) {
-            alert(JSON.stringify(formatForm, null, 2));
+            // alert(JSON.stringify(formatForm, null, 2));
 
             // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
