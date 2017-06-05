@@ -1,4 +1,4 @@
-var app = angular.module('ases', ['ui.router']);
+var app = angular.module('ases', ['ui.router', 'ngCsvImport', 'ngCsv', 'ngSanitize']);
 
 app.config([
     '$stateProvider',
@@ -10,6 +10,11 @@ app.config([
                 url: '/home',
                 templateUrl: '/home.html',
                 controller: 'MainCtrl'
+            })
+            .state('admin_menu', {
+                url: '/admin_menu',
+                templateUrl: '/admin_menu.html',
+                controller: 'AdminCtrl'
             })
             .state('message_board', {
                 url: '/message_board', // 
@@ -338,10 +343,8 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
     auth.getToken = function() {
         return $window.localStorage['ases-token'];
     }
-
     auth.isLoggedIn = function() {
         var token = auth.getToken();
-
         if (token) {
             var payload = JSON.parse($window.atob(token.split('.')[1]));
 
@@ -350,7 +353,6 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
             return false;
         }
     };
-
     auth.currentUser = function() {
         if (auth.isLoggedIn()) {
             var token = auth.getToken();
@@ -364,6 +366,11 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
             auth.saveToken(data.token);
         });
     };
+
+    auth.registerFromCSV = function(user) {
+        return $http.post('/register', user).success(function(data) {});
+    };
+
     auth.logIn = function(user) {
         return $http.post('/login', user).success(function(data) {
             auth.saveToken(data.token);
@@ -376,6 +383,88 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
 }]);
 // SERVICE FACTORIES END
 
+app.controller('AdminCtrl', [
+    '$scope',
+    '$parse',
+    'auth',
+    function($scope, $parse, auth) {
+        $scope.isLoggedIn = auth.isLoggedIn;
+        $scope.currentUser = auth.currentUser;
+
+        $scope.exportToCSV = [];
+
+        $scope.generatePassword = function() {
+            var length = 8,
+                charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+                retVal = "";
+            for (var i = 0, n = charset.length; i < length; ++i) {
+                retVal += charset.charAt(Math.floor(Math.random() * n));
+            }
+            return retVal;
+        }
+
+        $scope.registerFromCSV = function(user) {
+            // register user from CSV file
+            if ($scope.exportToCSV.findIndex(function(el) { return el.username === user.username }) > -1) { return; }
+            user.password = $scope.generatePassword(); // generate random password
+            auth.registerFromCSV(user).error(function(error) {
+                $scope.error = error;
+            }).then(function() {
+                $state.go('home');
+            });
+            // add the newly added user to an array which will be exported back to csv with password
+            $scope.exportToCSV.push(user);
+        };
+
+
+        // cvs extraction variables/methods
+        $scope.Math = window.Math;
+        $scope.csv = {
+            content: null,
+            header: true,
+            headerVisible: true,
+            separator: ',',
+            separatorVisible: true,
+            result: null,
+            encoding: 'ISO-8859-1',
+            encodingVisible: true,
+            uploadButtonLabel: "upload a csv file",
+            progressCallback: function(progress) {
+                $scope.$apply(function() {
+                    $scope.progress = progress;
+                });
+            },
+            streamingCallback: function(stream) {
+                if (typeof stream != "undefined") {
+                    $scope.$apply(function() {
+                        $scope.preview = stream[Math.floor(Math.random() * stream.length)];
+                    });
+                }
+            },
+            streamingErrorCallback: function(streamError) {
+                console.log(streamError);
+            }
+        };
+        var _lastGoodResult = '';
+        $scope.toPrettyJSON = function(json, tabWidth) {
+            var objStr = JSON.stringify(json);
+            var obj = null;
+            try {
+                obj = $parse(objStr)({});
+            } catch (e) {
+                // eat $parse error
+                return _lastGoodResult;
+            }
+            var result = JSON.stringify(obj, null, Number(tabWidth));
+            _lastGoodResult = result;
+            return result;
+        };
+
+
+
+
+    }
+]);
 
 // APP CONTROLLERS START
 app.controller('StaffGroupsCtrl', [
@@ -617,7 +706,6 @@ app.controller('FormatCriteriaCtrl', [
         }
     }
 ]);
-
 
 app.controller('FormatFormCtrl', [
     '$scope',
