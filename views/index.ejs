@@ -122,9 +122,9 @@
                 <span ng-show="user.status===1">שגיאה בהכנסת משתמש</span>
                 <span>{{rec.status}}</span>
             </div>
-            <label><input type="checkbox" ng-model="primitives.selectedAll" ng-click="checkAll()" />בחר הכל</label><br />
-            <button ng-click="registerSelectedFromCSV()">הוסף משתמשים מסומנים</button>
-            <button type="button" csv-header="csvHeader" csv-column-order="csvHeader" ng-csv="exportToCSV" filename="test.csv">ייצא לקובץ</button>
+            <label><input type="checkbox" ng-model="primitives.selectedAll" ng-click="checkAll()" /> בחר הכל</label><br />
+            <button class="btn btn-primary" ng-click="registerSelectedFromCSV()">הוסף משתמשים מסומנים</button>
+            <button class="btn btn-primary" type="button" csv-header="csvHeader" csv-column-order="csvHeader" ng-csv="exportToCSV" filename="test.csv">ייצא לקובץ</button>
 
             <br />{{csv.result}}<br />
 
