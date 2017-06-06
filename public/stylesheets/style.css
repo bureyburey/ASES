@@ -1,11 +1,18 @@
 body {
     /*padding: 50px;*/
-    font: 14px Calibri, "Lucida Grande", Helvetica, Arial, sans-serif;
-    color: black;
+    /*font: 14px Calibri, "Lucida Grande", Helvetica, Arial, sans-serif;*/
     /*background: linear-gradient( 45deg, #5d9634, #5d9634 50%, #538c2b 50%, #538c2b);*/
-    background: linear-gradient(to right, lightblue, white, lightblue);
+    /*background: linear-gradient(to right, lightblue, white, lightblue);*/
     /* Standard syntax */
     /*background-size: 20px 10px;*/
+}
+
+md-content {
+    font: 14px Calibri, "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: black;
+    background: linear-gradient(to right, lightblue, white, lightblue);
+    height: 100vh;
+    overflow-x: hidden;
 }
 
 a {

@@ -2,107 +2,120 @@
 
 <head>
     <title>ASES</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
 
     <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">-->
     <!--<link rel="stylesheet" href="/stylesheets/build.css">-->
 
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>-->
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
-    <script src="/bower_components/angular-csv-import/dist/angular-csv-import.js"></script>
-    <script src="/bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.6/ng-csv.min.js"></script>
-
+    <!--local scripts-->
+    <script src="/static_components/angular/angular.js"></script>
+    <script src="/static_components/angular-aria/angular-aria.js"></script>
+    <script src="/static_components/angular-animate/angular-animate.js"></script>
+    <script src="/static_components/angular-material/angular-material.js"></script>
+    <script src="/static_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="/static_components/angular-csv-import/dist/angular-csv-import.js"></script>
+    <script src="/static_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/static_components/ng-csv/build/ng-csv.min.js"></script>
 
     <script src="/javascripts/angularApp.js"></script>
+    <link href="/static_components/angular-material/angular-material.css" rel="stylesheet">
+    <link href="/static_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/style.css" rel="stylesheet">
+
 
 
 </head>
 
 <body dir="rtl" ng-app="ases">
-    <nav ng-controller="NavCtrl">
-        <!--<nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">-->
-        <ul>
-            <!-- 
+
+    <md-content flex style="border: 1px solid firebrick;" layout="column">
+
+
+        <nav ng-controller="NavCtrl">
+            <!--<nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">-->
+            <ul>
+                <!-- 
                 href is sent to angularApp.js ->
                     app.config ->
                         $stateProvider ->
                             choose state by matching URL ->
                                 return templateUrl   
             -->
-            <li style="padding:10px;">
-                <center><img src="/images/logo.png" /></center>
-            </li>
-            <li ng-show="isLoggedIn()"><a class="ng-binding">מחובר כ -  {{currentUser()}}</a></li>
-            <li ng-show="isLoggedIn()"><a href="/#/home">תפריט ראשי</a></li>
-            <!--<li ng-show="isLoggedIn()"><a href="/#/message_board">לוח הודעות</a></li>-->
-            <li ng-show="isLoggedIn()"><a href="/#/admin_menu">תפריט מנהל</a></li>
-            <li ng-show="isLoggedIn()"><a href="/#/staff_groups">ניהול קבוצות חברי סגל</a></li>
-            <li ng-show="isLoggedIn()"><a href="/#/sections">ניהול תחומי פעילות</a></li>
-            <li ng-show="isLoggedIn()"><a href="/#/format_criterias">ניהול קריטריונים להערכה</a></li>
-            <li ng-show="isLoggedIn()"><a href="/#/format_forms">ניהול טפסי הערכה</a></li>
-            <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">התנתקות</a></li>
-            <li class="ng-hide" ng-hide="isLoggedIn()"><a href="/#/login">התחברות</a></li>
-            <li class="ng-hide" ng-hide="isLoggedIn()"><a href="/#/register">הרשמה</a></li>
-        </ul>
-    </nav>
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <ui-view></ui-view>
-        </div>
-    </div>
-
-
-
-    <!--TEMPLATES ARE BELOW-->
-    <script type="text/ng-template" id="/home.html">
-        <div class="page-header">
-            <h1>ASES</h1>
-        </div>
-        <!-- rest of template -->
-        <div ng-hide="isLoggedIn()">
-            <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
-        </div>
-
-        ברוך הבא: {{currentUser()}}
-
-    </script>
-
-
-    <script type="text/ng-template" id="/admin_menu.html">
-        <div class="page-header">
-            <h1>ASES - Admin Menu</h1>
-        </div>
-        <!-- rest of template -->
-        <div ng-hide="isLoggedIn()">
-            <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
-        </div>
-
-        ברוך הבא: {{currentUser()}}
-
-
-        <div class="block row">
-            <div class="title">
-                <h4>Select your CSV file: </h4>
-            </div>
-            <div class="block right">
-                <ng-csv-import class="import" content="csv.content" header="csv.header" header-visible="csv.headerVisible" separator="csv.separator" separator-visible="csv.separatorVisible" result="csv.result" encoding="csv.encoding" encoding-visible="csv.encodingVisible"
-                    upload-button-label="csv.uploadButtonLabel" progress-callback="csv.progressCallback" streaming-callback="csv.streamingCallback" streaming-error-callback="csv.streamingCallback"></ng-csv-import>
+                <li style="padding:10px;">
+                    <center><img src="/images/logo.png" /></center>
+                </li>
+                <li ng-show="isLoggedIn()"><a class="ng-binding">מחובר כ -  {{currentUser()}}</a></li>
+                <li ng-show="isLoggedIn()"><a href="/#/home">תפריט ראשי</a></li>
+                <!--<li ng-show="isLoggedIn()"><a href="/#/message_board">לוח הודעות</a></li>-->
+                <li ng-show="isLoggedIn()"><a href="/#/admin_menu">תפריט מנהל</a></li>
+                <li ng-show="isLoggedIn()"><a href="/#/staff_groups">ניהול קבוצות חברי סגל</a></li>
+                <li ng-show="isLoggedIn()"><a href="/#/sections">ניהול תחומי פעילות</a></li>
+                <li ng-show="isLoggedIn()"><a href="/#/format_criterias">ניהול קריטריונים להערכה</a></li>
+                <li ng-show="isLoggedIn()"><a href="/#/format_forms">ניהול טפסי הערכה</a></li>
+                <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">התנתקות</a></li>
+                <li class="ng-hide" ng-hide="isLoggedIn()"><a href="/#/login">התחברות</a></li>
+                <li class="ng-hide" ng-hide="isLoggedIn()"><a href="/#/register">הרשמה</a></li>
+            </ul>
+        </nav>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <ui-view></ui-view>
             </div>
         </div>
 
-        <div ng-if="progress">
-            <md-progress-linear md-mode="determinate" class="md-warn" value="{{progress}}"></md-progress-linear>
-        </div>
-
-        <div class="block row" ng-if="csv.result">
-            <!--{{toPrettyJSON(csv.result, 2)}} -->
-            <!--<div class="content" hljs source="toPrettyJSON(preview, 2)"></div>-->
 
 
-            <!--<form ng-submit="register()" style="margin-top:30px;">
+        <!--TEMPLATES ARE BELOW-->
+        <script type="text/ng-template" id="/home.html">
+            <div class="page-header">
+                <h1>ASES</h1>
+            </div>
+            <!-- rest of template -->
+            <div ng-hide="isLoggedIn()">
+                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
+            </div>
+
+            ברוך הבא: {{currentUser()}}
+
+        </script>
+
+
+        <script type="text/ng-template" id="/admin_menu.html">
+            <div class="page-header">
+                <h1>ASES - Admin Menu</h1>
+            </div>
+            <!-- rest of template -->
+            <div ng-hide="isLoggedIn()">
+                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
+            </div>
+
+            ברוך הבא: {{currentUser()}}
+
+
+            <div class="block row">
+                <div class="title">
+                    <h4>Select your CSV file: </h4>
+                </div>
+                <div class="block right">
+                    <ng-csv-import class="import" content="csv.content" header="csv.header" header-visible="csv.headerVisible" separator="csv.separator" separator-visible="csv.separatorVisible" result="csv.result" encoding="csv.encoding" encoding-visible="csv.encodingVisible"
+                        upload-button-label="csv.uploadButtonLabel" progress-callback="csv.progressCallback" streaming-callback="csv.streamingCallback" streaming-error-callback="csv.streamingCallback"></ng-csv-import>
+                </div>
+            </div>
+
+            <div ng-if="progress">
+                <md-progress-linear md-mode="determinate" class="md-warn" value="{{progress}}"></md-progress-linear>
+            </div>
+
+            <div class="block row" ng-if="csv.result">
+                <!--{{toPrettyJSON(csv.result, 2)}} -->
+                <!--<div class="content" hljs source="toPrettyJSON(preview, 2)"></div>-->
+
+
+                <!--<form ng-submit="register()" style="margin-top:30px;">
                 <h3>Register</h3>
 
                 <div class="form-group">
@@ -114,375 +127,392 @@
                 <button type="submit" class="btn btn-primary">Register</button>
             </form>-->
 
-            <div ng-repeat="user in csv.result">
-                <span><input  type="checkbox" ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)" />
+                <div ng-repeat="user in csv.result">
+                    <span><input  type="checkbox" ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)" />
                 {{user.username}}
                 </span>
-                <span ng-show="user.status===0">המשתמש הוכנס בהצלחה</span>
-                <span ng-show="user.status===1">שגיאה בהכנסת משתמש</span>
-                <span>{{rec.status}}</span>
+                    <span ng-show="user.status===0">המשתמש הוכנס בהצלחה</span>
+                    <span ng-show="user.status===1">שגיאה בהכנסת משתמש</span>
+                    <span>{{rec.status}}</span>
+                </div>
+                <label><input type="checkbox" ng-model="primitives.selectedAll" ng-click="checkAll()" /> בחר הכל</label><br />
+
+                <!--<label><md-checkbox ng-model="primitives.selectedAll" ng-click="checkAll()"> בחר הכל</label><br />-->
+
+                <button class="btn btn-primary" ng-click="registerSelectedFromCSV()">הוסף משתמשים מסומנים</button>
+                <button class="btn btn-primary" type="button" csv-header="csvHeader" csv-column-order="csvHeader" ng-csv="exportToCSV" filename="test.csv">ייצא לקובץ</button>
+
+                <br />{{csv.result}}<br />
+
+                <div ng-repeat="rec1 in exportToCSV">
+                    <span>{{rec1}}</span>
+                </div>
             </div>
-            <label><input type="checkbox" ng-model="primitives.selectedAll" ng-click="checkAll()" /> בחר הכל</label><br />
-            <button class="btn btn-primary" ng-click="registerSelectedFromCSV()">הוסף משתמשים מסומנים</button>
-            <button class="btn btn-primary" type="button" csv-header="csvHeader" csv-column-order="csvHeader" ng-csv="exportToCSV" filename="test.csv">ייצא לקובץ</button>
 
-            <br />{{csv.result}}<br />
 
-            <div ng-repeat="rec1 in exportToCSV">
-                <span>{{rec1}}</span>
+
+        </script>
+
+
+        <script type="text/ng-template" id="/message_board.html">
+            <div class="page-header">
+                <h1>ASES</h1>
             </div>
-        </div>
-
-
-
-    </script>
-
-
-    <script type="text/ng-template" id="/message_board.html">
-        <div class="page-header">
-            <h1>ASES</h1>
-        </div>
-        <!-- rest of template -->
-        <div ng-hide="isLoggedIn()">
-            <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
-        </div>
-        <div ng-repeat="post in posts | orderBy:'-upvotes'">
-            <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span> {{post.upvotes}}
-            <span style="font-size:20px; margin-left:10px;">
+            <!-- rest of template -->
+            <div ng-hide="isLoggedIn()">
+                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
+            </div>
+            <div ng-repeat="post in posts | orderBy:'-upvotes'">
+                <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span> {{post.upvotes}}
+                <span style="font-size:20px; margin-left:10px;">
             <a ng-show="post.link" href="{{post.link}}">
               {{post.title}}
             </a>
             <span ng-hide="post.link">
               {{post.title}}
             </span>
-            </span>
-            <span ng-show="post.author">posted by <a>{{post.author}}</a> |</span>
-            <span><a href="#/posts/{{post._id}}">Comments</a></span>
-            <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
-                <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span> {{comment.upvotes}} - by {{comment.author}}
-                <span style="font-size:20px; margin-left:10px;">
+                </span>
+                <span ng-show="post.author">posted by <a>{{post.author}}</a> |</span>
+                <span><a href="#/posts/{{post._id}}">Comments</a></span>
+                <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
+                    <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span> {{comment.upvotes}} - by {{comment.author}}
+                    <span style="font-size:20px; margin-left:10px;">
                     {{comment.body}}
                 </span>
+                </div>
             </div>
-        </div>
-        <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
-            <h3>Add a new post</h3>
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Title" ng-model="title"></input>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Link" ng-model="link"></input>
-            </div>
-            <button type="submit" class="btn btn-primary">Post</button>
-        </form>
-    </script>
+            <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                <h3>Add a new post</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Title" ng-model="title"></input>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Link" ng-model="link"></input>
+                </div>
+                <button type="submit" class="btn btn-primary">Post</button>
+            </form>
+        </script>
 
 
 
 
-    <script type="text/ng-template" id="/staff_groups.html">
-        <div>
-            <div class="page-header">
-                <h1>ASES - ניהול קבוצות חברי סגל</h1>
-            </div>
-            <!-- rest of template -->
-            <div ng-hide="isLoggedIn()">
-                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
-                </h3>
-            </div>
+        <script type="text/ng-template" id="/staff_groups.html">
+            <div>
+                <div class="page-header">
+                    <h1>ASES - ניהול קבוצות חברי סגל</h1>
+                </div>
+                <!-- rest of template -->
+                <div ng-hide="isLoggedIn()">
+                    <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
+                    </h3>
+                </div>
 
-            <form ng-submit="addStaffGroup()" ng-show="isLoggedIn()" style="margin-top:30px;">
-                <h3>הוספת קבוצה חדשה</h3>
+                <form ng-submit="addStaffGroup()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                    <h3>הוספת קבוצה חדשה</h3>
 
-                <!--<div class="form-group">
+                    <!--<div class="form-group">
                     <input type="num" class="form-control" placeholder="מספר" ng-model="group"></input>
                 </div>-->
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
-                </div>
-                <button type="submit" class="btn btn-primary">הוספה</button>
-            </form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
+                    </div>
+                    <button type="submit" class="btn btn-primary">הוספה</button>
+                </form>
 
-            <!--EXISTING STAFF GROUPS-->
-            <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
-                <hr width="100%" size="8" align="center" noshade>
-                <div>
-                    <span style="font-size:20px; margin-left:10px;">
+                <!--EXISTING STAFF GROUPS-->
+                <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+                    <hr width="100%" size="8" align="center" noshade>
+                    <div>
+                        <span style="font-size:20px; margin-left:10px;">
       <span>
         <label class="label-field">מזהה קבוצה: </label>
         <input class="editable-field" ng-model="staffGroup.group" ng-disabled="!edit" value="{{staffGroup.group}}">
         <br />
       </span>
-                    <span>
+                        <span>
         <label class="label-field">שם: </label>
         <input class="editable-field" ng-model="staffGroup.name" ng-disabled="!edit" value="{{staffGroup.name}}">
         <br />
       </span>
-                    <span ng-show="staffGroup.slug || edit">
+                        <span ng-show="staffGroup.slug || edit">
         <label class="label-field">תיאור: </label>
         <input class="editable-field" ng-model="staffGroup.slug" ng-disabled="!edit" value="{{staffGroup.slug}}">
         <br />
         </span>
-                    <span>
+                        <span>
        <label>תאריך הוספה:</label> {{staffGroup.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
        <br />
       </span>
-                    <span ng-hide="staffGroup.dateCreated===staffGroup.dateModified">
+                        <span ng-hide="staffGroup.dateCreated===staffGroup.dateModified">
          <label>נערך לאחרונה:</label> {{staffGroup.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
          <br />
       </span>
 
-                    <span>
-        <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
+                        <span>
+        <md-switch class="md-primary" ng-model="edit">
+           <label ng-show="!edit">אפשר עריכה</label>
+           <label ng-hide="!edit">צא ממצב עריכה</label>
+       </md-switch>
         <button ng-click="editStaffGroup($index, staffGroup)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
         <button ng-click="deleteStaffGroup(staffGroup)" class="btn btn-danger" ng-disabled="!edit">מחק קבוצה זו</button>
         <br />
       </span>
-                    </span>
+                        </span>
 
-                    <!--</form>-->
+                        <!--</form>-->
 
+                    </div>
                 </div>
+
+
+
             </div>
+        </script>
 
 
+        <script type="text/ng-template" id="/sections.html">
+            <div>
+                <div class="page-header">
+                    <h1>ASES - ניהול תחומי פעילות</h1>
+                </div>
+                <!-- rest of template -->
+                <div ng-hide="isLoggedIn()">
+                    <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
+                    </h3>
+                </div>
 
-        </div>
-    </script>
+                <form ng-submit="addSection()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                    <h3>הוספת תחום פעילות חדש</h3>
 
-
-    <script type="text/ng-template" id="/sections.html">
-        <div>
-            <div class="page-header">
-                <h1>ASES - ניהול תחומי פעילות</h1>
-            </div>
-            <!-- rest of template -->
-            <div ng-hide="isLoggedIn()">
-                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
-                </h3>
-            </div>
-
-            <form ng-submit="addSection()" ng-show="isLoggedIn()" style="margin-top:30px;">
-                <h3>הוספת תחום פעילות חדש</h3>
-
-                <!--<div class="form-group">
+                    <!--<div class="form-group">
                     <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
                 </div>-->
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
-                </div>
-                <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
-                    <input type="checkbox" ng-checked="checkedStaffGroups.indexOf(staffGroup) != -1" ng-click="toggleCheck(staffGroup)" />
-                    <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
-                </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
+                    </div>
+                    <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+                        <input type="checkbox" ng-checked="checkedStaffGroups.indexOf(staffGroup) != -1" ng-click="toggleCheck(staffGroup)" />
+                        <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
+                    </div>
 
-                <button type="submit" class="btn btn-primary">הוספה</button>
-            </form>
+                    <button type="submit" class="btn btn-primary">הוספה</button>
+                </form>
 
-            <br />
+                <br />
 
 
-            <!-- EXISTING SECTIONS -->
-            <div ng-repeat="section in sections | orderBy:'num'">
-                <hr width="100%" size="8" align="center" noshade>
+                <!-- EXISTING SECTIONS -->
+                <div ng-repeat="section in sections | orderBy:'num'">
+                    <hr width="100%" size="8" align="center" noshade>
 
-                <div>
-                    <span style="font-size:20px; margin-left:10px;">
+                    <div>
+                        <span style="font-size:20px; margin-left:10px;">
                     <span>
                     <label class="label-field">מספר: </label>
                     <input class="editable-field" ng-model="section.num" ng-disabled="!edit" value="{{section.num}}">
                     <br />
                     </span>
-                    <span>
+                        <span>
         <label class="label-field">שם: </label>
         <input class="editable-field" ng-model="section.name" ng-disabled="!edit" value="{{section.name}}">
         <br />
       </span>
-                    <span ng-show="section.slug || edit">
+                        <span ng-show="section.slug || edit">
         <label class="label-field">תיאור: </label>
         <input class="editable-field" ng-model="section.slug" ng-disabled="!edit" value="{{section.slug}}">
         <br />
         </span>
 
 
-                    <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
-                        <!--NEED TO MAKE CHANGES TO NG-CLICK HERE-->
-                        <input type="checkbox" ng-checked="staffGroupIndex(staffGroup, section.staffGroups) > -1" ng-click="toggleCheck(staffGroup, section.staffGroups)" ng-disabled="!edit" /> <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
-                    </div>
-                    <span>
+                        <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+                            <!--NEED TO MAKE CHANGES TO NG-CLICK HERE-->
+                            <input type="checkbox" ng-checked="staffGroupIndex(staffGroup, section.staffGroups) > -1" ng-click="toggleCheck(staffGroup, section.staffGroups)" ng-disabled="!edit" /> <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
+                        </div>
+                        <span>
         <label>תאריך הוספה:</label> {{section.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
         <br />
         </span>
-                    <span ng-hide="section.dateCreated===section.dateModified">
+                        <span ng-hide="section.dateCreated===section.dateModified">
          <label>נערך לאחרונה:</label> {{section.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
          <br />
       </span>
 
-                    <span>
-        <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
-        <button ng-click="editSection($index, section)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-        <button ng-click="deleteSection(section)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
-        <br />
-        </span>
-                    </span>
-                </div>
-            </div>
+                        <span>
+        <!--<label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>-->
+
+       <md-switch class="md-primary" ng-model="edit">
+           <label ng-show="!edit">אפשר עריכה</label>
+           <label ng-hide="!edit">צא ממצב עריכה</label>
+       </md-switch>
 
 
 
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="/format_criterias.html">
-        <div>
-            <div class="page-header">
-                <h1>ASES - ניהול קריטריונים להערכה</h1>
-            </div>
-            <!-- rest of template -->
-            <div ng-hide="isLoggedIn()">
-                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
-                </h3>
-            </div>
-
-            <form ng-submit="addFormatCriteria()" ng-show="isLoggedIn()" style="margin-top:30px;">
-                <h3>הוספת קריטריון הערכה חדש</h3>
-
-
-                <!--<div class="form-group">
-                    <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
-                </div>-->
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
-                </div>
-                <div class="form-group">
-                    <input type="num" class="form-control" placeholder="משקל" ng-model="weight" ng-required="true"></input>
-                </div>
-
-
-
-
-
-
-                <div>
-                    <label>תחום פעילות: <select ng-model="section" ng-options="(section.num+'.'+section.name) for section in sections" value="{{section}}">
-                        <option value="">נא לבחור תחום פעילות</option>
-                    </select></label>
-                </div>
-
-
-
-
-
-                <div>
-                    <!-- ng-click activate function in controller which adds a new field -->
-                    <input type="button" class="btn btn-info" ng-click="addNewField()" value="הוספת שדה">
-                    <div>
-                        <!-- generate fields for each element in fields in the controller -->
-                        <fieldset data-ng-repeat="field in fields track by $index">
-                            <!-- input model according to fields name -->
-                            <input ng-model="field.name" />
-                            <!-- dataType model according to data type -->
-                            <!-- ng-change call is obsolete!!!! -->
-                            <select ng-model="field.dataType" ng-change="updateDataType($index, dataType)" ng-options="dataType.placeholder for dataType in dataTypes">
-                                <option value="">סוג הקלט:</option>
-                            </select>
-                            <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
-                            <span class="glyphicon glyphicon-minus"></span> הסרת שדה
-                            </button>
-                        </fieldset>
+                        <button ng-click="editSection($index, section)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
+                        <button ng-click="deleteSection(section)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
+                        <br />
+                        </span>
+                        </span>
                     </div>
                 </div>
 
-                <br />
-                <button type="submit" class="btn btn-primary">הוספה</button>
-            </form>
+
+
+            </div>
+        </script>
+
+        <script type="text/ng-template" id="/format_criterias.html">
+            <div>
+                <div class="page-header">
+                    <h1>ASES - ניהול קריטריונים להערכה</h1>
+                </div>
+                <!-- rest of template -->
+                <div ng-hide="isLoggedIn()">
+                    <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
+                    </h3>
+                </div>
+
+                <form ng-submit="addFormatCriteria()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                    <h3>הוספת קריטריון הערכה חדש</h3>
+
+
+                    <!--<div class="form-group">
+                    <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
+                </div>-->
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
+                    </div>
+                    <div class="form-group">
+                        <input type="num" class="form-control" placeholder="משקל" ng-model="weight" ng-required="true"></input>
+                    </div>
 
 
 
-            <!-- EXISTING Format Criterias -->
-            <div ng-repeat="formatCriteria in formatCriterias | orderBy:'num'">
-                <hr width="100%" size="8" align="center" noshade>
-                <span style=" font-size:20px; margin-left:10px;">
+
+
+
+                    <div>
+                        <label>תחום פעילות: <select ng-model="section" ng-options="(section.num+'.'+section.name) for section in sections" value="{{section}}">
+                        <option value="">נא לבחור תחום פעילות</option>
+                    </select></label>
+                    </div>
+
+
+
+
+
+                    <div>
+                        <!-- ng-click activate function in controller which adds a new field -->
+                        <input type="button" class="btn btn-info" ng-click="addNewField()" value="הוספת שדה">
+                        <div>
+                            <!-- generate fields for each element in fields in the controller -->
+                            <fieldset data-ng-repeat="field in fields track by $index">
+                                <!-- input model according to fields name -->
+                                <input ng-model="field.name" />
+                                <!-- dataType model according to data type -->
+                                <!-- ng-change call is obsolete!!!! -->
+                                <select ng-model="field.dataType" ng-change="updateDataType($index, dataType)" ng-options="dataType.placeholder for dataType in dataTypes">
+                                <option value="">סוג הקלט:</option>
+                            </select>
+                                <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
+                            <span class="glyphicon glyphicon-minus"></span> הסרת שדה
+                            </button>
+                            </fieldset>
+                        </div>
+                    </div>
+
+                    <br />
+                    <button type="submit" class="btn btn-primary">הוספה</button>
+                </form>
+
+
+
+                <!-- EXISTING Format Criterias -->
+                <div ng-repeat="formatCriteria in formatCriterias | orderBy:'num'">
+                    <hr width="100%" size="8" align="center" noshade>
+                    <span style=" font-size:20px; margin-left:10px;">
       <span>
         <label class="label-field"0>מספר: </label>
         <input class="editable-field" ng-model="formatCriteria.num" ng-disabled="!edit" value="{{formatCriteria.num}}">
         <br />
       </span>
-                <span>
+                    <span>
         <label class="label-field">שם: </label>
         <input class="editable-field" ng-model="formatCriteria.name" ng-disabled="!edit" value="{{formatCriteria.name}}">
         <br />
       </span>
-                <span ng-show="formatCriteria.slug || edit">
+                    <span ng-show="formatCriteria.slug || edit">
         <label class="label-field">תיאור: </label>
         <input class="editable-field" ng-model="formatCriteria.slug" ng-disabled="!edit" value="{{formatCriteria.slug}}">
         <br />
         </span>
 
 
-                <span>
+                    <span>
         <label class="label-field">משקל: </label>
         <input class="editable-field" ng-model="formatCriteria.weight" ng-disabled="!edit" value="{{formatCriteria.weight}}" />
         <br />
       </span>
 
 
-                <div>
-                    <label> תחום פעילות: 
+                    <div>
+                        <label> תחום פעילות: 
                     <select ng-model="formatCriteria.section" ng-init="formatCriteria.section=sections[getSectionIndexByNum(formatCriteria.section.num)]" ng-options="(section.num+ '.'+section.name) for section in sections" ng-disabled="!edit" value="{{section}}">
                     </select>
                 </label>
-                </div>
+                    </div>
 
 
-                <div>
-                    <!-- ng-click activate function in controller which adds a new field -->
-                    <input type="button" class="btn btn-info" ng-click="addNewField(formatCriteria.fields)" ng-disabled="!edit" value="הוספת שדה">
                     <div>
-                        <!-- generate fields for each element in fields in the controller -->
-                        <fieldset ng-model="fieldUser" ng-disabled="!edit" data-ng-repeat="fieldUser in formatCriteria.fields track by $index">
-                            <!-- input model according to fields name -->
-                            <input ng-model="fieldUser.name" />
-                            <select ng-model="fieldUser.dataType" ng-init="fieldUser.dataType=dataTypes[fieldUser.id-1]" ng-change="updateDataType($index, dataType.dataType, formatCriteria.fields)" ng-options="dataType.placeholder for dataType in dataTypes track by dataType.id">
+                        <!-- ng-click activate function in controller which adds a new field -->
+                        <input type="button" class="btn btn-info" ng-click="addNewField(formatCriteria.fields)" ng-disabled="!edit" value="הוספת שדה">
+                        <div>
+                            <!-- generate fields for each element in fields in the controller -->
+                            <fieldset ng-model="fieldUser" ng-disabled="!edit" data-ng-repeat="fieldUser in formatCriteria.fields track by $index">
+                                <!-- input model according to fields name -->
+                                <input ng-model="fieldUser.name" />
+                                <select ng-model="fieldUser.dataType" ng-init="fieldUser.dataType=dataTypes[fieldUser.id-1]" ng-change="updateDataType($index, dataType.dataType, formatCriteria.fields)" ng-options="dataType.placeholder for dataType in dataTypes track by dataType.id">
                                 <option value="">סוג הקלט:</option>
                             </select>
-                            <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index,formatCriteria.fields)">
+                                <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index,formatCriteria.fields)">
                             <span class="glyphicon glyphicon-minus"></span> הסרת שדה
                             </button>
-                        </fieldset>
+                            </fieldset>
+                        </div>
                     </div>
-                </div>
 
-                <span>
+                    <span>
        <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
        <br />
       </span>
-                <span ng-hide="formatCriteria.dateCreated===formatCriteria.dateModified">
+                    <span ng-hide="formatCriteria.dateCreated===formatCriteria.dateModified">
          <label>נערך לאחרונה:</label> {{formatCriteria.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
          <br />
       </span>
 
-                <span>
-        <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
+                    <span>
+        <md-switch class="md-primary" ng-model="edit">
+           <label ng-show="!edit">אפשר עריכה</label>
+           <label ng-hide="!edit">צא ממצב עריכה</label>
+       </md-switch>
 
         <button ng-click="editFormatCriteria($index, formatCriteria)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
         <button ng-click="deleteFormatCriteria(formatCriteria)" class="btn btn-danger" ng-disabled="!edit">מחק קריטריון הערכה זה</button>
         <br />
       </span>
-                </span>
+                    </span>
 
+                </div>
             </div>
-        </div>
-    </script>
+        </script>
 
 
 
@@ -493,74 +523,74 @@
 
 
 
-    <script type="text/ng-template" id="/format_forms.html">
-        <div>
-            <div class="page-header">
-                <h1>ASES - ניהול טפסי הערכה</h1>
-            </div>
-            <!-- rest of template -->
-            <div ng-hide="isLoggedIn()">
-                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
-                </h3>
-            </div>
+        <script type="text/ng-template" id="/format_forms.html">
+            <div>
+                <div class="page-header">
+                    <h1>ASES - ניהול טפסי הערכה</h1>
+                </div>
+                <!-- rest of template -->
+                <div ng-hide="isLoggedIn()">
+                    <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.
+                    </h3>
+                </div>
 
-            <form ng-submit="addFormatForm()" ng-show="isLoggedIn()" style="margin-top:30px;">
-                <h3>הוספת טופס הערכה חדש</h3>
+                <form ng-submit="addFormatForm()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                    <h3>הוספת טופס הערכה חדש</h3>
 
 
-                <!--<div class="form-group">
+                    <!--<div class="form-group">
                     <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
                 </div>-->
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
-                </div>
-
-
-
-                <div ng-repeat="section in sections">
-                    {{section.num+'.'+section.name}}
-                    <button type="button" ng-click="toggle(section)" ng-show="!section.toggle" class="btn-primary">הצג קריטריונים</button>
-                    <button type="button" ng-click="toggle(section)" ng-show="section.toggle" class="btn-warning">הסתר קריטריונים</button>
-                    <div ng-if="section.num===formatCriteria.section.num" ng-hide="!section.toggle" ng-repeat="formatCriteria in formatCriterias | orderBy:'section.num'">
-
-                        <!--<div class="checkbox checkbox-warning">-->
-                        <div>
-                            <input type="checkbox" class="styled" ng-click="toggleCheck(formatCriteria)" /> {{formatCriteria.name}}
-                            <!--<input type="checkbox" ng-checked="checkedStaffGroups.indexOf(staffGroup) != -1" ng-click="toggleCheck(staffGroup)" /> {{formatCriteria.name}}-->
-                        </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
                     </div>
-                    <hr>
-                </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
+                    </div>
 
 
-                <br />
-                <button type="submit" class="btn btn-primary">הוספה</button>
-            </form>
+
+                    <div ng-repeat="section in sections">
+                        {{section.num+'.'+section.name}}
+                        <button type="button" ng-click="toggle(section)" ng-show="!section.toggle" class="btn-primary">הצג קריטריונים</button>
+                        <button type="button" ng-click="toggle(section)" ng-show="section.toggle" class="btn-warning">הסתר קריטריונים</button>
+                        <div ng-if="section.num===formatCriteria.section.num" ng-hide="!section.toggle" ng-repeat="formatCriteria in formatCriterias | orderBy:'section.num'">
+
+                            <!--<div class="checkbox checkbox-warning">-->
+                            <div>
+                                <input type="checkbox" class="styled" ng-click="toggleCheck(formatCriteria)" /> {{formatCriteria.name}}
+                                <!--<input type="checkbox" ng-checked="checkedStaffGroups.indexOf(staffGroup) != -1" ng-click="toggleCheck(staffGroup)" /> {{formatCriteria.name}}-->
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
 
 
-            <!-- REQUIRED IMPLEMENTATION -->
-            <!-- EXISTING Format Forms -->
-            <label>עריכת טפסים</label>
-            <div ng-repeat="formatForm in formatForms | orderBy:'num'">
-                <hr width="100%" size="8" align="center" noshade>
-                <button class="btn-primary" ng-click="toggle(formatForm)">{{formatForm.name}}</button>
-                <div ng-show="formatForm.toggle">
+                    <br />
+                    <button type="submit" class="btn btn-primary">הוספה</button>
+                </form>
 
-                    <span style=" font-size:20px; margin-left:10px;">
+
+                <!-- REQUIRED IMPLEMENTATION -->
+                <!-- EXISTING Format Forms -->
+                <label>עריכת טפסים</label>
+                <div ng-repeat="formatForm in formatForms | orderBy:'num'">
+                    <hr width="100%" size="8" align="center" noshade>
+                    <button class="btn-primary" ng-click="toggle(formatForm)">{{formatForm.name}}</button>
+                    <div ng-show="formatForm.toggle">
+
+                        <span style=" font-size:20px; margin-left:10px;">
       <span>
         <label class="label-field">מספר: </label>
         <input class="editable-field" ng-model="formatForm.num" ng-disabled="!edit" value="{{formatForm.num}}">
         <br />
       </span>
-                    <span>
+                        <span>
         <label class="label-field">שם: </label>
         <input class="editable-field" ng-model="formatForm.name" ng-disabled="!edit" value="{{formatForm.name}}">
         <br />
       </span>
-                    <span ng-show="formatForm.slug || edit">
+                        <span ng-show="formatForm.slug || edit">
         <label class="label-field">תיאור: </label>
         <input class="editable-field" ng-model="formatForm.slug" ng-disabled="!edit" value="{{formatForm.slug}}">
         <br />
@@ -569,22 +599,22 @@
 
 
 
-                    <div ng-repeat="sectionUser in sections">
-                        {{sectionUser.num+'.'+sectionUser.name}}
-                        <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
+                        <div ng-repeat="sectionUser in sections">
+                            {{sectionUser.num+'.'+sectionUser.name}}
+                            <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
                         <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
-                        <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
-                            <!--{{formatCriteriaUser}}-->
-                            <div>
-                                <input type="checkbox" ng-disabled="!edit" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" /> {{formatCriteriaUser.name}}
+                            <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
+                                <!--{{formatCriteriaUser}}-->
+                                <div>
+                                    <input type="checkbox" ng-disabled="!edit" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" /> {{formatCriteriaUser.name}}
+                                </div>
                             </div>
+                            <hr>
                         </div>
-                        <hr>
-                    </div>
 
 
 
-                    <!--<div ng-repeat="sectionUser in sections">
+                        <!--<div ng-repeat="sectionUser in sections">
                         {{sectionUser.num+'.'+sectionUser.name}}
                         <button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
                         <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>
@@ -598,30 +628,33 @@
                     </div>-->
 
 
-                    <span>
+                        <span>
        <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
        <br />
       </span>
-                    <span ng-hide="formatForm.dateCreated===formatForm.dateModified">
+                        <span ng-hide="formatForm.dateCreated===formatForm.dateModified">
          <label>נערך לאחרונה:</label> {{formatForm.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
          <br />
       </span>
 
-                    <span>
-        <label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>
+                        <span>
+        <md-switch class="md-primary" ng-model="edit">
+           <label ng-show="!edit">אפשר עריכה</label>
+           <label ng-hide="!edit">צא ממצב עריכה</label>
+       </md-switch>
 
         <button ng-click="editFormatForm($index, formatForm)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
         <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק טופס זה</button>
         <br />
       </span>
-                    </span>
+                        </span>
 
+                    </div>
                 </div>
+
+
             </div>
-
-
-        </div>
-    </script>
+        </script>
 
 
 
@@ -632,19 +665,19 @@
 
 
 
-    <script type="text/ng-template" id="/posts.html">
-        <div ng-hide="isLoggedIn()">
-            <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
-        </div>
-        <div class="page-header">
-            <h3>
-                <a ng-show="post.link" href="{{post.link}}">{{post.title}}</a>
-                <span ng-hide="post.link">{{post.title}}</span>
-            </h3>
-        </div>
-        <div ng-repeat="comment in post.comments | orderBy: '-upvotes'">
-            <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span> {{comment.upvotes}} - by {{comment.author}}
-            <span style="font-size:20px; margin-left:10px;">{{comment.body}}
+        <script type="text/ng-template" id="/posts.html">
+            <div ng-hide="isLoggedIn()">
+                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
+            </div>
+            <div class="page-header">
+                <h3>
+                    <a ng-show="post.link" href="{{post.link}}">{{post.title}}</a>
+                    <span ng-hide="post.link">{{post.title}}</span>
+                </h3>
+            </div>
+            <div ng-repeat="comment in post.comments | orderBy: '-upvotes'">
+                <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span> {{comment.upvotes}} - by {{comment.author}}
+                <span style="font-size:20px; margin-left:10px;">{{comment.body}}
         </div>
         <form ng-submit="addComment()" ng-show="isLoggedIn()" style="margin-top:30px;">
             <h3>Add a new comment</h3>
@@ -662,42 +695,45 @@
 
         <div ng-show="error" class="alert alert-danger row">
             <span>{{ error.message }}</span>
-        </div>
-
-        <form ng-submit="register()" style="margin-top:30px;">
-            <h3>Register</h3>
-
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
+
+            <form ng-submit="register()" style="margin-top:30px;">
+                <h3>Register</h3>
+
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+        </script>
+
+        <script type="text/ng-template" id="/login.html">
+            <div class="page-header">
+                <h1>ASES</h1>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
-    </script>
 
-    <script type="text/ng-template" id="/login.html">
-        <div class="page-header">
-            <h1>ASES</h1>
-        </div>
-
-        <div ng-show="error" class="alert alert-danger row">
-            <span>{{ error.message }}</span>
-        </div>
-
-        <form ng-submit="logIn()" style="margin-top:30px;">
-            <h3>Log In</h3>
-
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
+            <div ng-show="error" class="alert alert-danger row">
+                <span>{{ error.message }}</span>
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
-            </div>
-            <button type="submit" class="btn btn-primary">Log In</button>
-        </form>
-    </script>
+
+            <form ng-submit="logIn()" style="margin-top:30px;">
+                <h3>Log In</h3>
+
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
+                </div>
+                <button type="submit" class="btn btn-primary">Log In</button>
+            </form>
+        </script>
+
+
+    </md-content>
 
 </body>
 

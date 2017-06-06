@@ -1,4 +1,4 @@
-var app = angular.module('ases', ['ui.router', 'ngCsvImport', 'ngCsv', 'ngSanitize']);
+var app = angular.module('ases', ['ui.router', 'ngCsvImport', 'ngCsv', 'ngSanitize', 'ngMaterial']);
 
 app.config([
     '$stateProvider',
