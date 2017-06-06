@@ -390,8 +390,9 @@ app.controller('AdminCtrl', [
     function($scope, $parse, auth) {
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.currentUser = auth.currentUser;
-
+        $scope.primitives = {};
         $scope.exportToCSV = [];
+        $scope.csvHeader = ['username', 'password'];
 
         $scope.generatePassword = function() {
             var length = 8,
@@ -407,13 +408,42 @@ app.controller('AdminCtrl', [
             // register user from CSV file
             if ($scope.exportToCSV.findIndex(function(el) { return el.username === user.username }) > -1) { return; }
             user.password = $scope.generatePassword(); // generate random password
-            auth.registerFromCSV(user).error(function(error) {
+            auth.registerFromCSV(user).success(function() {
+                // add the newly added user to an array which will be exported back to csv with password
+                $scope.exportToCSV.push(user);
+                user.status = 0;
+            }).error(function(error) {
                 $scope.error = error;
+                user.status = 1;
+                return;
             }).then(function() {
                 $state.go('home');
             });
-            // add the newly added user to an array which will be exported back to csv with password
-            $scope.exportToCSV.push(user);
+        };
+
+        $scope.registerSelectedFromCSV = function() {
+            // alert(JSON.stringify($scope.csv.result, null, 2));
+            for (var i = 0; i < $scope.csv.result.length; i++) {
+                var user = $scope.csv.result[i];
+                if (user.selected) { $scope.registerFromCSV(user); }
+            }
+        }
+
+        $scope.checkOne = function(user) {
+            if (!user.selected) {
+                $scope.primitives.selectedAll = false;
+            }
+        }
+
+        $scope.checkAll = function() {
+            if ($scope.primitives.selectedAll) {
+                $scope.primitives.selectedAll = true;
+            } else {
+                $scope.primitives.selectedAll = false;
+            }
+            angular.forEach($scope.csv.result, function(user) {
+                user.selected = $scope.primitives.selectedAll;
+            });
         };
 
 

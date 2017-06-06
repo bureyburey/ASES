@@ -114,10 +114,19 @@
                 <button type="submit" class="btn btn-primary">Register</button>
             </form>-->
 
-            <div ng-repeat="rec in csv.result">
-                <span>{{rec.username}} <button ng-click="registerFromCSV(rec)">Add</button></span>
+            <div ng-repeat="user in csv.result">
+                <span><input  type="checkbox" ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)" />
+                {{user.username}}
+                </span>
+                <span ng-show="user.status===0">המשתמש הוכנס בהצלחה</span>
+                <span ng-show="user.status===1">שגיאה בהכנסת משתמש</span>
+                <span>{{rec.status}}</span>
             </div>
-            <button type="button" ng-csv="exportToCSV" filename="test.csv">Export</button>
+            <label><input type="checkbox" ng-model="primitives.selectedAll" ng-click="checkAll()" />בחר הכל</label><br />
+            <button ng-click="registerSelectedFromCSV()">הוסף משתמשים מסומנים</button>
+            <button type="button" csv-header="csvHeader" csv-column-order="csvHeader" ng-csv="exportToCSV" filename="test.csv">ייצא לקובץ</button>
+
+            <br />{{csv.result}}<br />
 
             <div ng-repeat="rec1 in exportToCSV">
                 <span>{{rec1}}</span>
