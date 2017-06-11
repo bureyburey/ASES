@@ -548,6 +548,23 @@ router.get('/usercriterias', function(req, res, next) {
 });
 
 
+
+// add/update multiple user criteria
+router.post('/usercriterias/save', auth, function(req, res, next) {
+    console.log("INVOKED: router.post(usercriterias/save)");
+    UserCriteria.insertMany(req.body).then(function(data) {
+        console.log(JSON.stringify(data, null, 2));
+        res.json(data);
+    });
+
+    // for (var i = 0; i < req.body.length; i++) {
+    //     console.log(JSON.stringify(req.body[i], null, 2));
+
+    //     console.log("\n");
+    // }
+});
+
+
 // add a new user criteria
 router.post('/usercriterias', auth, function(req, res, next) {
     console.log("INVOKED: router.post(usercriterias)");
@@ -568,6 +585,25 @@ router.post('/usercriterias', auth, function(req, res, next) {
         // });
     });
 });
+
+
+
+router.post('/usercriteriasbyform', auth, function(req, res, next) {
+    console.log("INVOKED: router.post(usercriteriasbyform)");
+
+
+    console.log(req.headers.id);
+
+    UserCriteria.find({ userForm: req.headers.id }).populate('formatForm').exec(function(err, userForm) {
+        if (err) { return next(err); }
+        console.log(JSON.stringify(userForm, null, 2));
+        res.json(userForm);
+    });
+
+
+});
+
+
 // preloading user criteria
 router.param('usercriterias', function(req, res, next, id) {
     console.log("INVOKED: router.param(usercriterias)");
@@ -723,6 +759,7 @@ router.param('userform', function(req, res, next, id) {
 // edit a user form
 router.put('/userforms/:userform/edit', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/userforms/" + req.userForm._id + "/edit)");
+
     req.userForm.edit(req.body, function(err, userForm) {
         if (err) { return next(err); }
         // populate the section field of the returned saved object (needed as it is passed back to the client side)

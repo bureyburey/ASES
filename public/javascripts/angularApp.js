@@ -118,6 +118,9 @@ app.config([
                 }],
                 userForm: ['$stateParams', 'userForms', function($stateParams, userForms) {
                     return userForms.get($stateParams.id);
+                }],
+                userCriteriasData: ['$stateParams', 'userCriterias', function($stateParams, userCriterias) {
+                    return userCriterias.getByForm($stateParams.id);
                 }]
             }
         })
@@ -391,9 +394,28 @@ app.factory('userCriterias', ['$http', 'auth', function($http, auth) {
             angular.copy(data, obj.userCriterias);
         });
     };
-    obj.create = function(formatCriteria) {
+
+    obj.getByForm = function(id) {
         // create a new user criteria and upload to server
-        return $http.post('/usercriterias', formatCriteria, {
+        return $http.post('/usercriteriasbyform', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken(), id: id }
+        }).success(function(data) {
+            obj.userCriterias.push(data);
+        });
+    };
+
+    obj.save = function(userCriterias) {
+        return $http.post('/usercriterias/save', userCriterias, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            // obj.userCriterias.push(data);
+            angular.copy(data, obj.userCriterias);
+        });
+    };
+
+    obj.create = function(userCriterias) {
+        // create a new user criteria and upload to server
+        return $http.post('/usercriterias', userCriterias, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
             obj.userCriterias.push(data);
@@ -435,7 +457,7 @@ app.factory('userForms', ['$http', 'auth', function($http, auth) {
     };
 
     obj.getAllPost = function() {
-        // create a new section and upload to server
+        // get all user forms of a specific user
         return $http.post('/userformspost', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
@@ -1050,18 +1072,24 @@ app.controller('FormSelectCtrl', [
 app.controller('FormFillCtrl', [
     '$scope',
     'sections',
+    'userForms',
     'userForm',
+    'userCriterias',
+    'userCriteriasData',
     'auth',
-    function($scope, sections, userForm, auth) {
+    function($scope, sections, userForms, userForm, userCriterias, userCriteriasData, auth) {
+
 
         $scope.sections = sections.sections;
         $scope.userForm = userForm;
         $scope.formatForm = userForm.formatForm;
-        $scope.userCriterias = userForm.userCriterias;
+        $scope.userCriterias = userCriterias.userCriterias[0];
+        // $scope.userCriterias = userCriteriasData;
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.currentUser = auth.currentUser;
         $scope.userId = auth.userId;
 
+        // alert(JSON.stringify(userCriteriasData, null, 2));
         // alert(JSON.stringify($scope.userForm, null, 2));
         // alert(JSON.stringify($scope.formatForm, null, 2));
 
@@ -1093,17 +1121,25 @@ app.controller('FormFillCtrl', [
                     name: "",
                     slug: "",
                     owner: $scope.userId(),
-                    userForm: null,
+                    userForm: $scope.userForm._id,
                     formatCriteria: formatCriteria._id,
                     data: [data]
                 });
             }
-
         };
 
-        $scope.removeFields = function(dataRow, userCriteria) {
+        $scope.removeRow = function(dataRow, userCriteria) {
             var ind = userCriteria.indexOf(dataRow);
             userCriteria.splice(ind, 1);
+            var count = 0;
+            for (var i = $scope.userCriterias.length - 1; i >= 0; i--) {
+                if ($scope.userCriterias[i].data.length === 0) {
+                    // $scope.userCriterias[i].data = null;
+                    count++;
+                    $scope.userCriterias[i].data = [];
+                }
+            }
+            // if (count === 0) { $scope.userCriterias = []; }
         }
 
         $scope.saveForm = function() {
@@ -1114,10 +1150,27 @@ app.controller('FormFillCtrl', [
             form.formatForm = $scope.formatForm;
             form.userCriterias = $scope.userCriterias;
 
+            userCriterias.save($scope.userCriterias).then(function(data) {
+                alert(JSON.stringify(data, null, 2));
+                var userCriteriasIDs = [];
+                for (var i = 0; i < data.data.length; i++) { userCriteriasIDs.push(data.data[i]._id); }
+                alert(JSON.stringify(userCriteriasIDs, null, 2));
+                userForms.update(userForm, {
+                    _id: userForm._id,
+                    name: userForm.name,
+                    slug: userForm.slug,
+                    owner: userForm.owner,
+                    formatForm: userForm.formatForm._id,
+                    userCriterias: userCriteriasIDs,
+                    dateCreated: userForm.dateCreated,
+                    dateModified: new Date()
+                });
+            });
+
             // status: { type: mongoose.Schema.Types.ObjectId, ref: 'Status' },
             // alert(JSON.stringify($scope.userForm, null, 2));
 
-            alert(JSON.stringify($scope.userCriterias, null, 2));
+            // alert(JSON.stringify($scope.userCriterias, null, 2));
         }
     }
 ]);
