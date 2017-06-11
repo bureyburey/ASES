@@ -56,6 +56,7 @@
                 <li ng-show="isLoggedIn()"><a href="/#/sections">ניהול תחומי פעילות</a></li>
                 <li ng-show="isLoggedIn()"><a href="/#/format_criterias">ניהול קריטריונים להערכה</a></li>
                 <li ng-show="isLoggedIn()"><a href="/#/format_forms">ניהול טפסי הערכה</a></li>
+                <li ng-show="isLoggedIn()"><a href="/#/form_select">מילוי טופס</a></li>
                 <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">התנתקות</a></li>
                 <li class="ng-hide" ng-hide="isLoggedIn()"><a href="/#/login">התחברות</a></li>
                 <li class="ng-hide" ng-hide="isLoggedIn()"><a href="/#/register">הרשמה</a></li>
@@ -111,21 +112,7 @@
             </div>
 
             <div class="block row" ng-if="csv.result">
-                <!--{{toPrettyJSON(csv.result, 2)}} -->
-                <!--<div class="content" hljs source="toPrettyJSON(preview, 2)"></div>-->
 
-
-                <!--<form ng-submit="register()" style="margin-top:30px;">
-                <h3>Register</h3>
-
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Username" ng-model="user.username" disabled></input>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Password" ng-model="user.password" disabled></input>
-                </div>
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>-->
 
                 <div ng-repeat="user in csv.result">
                     <span><input  type="checkbox" ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)" />
@@ -142,11 +129,8 @@
                 <button class="btn btn-primary" ng-click="registerSelectedFromCSV()">הוסף משתמשים מסומנים</button>
                 <button class="btn btn-primary" type="button" csv-header="csvHeader" csv-column-order="csvHeader" ng-csv="exportToCSV" filename="test.csv">ייצא לקובץ</button>
 
-                <br />{{csv.result}}<br />
+                <br /><pre>{{toPrettyJSON(csv.result,2)}}</pre><br />
 
-                <div ng-repeat="rec1 in exportToCSV">
-                    <span>{{rec1}}</span>
-                </div>
             </div>
 
 
@@ -224,7 +208,8 @@
 
                 <!--EXISTING STAFF GROUPS-->
                 <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
-                    <hr width="100%" size="8" align="center" noshade>
+                    <!--<hr width="100%" size="8" align="center" noshade>-->
+                    <md-divider></md-divider>
                     <div>
                         <span style="font-size:20px; margin-left:10px;">
       <span>
@@ -309,8 +294,8 @@
 
                 <!-- EXISTING SECTIONS -->
                 <div ng-repeat="section in sections | orderBy:'num'">
-                    <hr width="100%" size="8" align="center" noshade>
-
+                    <!--<hr width="100%" size="8" align="center" noshade>-->
+                    <md-divider></md-divider>
                     <div>
                         <span style="font-size:20px; margin-left:10px;">
                     <span>
@@ -437,10 +422,11 @@
 
                 <!-- EXISTING Format Criterias -->
                 <div ng-repeat="formatCriteria in formatCriterias | orderBy:'num'">
-                    <hr width="100%" size="8" align="center" noshade>
+                    <!--<hr width="100%" size="8" align="center" noshade>-->
+                    <md-divider></md-divider>
                     <span style=" font-size:20px; margin-left:10px;">
       <span>
-        <label class="label-field"0>מספר: </label>
+        <label class="label-field">מספר: </label>
         <input class="editable-field" ng-model="formatCriteria.num" ng-disabled="!edit" value="{{formatCriteria.num}}">
         <br />
       </span>
@@ -562,7 +548,8 @@
                                 <!--<input type="checkbox" ng-checked="checkedStaffGroups.indexOf(staffGroup) != -1" ng-click="toggleCheck(staffGroup)" /> {{formatCriteria.name}}-->
                             </div>
                         </div>
-                        <hr>
+                        <!--<hr>-->
+                        <md-divider></md-divider>
                     </div>
 
 
@@ -575,7 +562,8 @@
                 <!-- EXISTING Format Forms -->
                 <label>עריכת טפסים</label>
                 <div ng-repeat="formatForm in formatForms | orderBy:'num'">
-                    <hr width="100%" size="8" align="center" noshade>
+                    <!--<hr width="100%" size="8" align="center" noshade>-->
+                    <md-divider></md-divider>
                     <button class="btn-primary" ng-click="toggle(formatForm)">{{formatForm.name}}</button>
                     <div ng-show="formatForm.toggle">
 
@@ -597,8 +585,6 @@
         </span>
 
 
-
-
                         <div ng-repeat="sectionUser in sections">
                             {{sectionUser.num+'.'+sectionUser.name}}
                             <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
@@ -609,7 +595,7 @@
                                     <input type="checkbox" ng-disabled="!edit" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" /> {{formatCriteriaUser.name}}
                                 </div>
                             </div>
-                            <hr>
+                            <md-divider></md-divider>
                         </div>
 
 
@@ -638,14 +624,14 @@
       </span>
 
                         <span>
-        <md-switch class="md-primary" ng-model="edit">
-           <label ng-show="!edit">אפשר עריכה</label>
-           <label ng-hide="!edit">צא ממצב עריכה</label>
-       </md-switch>
+            <md-switch class="md-primary" ng-model="edit">
+            <label ng-show="!edit">אפשר עריכה</label>
+            <label ng-hide="!edit">צא ממצב עריכה</label>
+            </md-switch>
 
-        <button ng-click="editFormatForm($index, formatForm)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-        <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק טופס זה</button>
-        <br />
+            <button ng-click="editFormatForm($index, formatForm)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
+            <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק טופס זה</button>
+            <br />
       </span>
                         </span>
 
@@ -656,6 +642,128 @@
             </div>
         </script>
 
+
+
+
+
+
+        <script type="text/ng-template" id="/form_select.html">
+            <div>
+                <div class="page-header">
+                    <h1>ASES - טפסי הערכה</h1>
+                </div>
+                <!-- rest of template -->
+                <div ng-hide="isLoggedIn()">
+                    <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.</h3>
+                </div>
+
+                <div ng-hide="!isLoggedIn()">
+                    <div ng-show="currentUser()==='admin'">
+                        <span ng-repeat="form in formatForms">
+                            <span ng-repeat="user in users">
+                                <button ng-click="addUserForm(form,user)">הפץ</button>
+                                <br />
+                                {{form.name}}<br />{{user.username}}
+                                <md-divider></md-divider>
+                            </span>
+
+                        </span>
+                    </div>
+
+                    <span ng-repeat="userForm in userForms">
+                        <a href="#/form_fill/{{currentUser()}}/{{userForm._id}}">{{userForm.formatForm.name}} מילוי טופס</a>
+                    </span>
+
+
+
+                    <!--<span><a href="#/form_fill/{{currentUser()}}/{{form._id}}">מילוי טופס</a></span>-->
+                    <!--<span ng-show="currentUser()==='admin'">הפצת טופס</span>-->
+
+                </div>
+            </div>
+        </script>
+
+
+        <script type="text/ng-template" id="/form_fill.html">
+            <div>
+                <div class="page-header">
+                    <h1>ASES - ניהול טפסי הערכה</h1>
+                </div>
+                <!-- rest of template -->
+                <div ng-hide="isLoggedIn()">
+                    <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.</h3>
+                </div>
+
+
+                <div ng-hide="!isLoggedIn()">
+                    <!--{{formatForm}}-->
+                    {{userCriterias}}
+                    <div ng-repeat="section in sections">
+                        <b><h3>{{section.num+'.'+section.name}}</h3></b>
+                        <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
+                        <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
+                        <!--{{section._id}}-->
+
+                        <div ng-if="section._id===formatCriteria.section" ng-repeat="formatCriteria in formatForm.formatCriterias">
+                            <b>{{formatCriteria.name}}</b>
+                            <md-divider></md-divider>
+
+                            <table>
+                                <!--<tr>
+                                    <th></th>
+                                    <th ng-repeat="field in formatCriteria.fields">|{{field.name}}|</th>
+                                </tr>-->
+                                <!--iterate on all form criteria-->
+                                <tr ng-show="userCriteria.formatCriteria===formatCriteria._id" ng-repeat="userCriteria in userCriterias">
+                                    <!--iterate on each row inside each criteria-->
+
+                                    <td>
+                                        <table>
+                                            <tr ng-repeat="dataRow in userCriteria.data track by $index">
+                                                <td><button class="btn-danger" ng-click="removeFields(dataRow, userCriteria.data)">הסר</button></td>
+                                                <td ng-repeat="data in dataRow">
+                                                    <span ng-show="data.dataType==='String'">
+                                                        <input type="text" placeholder="{{data.fieldText}}" ng-model="data.fieldInput" />
+                                                    </span>
+
+                                                    <span ng-show="data.dataType==='Link'">
+                                                        <input type="text" ng-model="data.fieldInput" />
+                                                    </span>
+
+                                                    <span ng-show="data.dataType==='Number'">
+                                                        <input type="number" ng-model="data.fieldInput" />
+                                                    </span>
+
+                                                    <span ng-show="data.dataType==='Date'">
+                                                        <md-datepicker md-placeholder="בחר תאריך" ng-model="data.fieldInput"></md-datepicker>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+
+
+
+
+                                    <!--</td>-->
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="button" class="btn btn-primary" ng-click="addNewField(formatCriteria.fields, formatCriteria)" value="הוספה">
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <md-divider></md-divider>
+                    </div>
+                    <button ng-click="saveForm()">שמור טופס</button>
+
+                </div>
+
+            </div>
+        </script>
 
 
 

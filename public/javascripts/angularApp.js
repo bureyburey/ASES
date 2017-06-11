@@ -17,7 +17,7 @@ app.config([
                 controller: 'AdminCtrl'
             })
             .state('message_board', {
-                url: '/message_board', // 
+                url: '/message_board',
                 templateUrl: '/message_board.html',
                 controller: 'MsgBoardCtrl',
                 resolve: {
@@ -85,7 +85,44 @@ app.config([
                     }]
                 }
             })
-            .state('posts', {
+
+        .state('form_select', {
+            url: '/form_select',
+            templateUrl: '/form_select.html',
+            controller: 'FormSelectCtrl',
+            resolve: {
+                // make sure to load format forms on startup
+                formatFormsPromise: ['formatForms', function(formatForms) {
+                    return formatForms.getAll();
+                }],
+                userFormsPromise: ['userForms', function(userForms) {
+                    return userForms.getAllPost();
+                }],
+                usersPromise: ['users', function(users) {
+                    return users.getAllPost();
+                    // return users.getAll();
+                }]
+            }
+        })
+
+        .state('form_fill', {
+            url: '/form_fill/{currentUser}/{id}',
+            templateUrl: '/form_fill.html',
+            controller: 'FormFillCtrl',
+            resolve: {
+                // formatForm: ['$stateParams', 'formatForms', function($stateParams, formatForms) {
+                //     return formatForms.get($stateParams.id);
+                // }],
+                sectionsPromise: ['sections', function(sections) {
+                    return sections.getAll();
+                }],
+                userForm: ['$stateParams', 'userForms', function($stateParams, userForms) {
+                    return userForms.get($stateParams.id);
+                }]
+            }
+        })
+
+        .state('posts', {
                 url: '/posts/{id}',
                 templateUrl: '/posts.html',
                 controller: 'PostsCtrl',
@@ -122,6 +159,59 @@ app.config([
 
 
 // SERVICE FACTORIES START
+
+app.factory('users', ['$http', 'auth', function($http, auth) {
+    var obj = {
+        users: []
+    };
+    obj.getAll = function() {
+        // get all sections from server and deep copy the data
+        return $http.get('/users').success(function(data) {
+            angular.copy(data, obj.users);
+        });
+    };
+
+    obj.getAllPost = function() {
+        // create a new section and upload to server
+        return $http.post('/userspost', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            angular.copy(data, obj.users);
+        });
+    };
+
+    obj.create = function(users) {
+        // create a new section and upload to server
+        return $http.post('/users', staffGroup, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.users.push(data);
+        });
+    };
+    obj.get = function(id) {
+        // get a section from the server
+        return $http.get('/users/' + id).then(function(res) {
+            return res.data;
+        });
+    };
+    obj.update = function(user, userEdit) {
+        return $http.put('/users/' + users._id + '/edit', staffGroupEdit, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.users[obj.users.indexOf(user)] = data;
+        });
+    };
+    obj.delete = function(user) {
+        return $http.put('/users/' + user._id + '/delete', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.users.splice(obj.users.indexOf(user), 1);
+        });
+    };
+    return obj;
+}]);
+
+
 app.factory('staffGroups', ['$http', 'auth', function($http, auth) {
     var obj = {
         staffGroups: []
@@ -253,13 +343,13 @@ app.factory('formatForms', ['$http', 'auth', function($http, auth) {
         formatForms: []
     };
     obj.getAll = function() {
-        // get all format criterias from server and deep copy the data
+        // get all format forms from server and deep copy the data
         return $http.get('/formatforms').success(function(data) {
             angular.copy(data, obj.formatForms);
         });
     };
     obj.create = function(formatForm) {
-        // create a new format criteria and upload to server
+        // create a new format form and upload to server
         return $http.post('/formatforms', formatForm, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
@@ -267,7 +357,7 @@ app.factory('formatForms', ['$http', 'auth', function($http, auth) {
         });
     };
     obj.get = function(id) {
-        // get a format criterias from the server
+        // get a format form from the server
         return $http.get('/formatforms/' + id).then(function(res) {
             return res.data;
         });
@@ -288,6 +378,102 @@ app.factory('formatForms', ['$http', 'auth', function($http, auth) {
     };
     return obj;
 }]);
+
+
+app.factory('userCriterias', ['$http', 'auth', function($http, auth) {
+    var obj = {
+        userCriterias: []
+    };
+    // ALL METHODS NEED TO BE IMPLEMENTED IN ROUTES!!!!
+    obj.getAll = function() {
+        // get all user criterias from server and deep copy the data
+        return $http.get('/usercriterias').success(function(data) {
+            angular.copy(data, obj.userCriterias);
+        });
+    };
+    obj.create = function(formatCriteria) {
+        // create a new user criteria and upload to server
+        return $http.post('/usercriterias', formatCriteria, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.userCriterias.push(data);
+        });
+    };
+    obj.get = function(id) {
+        // get a user criterias from the server
+        return $http.get('/usercriterias/' + id).then(function(res) {
+            return res.data;
+        });
+    };
+    obj.update = function(userCriteria, userCriteriaEdit) {
+        return $http.put('/usercriterias/' + userCriteria._id + '/edit', userCriteriaEdit, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.userCriterias[obj.userCriterias.indexOf(userCriteria)] = data;
+        });
+    };
+    obj.delete = function(userCriteria) {
+        return $http.put('/usercriterias/' + userCriteria._id + '/delete', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.userCriterias.splice(obj.userCriterias.indexOf(userCriteria), 1);
+        });
+    };
+    return obj;
+}]);
+
+
+app.factory('userForms', ['$http', 'auth', function($http, auth) {
+    var obj = {
+        userForms: []
+    };
+    obj.getAll = function() {
+        // get all user forms from server and deep copy the data
+        return $http.get('/userforms').success(function(data) {
+            angular.copy(data, obj.userForms);
+        });
+    };
+
+    obj.getAllPost = function() {
+        // create a new section and upload to server
+        return $http.post('/userformspost', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            angular.copy(data, obj.userForms);
+        });
+    };
+
+    obj.create = function(formatForm) {
+        // create a new user form and upload to server
+        return $http.post('/userforms', formatForm, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.userforms.push(data);
+        });
+    };
+    obj.get = function(id) {
+        // get a user form from the server
+        return $http.get('/userforms/' + id).then(function(res) {
+            return res.data;
+        });
+    };
+    obj.update = function(userForm, userFormEdit) {
+        return $http.put('/userforms/' + userForm._id + '/edit', userFormEdit, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.userForms[obj.userForms.indexOf(userForm)] = data;
+        });
+    };
+    obj.delete = function(userForm) {
+        return $http.put('/userform/' + userForm._id + '/delete', null, {
+            headers: { Authorization: 'Bearer ' + auth.getToken() }
+        }).success(function(data) {
+            obj.userForms.splice(obj.userForms.indexOf(userForm), 1);
+        });
+    };
+    return obj;
+}]);
+
 
 app.factory('posts', ['$http', 'auth', function($http, auth) {
     var obj = {
@@ -357,8 +543,14 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
         if (auth.isLoggedIn()) {
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-
             return payload.username;
+        }
+    };
+    auth.userId = function() {
+        if (auth.isLoggedIn()) {
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            return payload._id;
         }
     };
     auth.register = function(user) {
@@ -366,11 +558,9 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
             auth.saveToken(data.token);
         });
     };
-
     auth.registerFromCSV = function(user) {
         return $http.post('/register', user).success(function(data) {});
     };
-
     auth.logIn = function(user) {
         return $http.post('/login', user).success(function(data) {
             auth.saveToken(data.token);
@@ -806,7 +996,6 @@ app.controller('FormatFormCtrl', [
             // $scope.slug = '';
         };
 
-        // REQUIRED IMPLEMENTETION FOR EDITING
         $scope.editFormatForm = function(index, formatForm) {
             // alert(JSON.stringify(formatForm, null, 2));
 
@@ -828,6 +1017,112 @@ app.controller('FormatFormCtrl', [
         }
     }
 ]);
+
+
+// WORK IN PROGRESS
+app.controller('FormSelectCtrl', [
+    '$scope',
+    'users',
+    'formatForms',
+    'userForms',
+    'auth',
+    function($scope, users, formatForms, userForms, auth) {
+        $scope.users = users.users;
+        $scope.formatForms = formatForms.formatForms;
+        $scope.userForms = userForms.userForms;
+        $scope.isLoggedIn = auth.isLoggedIn;
+        $scope.currentUser = auth.currentUser;
+
+        $scope.addUserForm = function(form, user) {
+            var data = {};
+            data.name = "";
+            data.slug = "";
+            data.owner = user._id;
+            data.formatForm = form._id;
+            data.userCriterias = [];
+            userForms.create(data);
+        }
+
+        // alert(JSON.stringify($scope.userForms, null, 2));
+    }
+]);
+
+app.controller('FormFillCtrl', [
+    '$scope',
+    'sections',
+    'userForm',
+    'auth',
+    function($scope, sections, userForm, auth) {
+
+        $scope.sections = sections.sections;
+        $scope.userForm = userForm;
+        $scope.formatForm = userForm.formatForm;
+        $scope.userCriterias = userForm.userCriterias;
+        $scope.isLoggedIn = auth.isLoggedIn;
+        $scope.currentUser = auth.currentUser;
+        $scope.userId = auth.userId;
+
+        // alert(JSON.stringify($scope.userForm, null, 2));
+        // alert(JSON.stringify($scope.formatForm, null, 2));
+
+        // $scope.filledFields = [];
+
+        $scope.addNewField = function(fieldsUser, formatCriteria) {
+            // alert(JSON.stringify(fieldsUser, null, 2));
+            var data = [];
+            for (var i = 0; i < fieldsUser.length; i++) {
+                var field = {
+                    fieldText: fieldsUser[i].name,
+                    fieldInput: "",
+                    dataType: fieldsUser[i].dataType,
+                    note: ""
+                }
+                data.push(field);
+            }
+            // alert(JSON.stringify(data, null, 2));
+
+            var arrRefrence = $scope.userCriterias;
+            var index = arrRefrence.findIndex(function(el) {
+                return el.formatCriteria === formatCriteria._id;
+            });
+            // alert(index);
+            if (index > -1) {
+                arrRefrence[index].data.push(data);
+            } else {
+                arrRefrence.push({
+                    name: "",
+                    slug: "",
+                    owner: $scope.userId(),
+                    userForm: null,
+                    formatCriteria: formatCriteria._id,
+                    data: [data]
+                });
+            }
+
+        };
+
+        $scope.removeFields = function(dataRow, userCriteria) {
+            var ind = userCriteria.indexOf(dataRow);
+            userCriteria.splice(ind, 1);
+        }
+
+        $scope.saveForm = function() {
+            var form = {};
+            form.name = "";
+            form.slug = "";
+            form.owner = $scope.userId();
+            form.formatForm = $scope.formatForm;
+            form.userCriterias = $scope.userCriterias;
+
+            // status: { type: mongoose.Schema.Types.ObjectId, ref: 'Status' },
+            // alert(JSON.stringify($scope.userForm, null, 2));
+
+            alert(JSON.stringify($scope.userCriterias, null, 2));
+        }
+    }
+]);
+// WORK IN PROGRESS
+
 
 app.controller('MainCtrl', [
     '$scope',

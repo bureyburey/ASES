@@ -13,6 +13,11 @@ md-content {
     background: linear-gradient(to right, lightblue, white, lightblue);
     height: 100vh;
     overflow-x: hidden;
+    width: 120%;
+}
+
+md-divider {
+    padding: 5px;
 }
 
 a {
@@ -63,7 +68,7 @@ li a:hover:not(.active) {
 }
 
 .label-field {
-    width: 10%;
+    width: 15%;
 }
 
 .editable-field {
