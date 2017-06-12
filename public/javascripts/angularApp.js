@@ -1083,20 +1083,14 @@ app.controller('FormFillCtrl', [
         $scope.sections = sections.sections;
         $scope.userForm = userForm;
         $scope.formatForm = userForm.formatForm;
-        $scope.userCriterias = userCriterias.userCriterias[0];
-        // $scope.userCriterias = userCriteriasData;
+        // $scope.userCriterias = userCriterias.userCriterias[0];
+        $scope.userCriterias = userForm.userCriterias;
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.currentUser = auth.currentUser;
         $scope.userId = auth.userId;
 
-        // alert(JSON.stringify(userCriteriasData, null, 2));
-        // alert(JSON.stringify($scope.userForm, null, 2));
-        // alert(JSON.stringify($scope.formatForm, null, 2));
-
-        // $scope.filledFields = [];
-
         $scope.addNewField = function(fieldsUser, formatCriteria) {
-            // alert(JSON.stringify(fieldsUser, null, 2));
+
             var data = [];
             for (var i = 0; i < fieldsUser.length; i++) {
                 var field = {
@@ -1107,13 +1101,11 @@ app.controller('FormFillCtrl', [
                 }
                 data.push(field);
             }
-            // alert(JSON.stringify(data, null, 2));
 
             var arrRefrence = $scope.userCriterias;
             var index = arrRefrence.findIndex(function(el) {
                 return el.formatCriteria === formatCriteria._id;
             });
-            // alert(index);
             if (index > -1) {
                 arrRefrence[index].data.push(data);
             } else {
@@ -1151,18 +1143,14 @@ app.controller('FormFillCtrl', [
             form.userCriterias = $scope.userCriterias;
 
             userCriterias.save($scope.userCriterias).then(function(data) {
-                alert(JSON.stringify(data, null, 2));
-                // extract user criteria IDs
-                var userCriteriasIDs = [];
-                for (var i = 0; i < data.data.length; i++) { userCriteriasIDs.push(data.data[i]._id); }
-                alert(JSON.stringify(userCriteriasIDs, null, 2));
+                // all the user criteria ids of the form are inside data.data
                 userForms.update(userForm, {
                     _id: userForm._id,
                     name: userForm.name,
                     slug: userForm.slug,
                     owner: userForm.owner,
                     formatForm: userForm.formatForm._id,
-                    userCriterias: userCriteriasIDs,
+                    userCriterias: data.data,
                     dateCreated: userForm.dateCreated,
                     dateModified: new Date()
                 });

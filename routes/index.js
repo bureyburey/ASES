@@ -554,15 +554,9 @@ router.get('/usercriterias', function(req, res, next) {
 router.post('/usercriterias/save', auth, function(req, res, next) {
     console.log("INVOKED: router.post(usercriterias/save)");
 
-
-    // UserCriteria.insertMany(req.body).then(function(data) {
-    //     console.log(JSON.stringify(data, null, 2));
-    //     res.json(data);
-    // });
-
     var bulk = UserCriteria.collection.initializeOrderedBulkOp();
 
-
+    var userCriteriaIds = [];
     for (var i = 0; i < req.body.length; i++) {
         if (req.body[i]._id === undefined) {
             // new entry (insert)
@@ -570,24 +564,20 @@ router.post('/usercriterias/save', auth, function(req, res, next) {
             console.log("Inserting new Record");
         } else {
             // existing entry (update)
-
+            userCriteriaIds.push(req.body[i]._id); // push existing id to array
             var objId = new ObjectId(req.body[i]._id);
             bulk.find({ _id: objId }).update({ $set: { data: req.body[i].data } });
             console.log("Updating Record " + req.body[i]._id);
         }
-
-        // console.log(JSON.stringify(req.body[i], null, 2));
-        // console.log(req.body[i]._id);
     }
 
     bulk.execute(function(err, result) {
-        // console.log(err);
-        // console.log(result);
-        console.log(JSON.stringify(result, null, 2));
-
+        // get new inserted ids
+        for (var i = 0; i < result.getInsertedIds().length; i++) {
+            userCriteriaIds.push(result.getInsertedIds()[i]._id);
+        }
+        res.json(userCriteriaIds);
     });
-
-
 });
 
 
