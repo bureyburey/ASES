@@ -20,7 +20,7 @@ require('./models/UserForms');
 require('./models/Statuses');
 
 require('./config/passport');
-mongoose.connect('mongodb://localhost/ases');
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/ases');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
