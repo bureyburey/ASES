@@ -1152,6 +1152,7 @@ app.controller('FormFillCtrl', [
 
             userCriterias.save($scope.userCriterias).then(function(data) {
                 alert(JSON.stringify(data, null, 2));
+                // extract user criteria IDs
                 var userCriteriasIDs = [];
                 for (var i = 0; i < data.data.length; i++) { userCriteriasIDs.push(data.data[i]._id); }
                 alert(JSON.stringify(userCriteriasIDs, null, 2));
