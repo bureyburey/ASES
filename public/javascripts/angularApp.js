@@ -1259,3 +1259,14 @@ app.controller('NavCtrl', [
     }
 ]);
 // APP CONTROLLERS END
+
+app.config(['$mdDateLocaleProvider', function($mdDateLocaleProvider) {
+    // date format for ngMaterial (requires moment.js which included in index.ejs view head)
+    $mdDateLocaleProvider.formatDate = function(date) {
+        return date ? moment(date).format('DD/MM/YYYY') : '';
+    };
+    $mdDateLocaleProvider.parseDate = function(dateString) {
+        var m = moment(dateString, 'DD/MM/YYYY', true);
+        return m.isValid() ? m.toDate() : new Date(NaN);
+    };
+}]);
