@@ -1158,7 +1158,6 @@ app.controller('FormFillCtrl', [
 
             // status: { type: mongoose.Schema.Types.ObjectId, ref: 'Status' },
             // alert(JSON.stringify($scope.userForm, null, 2));
-
             // alert(JSON.stringify($scope.userCriterias, null, 2));
         }
     }
