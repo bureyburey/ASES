@@ -117,11 +117,8 @@ app.config([
                     return sections.getAll();
                 }],
                 userForm: ['$stateParams', 'userForms', function($stateParams, userForms) {
-                        return userForms.get($stateParams.id);
-                    }]
-                    // userCriteriasData: ['$stateParams', 'userCriterias', function($stateParams, userCriterias) {
-                    //     return userCriterias.getByForm($stateParams.id);
-                    // }]
+                    return userForms.get($stateParams.id);
+                }]
             }
         })
 
@@ -392,14 +389,6 @@ app.factory('userCriterias', ['$http', 'auth', function($http, auth) {
         // get all user criterias from server and deep copy the data
         return $http.get('/usercriterias').success(function(data) {
             angular.copy(data, obj.userCriterias);
-        });
-    };
-
-    obj.getByForm = function(id) {
-        return $http.post('/usercriterias/byform', null, {
-            headers: { Authorization: 'Bearer ' + auth.getToken(), id: id }
-        }).success(function(data) {
-            obj.userCriterias.push(data);
         });
     };
 
@@ -1080,8 +1069,9 @@ app.controller('FormFillCtrl', [
     'userForms',
     'userForm',
     'userCriterias',
+    'toastr',
     'auth',
-    function($scope, sections, userForms, userForm, userCriterias, auth) {
+    function($scope, sections, userForms, userForm, userCriterias, toastr, auth) {
 
         // alert(JSON.stringify(userForm, null, 2));
         $scope.sections = sections.sections;
@@ -1170,6 +1160,7 @@ app.controller('FormFillCtrl', [
 
                     userForms.get($scope.userForm._id).then(function(userForm) {
                         $scope.userCriterias = userForm.userCriterias;
+                        toastr.success("", "שינויים נשמרו!");
                         $scope.$apply(function() {});
                     });
 

@@ -691,34 +691,20 @@
                     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.</h3>
                 </div>
 
-
                 <div ng-hide="!isLoggedIn()">
                     <!--{{formatForm}}-->
                     <!--{{userCriterias}}-->
                     <form ng-submit="saveForm()">
                         <div ng-repeat="section in sections">
                             <b><h3>{{section.num+'.'+section.name}}</h3></b>
-                            <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
-                        <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
-                            <!--{{section._id}}-->
-
                             <div ng-if="section._id===formatCriteria.section" ng-repeat="formatCriteria in formatForm.formatCriterias">
-                                <b>{{formatCriteria.name}}</b>
                                 <md-divider></md-divider>
-
-
-
-
+                                <b>{{formatCriteria.name}}</b>
 
                                 <table>
-                                    <!--<tr>
-                                    <th></th>
-                                    <th ng-repeat="field in formatCriteria.fields">|{{field.name}}|</th>
-                                </tr>-->
                                     <!--iterate on all form criteria-->
                                     <tr ng-show="userCriteria.formatCriteria===formatCriteria._id" ng-repeat="userCriteria in userCriterias">
                                         <!--iterate on each row inside each criteria-->
-                                        <!--<td>{{userCriteria._id}}</td>-->
                                         <td>
                                             <table>
                                                 <tr ng-repeat="dataRow in userCriteria.dataRows track by $index">
@@ -746,11 +732,6 @@
                                             </table>
                                         </td>
 
-
-
-
-                                        <!--</td>-->
-
                                     </tr>
                                     <tr>
                                         <td>
@@ -764,7 +745,7 @@
                             <md-divider></md-divider>
                         </div>
 
-                        <button type="submit">שמור טופס</button>
+                        <button class="btn btn-primary" type="submit">שמור טופס</button>
                     </form>
                 </div>
 
