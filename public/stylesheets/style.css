@@ -13,7 +13,6 @@ md-content {
     background: linear-gradient(to right, lightblue, white, lightblue);
     height: 100vh;
     overflow-x: hidden;
-    width: 120%;
 }
 
 md-divider {

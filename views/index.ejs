@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -117,13 +118,17 @@
 
 
                 <div ng-repeat="user in csv.result">
-                    <span><input  type="checkbox" ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)" />
-                {{user.username}}
-                </span>
+                    <span>
+                        <input  type="checkbox" ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)" />
+        
+                        <!--<md-checkbox ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)">-->
+                    {{user.username}}
+                    </span>
                     <span ng-show="user.status===0">המשתמש הוכנס בהצלחה</span>
                     <span ng-show="user.status===1">שגיאה בהכנסת משתמש</span>
                     <span>{{rec.status}}</span>
                 </div>
+
                 <label><input type="checkbox" ng-model="primitives.selectedAll" ng-click="checkAll()" /> בחר הכל</label><br />
 
                 <!--<label><md-checkbox ng-model="primitives.selectedAll" ng-click="checkAll()"> בחר הכל</label><br />-->
@@ -367,7 +372,6 @@
                 <form ng-submit="addFormatCriteria()" ng-show="isLoggedIn()" style="margin-top:30px;">
                     <h3>הוספת קריטריון הערכה חדש</h3>
 
-
                     <!--<div class="form-group">
                     <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
                 </div>-->
@@ -380,10 +384,6 @@
                     <div class="form-group">
                         <input type="num" class="form-control" placeholder="משקל" ng-model="weight" ng-required="true"></input>
                     </div>
-
-
-
-
 
 
                     <div>
@@ -407,97 +407,79 @@
                                 <!-- dataType model according to data type -->
                                 <!-- ng-change call is obsolete!!!! -->
                                 <select ng-model="field.dataType" ng-change="updateDataType($index, dataType)" ng-options="dataType.placeholder for dataType in dataTypes">
-                                <option value="">סוג הקלט:</option>
-                            </select>
+                                    <option value="">סוג הקלט:</option>
+                                </select>
                                 <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
-                            <span class="glyphicon glyphicon-minus"></span> הסרת שדה
-                            </button>
+                                    <span class="glyphicon glyphicon-minus"></span> הסרת שדה</button>
                             </fieldset>
                         </div>
                     </div>
-
                     <br />
-                    <button type="submit" class="btn btn-primary">הוספה</button>
+                    <button type="submit" class="btn btn-primary">הוספת קריטריון</button>
                 </form>
 
 
 
                 <!-- EXISTING Format Criterias -->
-                <div ng-repeat="formatCriteria in formatCriterias | orderBy:'num'">
-                    <!--<hr width="100%" size="8" align="center" noshade>-->
+                <div ng-repeat="formatCriteria in formatCriterias | orderBy:'formatCriteria.section.num'">
                     <md-divider></md-divider>
-                    <span style=" font-size:20px; margin-left:10px;">
-      <span>
-        <label class="label-field">מספר: </label>
-        <input class="editable-field" ng-model="formatCriteria.num" ng-disabled="!edit" value="{{formatCriteria.num}}">
-        <br />
-      </span>
-                    <span>
-        <label class="label-field">שם: </label>
-        <input class="editable-field" ng-model="formatCriteria.name" ng-disabled="!edit" value="{{formatCriteria.name}}">
-        <br />
-      </span>
-                    <span ng-show="formatCriteria.slug || edit">
-        <label class="label-field">תיאור: </label>
-        <input class="editable-field" ng-model="formatCriteria.slug" ng-disabled="!edit" value="{{formatCriteria.slug}}">
-        <br />
-        </span>
-
-
-                    <span>
-        <label class="label-field">משקל: </label>
-        <input class="editable-field" ng-model="formatCriteria.weight" ng-disabled="!edit" value="{{formatCriteria.weight}}" />
-        <br />
-      </span>
-
-
-                    <div>
-                        <label> תחום פעילות: 
-                    <select ng-model="formatCriteria.section" ng-init="formatCriteria.section=sections[getSectionIndexByNum(formatCriteria.section.num)]" ng-options="(section.num+ '.'+section.name) for section in sections" ng-disabled="!edit" value="{{section}}">
-                    </select>
-                </label>
-                    </div>
-
-
-                    <div>
-                        <!-- ng-click activate function in controller which adds a new field -->
-                        <input type="button" class="btn btn-info" ng-click="addNewField(formatCriteria.fields)" ng-disabled="!edit" value="הוספת שדה">
+                    <div style="font-size:20px; margin-left:10px;">
                         <div>
-                            <!-- generate fields for each element in fields in the controller -->
-                            <fieldset ng-model="fieldUser" ng-disabled="!edit" data-ng-repeat="fieldUser in formatCriteria.fields track by $index">
-                                <!-- input model according to fields name -->
-                                <input ng-model="fieldUser.name" />
-                                <select ng-model="fieldUser.dataType" ng-init="fieldUser.dataType=dataTypes[fieldUser.id-1]" ng-change="updateDataType($index, dataType.dataType, formatCriteria.fields)" ng-options="dataType.placeholder for dataType in dataTypes track by dataType.id">
-                                <option value="">סוג הקלט:</option>
-                            </select>
-                                <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index,formatCriteria.fields)">
-                            <span class="glyphicon glyphicon-minus"></span> הסרת שדה
-                            </button>
-                            </fieldset>
+                            <label class="label-field">מספר: </label>
+                            <input class="editable-field" ng-model="formatCriteria.num" ng-disabled="!edit" value="{{formatCriteria.num}}">
+                        </div>
+                        <div>
+                            <label class="label-field">שם: </label>
+                            <input class="editable-field" ng-model="formatCriteria.name" ng-disabled="!edit" value="{{formatCriteria.name}}">
+                        </div>
+                        <div ng-show="formatCriteria.slug || edit">
+                            <label class="label-field">תיאור: </label>
+                            <input class="editable-field" ng-model="formatCriteria.slug" ng-disabled="!edit" value="{{formatCriteria.slug}}">
+                        </div>
+                        <div>
+                            <label class="label-field">משקל: </label>
+                            <input class="editable-field" ng-model="formatCriteria.weight" ng-disabled="!edit" value="{{formatCriteria.weight}}" />
+                        </div>
+                        <div>
+                            <label> תחום פעילות:
+                            <select ng-model="formatCriteria.section" ng-init="formatCriteria.section=sections[getSectionIndexByNum(formatCriteria.section.num)]" ng-options="(section.num+ '.'+section.name) for section in sections" ng-disabled="!edit" value="{{section}}">
+                            </select></label>
+                        </div>
+
+                        <div>
+                            <!-- ng-click activate function in controller which adds a new field -->
+                            <input type="button" class="btn btn-info" ng-click="addNewField(formatCriteria.fields)" ng-disabled="!edit" value="הוספת שדה">
+                            <div>
+                                <!-- generate fields for each element in fields in the controller -->
+                                <fieldset ng-model="fieldUser" ng-disabled="!edit" data-ng-repeat="fieldUser in formatCriteria.fields track by $index">
+                                    <!-- input model according to fields name -->
+                                    <input ng-model="fieldUser.name" />
+                                    <select ng-model="fieldUser.dataType" ng-init="fieldUser.dataType=dataTypes[fieldUser.id-1]" ng-change="updateDataType($index, dataType.dataType, formatCriteria.fields)" ng-options="dataType.placeholder for dataType in dataTypes track by dataType.id">
+                                        <option value="">סוג הקלט:</option>
+                                    </select>
+                                    <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index,formatCriteria.fields)">
+                                        <span class="glyphicon glyphicon-minus"></span> הסרת שדה</button>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
+                        </div>
+                        <div ng-hide="formatCriteria.dateCreated===formatCriteria.dateModified">
+                            <label>נערך לאחרונה:</label> {{formatCriteria.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
+                        </div>
+
+                        <div>
+                            <md-switch class="md-primary" ng-model="edit">
+                                <label ng-show="!edit">מצב עריכה</label>
+                                <label ng-hide="!edit">צא ממצב עריכה</label>
+                            </md-switch>
+                            <button ng-click="editFormatCriteria($index, formatCriteria)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
+                            <button ng-click="deleteFormatCriteria(formatCriteria)" class="btn btn-danger" ng-disabled="!edit">מחק קריטריון הערכה זה</button>
+
                         </div>
                     </div>
-
-                    <span>
-       <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
-       <br />
-      </span>
-                    <span ng-hide="formatCriteria.dateCreated===formatCriteria.dateModified">
-         <label>נערך לאחרונה:</label> {{formatCriteria.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
-         <br />
-      </span>
-
-                    <span>
-        <md-switch class="md-primary" ng-model="edit">
-           <label ng-show="!edit">אפשר עריכה</label>
-           <label ng-hide="!edit">צא ממצב עריכה</label>
-       </md-switch>
-
-        <button ng-click="editFormatCriteria($index, formatCriteria)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-        <button ng-click="deleteFormatCriteria(formatCriteria)" class="btn btn-danger" ng-disabled="!edit">מחק קריטריון הערכה זה</button>
-        <br />
-      </span>
-                    </span>
-
                 </div>
             </div>
         </script>
@@ -560,85 +542,68 @@
                 </form>
 
 
-                <!-- REQUIRED IMPLEMENTATION -->
-                <!-- EXISTING Format Forms -->
-                <label>עריכת טפסים</label>
-                <div ng-repeat="formatForm in formatForms | orderBy:'num'">
-                    <!--<hr width="100%" size="8" align="center" noshade>-->
-                    <md-divider></md-divider>
-                    <button class="btn-primary" ng-click="toggle(formatForm)">{{formatForm.name}}</button>
-                    <div ng-show="formatForm.toggle">
 
-                        <span style=" font-size:20px; margin-left:10px;">
-      <span>
-        <label class="label-field">מספר: </label>
-        <input class="editable-field" ng-model="formatForm.num" ng-disabled="!edit" value="{{formatForm.num}}">
-        <br />
-      </span>
-                        <span>
-        <label class="label-field">שם: </label>
-        <input class="editable-field" ng-model="formatForm.name" ng-disabled="!edit" value="{{formatForm.name}}">
-        <br />
-      </span>
-                        <span ng-show="formatForm.slug || edit">
-        <label class="label-field">תיאור: </label>
-        <input class="editable-field" ng-model="formatForm.slug" ng-disabled="!edit" value="{{formatForm.slug}}">
-        <br />
-        </span>
+            </div>
+            <!-- REQUIRED IMPLEMENTATION -->
+            <!-- EXISTING Format Forms -->
+            <label>עריכת טפסים</label>
+            <div ng-repeat="formatForm in formatForms | orderBy:'num'">
+                <!--<hr width="100%" size="8" align="center" noshade>-->
+                <md-divider></md-divider>
+                <button class="btn-primary" ng-click="toggle(formatForm)">{{formatForm.name}}</button>
+                <div ng-show="formatForm.toggle">
+                    <div style=" font-size:20px; margin-left:10px;">
+                        <div>
+                            <label class="label-field">מספר: </label>
+                            <input class="editable-field" ng-model="formatForm.num" ng-disabled="!edit" value="{{formatForm.num}}" />
+                        </div>
+                        <div>
+                            <label class="label-field">שם: </label>
+                            <input class="editable-field" ng-model="formatForm.name" ng-disabled="!edit" value="{{formatForm.name}}" />
+                        </div>
+                        <div ng-show="formatForm.slug || edit">
+                            <label class="label-field">תיאור: </label>
+                            <input class="editable-field" ng-model="formatForm.slug" ng-disabled="!edit" value="{{formatForm.slug}}" />
+                        </div>
 
 
                         <div ng-repeat="sectionUser in sections">
                             {{sectionUser.num+'.'+sectionUser.name}}
                             <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
-                        <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
+                            <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
                             <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
                                 <!--{{formatCriteriaUser}}-->
                                 <div>
-                                    <input type="checkbox" ng-disabled="!edit" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" /> {{formatCriteriaUser.name}}
+                                    <input type="checkbox" ng-disabled="!edit" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" />
+                                    <span>{{formatCriteriaUser.name}}</span>
                                 </div>
                             </div>
                             <md-divider></md-divider>
                         </div>
 
 
-
-                        <!--<div ng-repeat="sectionUser in sections">
-                        {{sectionUser.num+'.'+sectionUser.name}}
-                        <button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
-                        <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>
-                        <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-hide="!sectionUser.toggle" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
-                            {{formatCriteriaUser}}
-                            <div>
-                                <input type="checkbox" ng-disabled="!edit" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" /> {{formatCriteriaUser.name}}
-                            </div>
+                        <div>
+                            <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
                         </div>
-                        <hr>
-                    </div>-->
-
-
-                        <span>
-       <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
-       <br />
-      </span>
-                        <span ng-hide="formatForm.dateCreated===formatForm.dateModified">
-         <label>נערך לאחרונה:</label> {{formatForm.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
-         <br />
-      </span>
+                        <div ng-hide="formatForm.dateCreated===formatForm.dateModified">
+                            <label>נערך לאחרונה:</label> {{formatForm.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
+                            <br />
+                        </div>
 
                         <span>
-            <md-switch class="md-primary" ng-model="edit">
-            <label ng-show="!edit">אפשר עריכה</label>
-            <label ng-hide="!edit">צא ממצב עריכה</label>
-            </md-switch>
+                            <md-switch class="md-primary" ng-model="edit">
+                            <label ng-show="!edit">אפשר עריכה</label>
+                            <label ng-hide="!edit">צא ממצב עריכה</label>
+                            </md-switch>
 
-            <button ng-click="editFormatForm($index, formatForm)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-            <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק טופס זה</button>
-            <br />
-      </span>
+                            <button ng-click="editFormatForm($index, formatForm)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
+                            <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק טופס זה</button>
+                            <br />
                         </span>
-
                     </div>
+
                 </div>
+            </div>
 
 
             </div>
@@ -684,7 +649,8 @@
         <script type="text/ng-template" id="/form_fill.html">
             <div>
                 <div class="page-header">
-                    <h1>ASES - ניהול טפסי הערכה</h1>
+                    <h1>ASES - מילוי טופס הערכה</h1>
+                    <h3>{{currentUser()}} - {{userForm.formatForm.name}}</h3>
                 </div>
                 <!-- rest of template -->
                 <div ng-hide="isLoggedIn()">
