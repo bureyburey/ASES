@@ -1,4 +1,4 @@
-var app = angular.module('ases', ['ui.router', 'ngCsvImport', 'ngCsv', 'ngSanitize', 'ngMaterial']);
+var app = angular.module('ases', ['ui.router', 'ngCsvImport', 'ngCsv', 'ngSanitize', 'ngMaterial', 'toastr', 'ngAnimate']);
 
 app.config([
     '$stateProvider',
@@ -847,8 +847,9 @@ app.controller('FormatCriteriaCtrl', [
     '$scope',
     'sections',
     'formatCriterias',
+    'toastr',
     'auth',
-    function($scope, sections, formatCriterias, auth) {
+    function($scope, sections, formatCriterias, toastr, auth) {
         $scope.formatCriterias = formatCriterias.formatCriterias;
         $scope.sections = sections.sections;
         $scope.isLoggedIn = auth.isLoggedIn;
@@ -910,7 +911,10 @@ app.controller('FormatCriteriaCtrl', [
 
         $scope.addFormatCriteria = function() {
             if ($scope.name === '' || $scope.name.length === 0) { return; }
-
+            if ($scope.section === undefined || $scope.section === null) {
+                toastr.error('נא לבחור תחום פעילות!', 'שגיאת מילוי!');
+                return;
+            }
             formatCriterias.create({
                 num: $scope.num,
                 name: $scope.name,
@@ -918,6 +922,8 @@ app.controller('FormatCriteriaCtrl', [
                 weight: $scope.weight,
                 section: $scope.section,
                 fields: $scope.buildFieldsData($scope.fields)
+            }).then(function() {
+                toastr.success($scope.name, "קריטריון הערכה התווסף!");
             });
             // $scope.num = '';
             // $scope.name = '';
