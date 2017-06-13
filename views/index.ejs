@@ -31,14 +31,11 @@
     <link href="/static_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/style.css" rel="stylesheet">
     <link href="/static_components/angular-toastr/dist/angular-toastr.min.css" rel="stylesheet" />
-
-
 </head>
 
 <body dir="rtl" ng-app="ases">
 
     <md-content flex style="border: 1px solid firebrick;" layout="column">
-
 
         <nav ng-controller="NavCtrl">
             <!--<nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">-->
@@ -67,8 +64,11 @@
                 <li class="ng-hide" ng-hide="isLoggedIn()"><a href="/#/register">הרשמה</a></li>
             </ul>
         </nav>
+
+
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
+                <!--content of page will be display inside ui-view-->
                 <ui-view></ui-view>
             </div>
         </div>
@@ -117,8 +117,6 @@
             </div>
 
             <div class="block row" ng-if="csv.result">
-
-
                 <div ng-repeat="user in csv.result">
                     <span>
                         <input  type="checkbox" ng-init="user.selected=false" ng-model="user.selected" ng-click="checkOne(user)" />
@@ -139,10 +137,7 @@
                 <button class="btn btn-primary" type="button" csv-header="csvHeader" csv-column-order="csvHeader" ng-csv="exportToCSV" filename="test.csv">ייצא לקובץ</button>
 
                 <br /><pre>{{toPrettyJSON(csv.result,2)}}</pre><br />
-
             </div>
-
-
 
         </script>
 
@@ -187,8 +182,6 @@
         </script>
 
 
-
-
         <script type="text/ng-template" id="/staff_groups.html">
             <div>
                 <div class="page-header">
@@ -204,8 +197,8 @@
                     <h3>הוספת קבוצה חדשה</h3>
 
                     <!--<div class="form-group">
-                    <input type="num" class="form-control" placeholder="מספר" ng-model="group"></input>
-                </div>-->
+                        <input type="num" class="form-control" placeholder="מספר" ng-model="group"></input>
+                    </div>-->
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
                     </div>
@@ -217,52 +210,38 @@
 
                 <!--EXISTING STAFF GROUPS-->
                 <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
-                    <!--<hr width="100%" size="8" align="center" noshade>-->
                     <md-divider></md-divider>
                     <div>
-                        <span style="font-size:20px; margin-left:10px;">
-      <span>
-        <label class="label-field">מזהה קבוצה: </label>
-        <input class="editable-field" ng-model="staffGroup.group" ng-disabled="!edit" value="{{staffGroup.group}}">
-        <br />
-      </span>
-                        <span>
-        <label class="label-field">שם: </label>
-        <input class="editable-field" ng-model="staffGroup.name" ng-disabled="!edit" value="{{staffGroup.name}}">
-        <br />
-      </span>
-                        <span ng-show="staffGroup.slug || edit">
-        <label class="label-field">תיאור: </label>
-        <input class="editable-field" ng-model="staffGroup.slug" ng-disabled="!edit" value="{{staffGroup.slug}}">
-        <br />
-        </span>
-                        <span>
-       <label>תאריך הוספה:</label> {{staffGroup.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
-       <br />
-      </span>
-                        <span ng-hide="staffGroup.dateCreated===staffGroup.dateModified">
-         <label>נערך לאחרונה:</label> {{staffGroup.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
-         <br />
-      </span>
-
-                        <span>
-        <md-switch class="md-primary" ng-model="edit">
-           <label ng-show="!edit">אפשר עריכה</label>
-           <label ng-hide="!edit">צא ממצב עריכה</label>
-       </md-switch>
-        <button ng-click="editStaffGroup($index, staffGroup)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-        <button ng-click="deleteStaffGroup(staffGroup)" class="btn btn-danger" ng-disabled="!edit">מחק קבוצה זו</button>
-        <br />
-      </span>
-                        </span>
-
-                        <!--</form>-->
-
+                        <div style="font-size:20px; margin-left:10px;">
+                            <div>
+                                <label class="label-field">מזהה קבוצה: </label>
+                                <input class="editable-field" ng-model="staffGroup.group" ng-disabled="!edit" value="{{staffGroup.group}}">
+                            </div>
+                            <div>
+                                <label class="label-field">שם: </label>
+                                <input class="editable-field" ng-model="staffGroup.name" ng-disabled="!edit" value="{{staffGroup.name}}">
+                            </div>
+                            <div ng-show="staffGroup.slug || edit">
+                                <label class="label-field">תיאור: </label>
+                                <input class="editable-field" ng-model="staffGroup.slug" ng-disabled="!edit" value="{{staffGroup.slug}}">
+                            </div>
+                            <div>
+                                <label>תאריך הוספה:</label> {{staffGroup.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
+                            </div>
+                            <div ng-hide="staffGroup.dateCreated===staffGroup.dateModified">
+                                <label>נערך לאחרונה:</label> {{staffGroup.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
+                            </div>
+                            <div>
+                                <md-switch class="md-primary" ng-model="edit">
+                                    <label ng-show="!edit">אפשר עריכה</label>
+                                    <label ng-hide="!edit">צא ממצב עריכה</label>
+                                </md-switch>
+                                <button ng-click="editStaffGroup($index, staffGroup)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
+                                <button ng-click="deleteStaffGroup(staffGroup)" class="btn btn-danger" ng-disabled="!edit">מחק קבוצה זו</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-
-
             </div>
         </script>
 
@@ -282,8 +261,8 @@
                     <h3>הוספת תחום פעילות חדש</h3>
 
                     <!--<div class="form-group">
-                    <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
-                </div>-->
+                        <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
+                    </div>-->
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
                     </div>
@@ -297,68 +276,52 @@
 
                     <button type="submit" class="btn btn-primary">הוספה</button>
                 </form>
-
                 <br />
-
 
                 <!-- EXISTING SECTIONS -->
                 <div ng-repeat="section in sections | orderBy:'num'">
                     <!--<hr width="100%" size="8" align="center" noshade>-->
                     <md-divider></md-divider>
                     <div>
-                        <span style="font-size:20px; margin-left:10px;">
-                    <span>
-                    <label class="label-field">מספר: </label>
-                    <input class="editable-field" ng-model="section.num" ng-disabled="!edit" value="{{section.num}}">
-                    <br />
-                    </span>
-                        <span>
-        <label class="label-field">שם: </label>
-        <input class="editable-field" ng-model="section.name" ng-disabled="!edit" value="{{section.name}}">
-        <br />
-      </span>
-                        <span ng-show="section.slug || edit">
-        <label class="label-field">תיאור: </label>
-        <input class="editable-field" ng-model="section.slug" ng-disabled="!edit" value="{{section.slug}}">
-        <br />
-        </span>
+                        <div style="font-size:20px; margin-left:10px;">
+                            <div>
+                                <label class="label-field">מספר: </label>
+                                <input class="editable-field" ng-model="section.num" ng-disabled="!edit" value="{{section.num}}">
+                            </div>
+                            <div>
+                                <label class="label-field">שם: </label>
+                                <input class="editable-field" ng-model="section.name" ng-disabled="!edit" value="{{section.name}}">
+                            </div>
+                            <div ng-show="section.slug || edit">
+                                <label class="label-field">תיאור: </label>
+                                <input class="editable-field" ng-model="section.slug" ng-disabled="!edit" value="{{section.slug}}">
+                            </div>
 
-
-                        <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
-                            <!--NEED TO MAKE CHANGES TO NG-CLICK HERE-->
-                            <input type="checkbox" ng-checked="staffGroupIndex(staffGroup, section.staffGroups) > -1" ng-click="toggleCheck(staffGroup, section.staffGroups)" ng-disabled="!edit" /> <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
+                            <div ng-repeat="staffGroup in staffGroups | orderBy:'group'">
+                                <!--NEED TO MAKE CHANGES TO NG-CLICK HERE-->
+                                <input type="checkbox" ng-checked="staffGroupIndex(staffGroup, section.staffGroups) > -1" ng-click="toggleCheck(staffGroup, section.staffGroups)" ng-disabled="!edit" /> <label>{{staffGroup.group+'.'+staffGroup.name}}</label>
+                            </div>
+                            <div>
+                                <label>תאריך הוספה:</label> {{section.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
+                            </div>
+                            <div ng-hide="section.dateCreated===section.dateModified">
+                                <label>נערך לאחרונה:</label> {{section.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
+                            </div>
+                            <div>
+                                <!--<label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>-->
+                                <md-switch class="md-primary" ng-model="edit">
+                                    <label ng-show="!edit">אפשר עריכה</label>
+                                    <label ng-hide="!edit">צא ממצב עריכה</label>
+                                </md-switch>
+                                <button ng-click="editSection($index, section)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
+                                <button ng-click="deleteSection(section)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
+                            </div>
                         </div>
-                        <span>
-        <label>תאריך הוספה:</label> {{section.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
-        <br />
-        </span>
-                        <span ng-hide="section.dateCreated===section.dateModified">
-         <label>נערך לאחרונה:</label> {{section.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
-         <br />
-      </span>
-
-                        <span>
-        <!--<label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>-->
-
-       <md-switch class="md-primary" ng-model="edit">
-           <label ng-show="!edit">אפשר עריכה</label>
-           <label ng-hide="!edit">צא ממצב עריכה</label>
-       </md-switch>
-
-
-
-                        <button ng-click="editSection($index, section)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
-                        <button ng-click="deleteSection(section)" class="btn btn-danger" ng-disabled="!edit">מחק תחום פעילות זה</button>
-                        <br />
-                        </span>
-                        </span>
                     </div>
                 </div>
-
-
-
             </div>
         </script>
+
 
         <script type="text/ng-template" id="/format_criterias.html">
             <div>
@@ -375,8 +338,8 @@
                     <h3>הוספת קריטריון הערכה חדש</h3>
 
                     <!--<div class="form-group">
-                    <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
-                </div>-->
+                        <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
+                    </div>-->
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
                     </div>
@@ -386,17 +349,11 @@
                     <div class="form-group">
                         <input type="num" class="form-control" placeholder="משקל" ng-model="weight" ng-required="true"></input>
                     </div>
-
-
                     <div>
                         <label>תחום פעילות: <select ng-model="section" ng-options="(section.num+'.'+section.name) for section in sections" value="{{section}}">
                         <option value="">נא לבחור תחום פעילות</option>
                     </select></label>
                     </div>
-
-
-
-
 
                     <div>
                         <!-- ng-click activate function in controller which adds a new field -->
@@ -419,7 +376,6 @@
                     <br />
                     <button type="submit" class="btn btn-primary">הוספת קריטריון</button>
                 </form>
-
 
 
                 <!-- EXISTING Format Criterias -->
@@ -485,14 +441,6 @@
                 </div>
             </div>
         </script>
-
-
-
-
-
-
-
-
 
 
         <script type="text/ng-template" id="/format_forms.html">
@@ -613,9 +561,6 @@
 
 
 
-
-
-
         <script type="text/ng-template" id="/form_select.html">
             <div>
                 <div class="page-header">
@@ -719,13 +664,6 @@
         </script>
 
 
-
-
-
-
-
-
-
         <script type="text/ng-template" id="/posts.html">
             <div ng-hide="isLoggedIn()">
                 <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
@@ -739,23 +677,23 @@
             <div ng-repeat="comment in post.comments | orderBy: '-upvotes'">
                 <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(comment)"></span> {{comment.upvotes}} - by {{comment.author}}
                 <span style="font-size:20px; margin-left:10px;">{{comment.body}}
-        </div>
-        <form ng-submit="addComment()" ng-show="isLoggedIn()" style="margin-top:30px;">
-            <h3>Add a new comment</h3>
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
             </div>
-            <button type="submit" class="btn btn-primary">Post</button>
-        </form>
-    </script>
+            <form ng-submit="addComment()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                <h3>Add a new comment</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
+                </div>
+                <button type="submit" class="btn btn-primary">Post</button>
+            </form>
+        </script>
 
-    <script type="text/ng-template" id="/register.html">
-        <div class="page-header">
-            <h1>ASES</h1>
-        </div>
+        <script type="text/ng-template" id="/register.html">
+            <div class="page-header">
+                <h1>ASES</h1>
+            </div>
 
-        <div ng-show="error" class="alert alert-danger row">
-            <span>{{ error.message }}</span>
+            <div ng-show="error" class="alert alert-danger row">
+                <span>{{ error.message }}</span>
             </div>
 
             <form ng-submit="register()" style="margin-top:30px;">
@@ -793,9 +731,7 @@
             </form>
         </script>
 
-
     </md-content>
-
 </body>
 
 </html>
