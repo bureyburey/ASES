@@ -710,37 +710,35 @@
                                                 <tr ng-repeat="dataRow in userCriteria.dataRows track by $index">
                                                     <td><button class="btn-danger" ng-click="removeRow(dataRow, userCriteria.dataRows)">הסר</button></td>
                                                     <td ng-repeat="data in dataRow">
-
                                                         <span ng-if="data.dataRow.dataType==='String'">
-                                                        <input type="text" placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" required />
+                                                        <input type="text" placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" required />
                                                     </span>
-
                                                         <span ng-if="data.dataRow.dataType==='Link'">
-                                                        <input type="text" placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" required />
+                                                        <input type="text" placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" required />
                                                     </span>
-
                                                         <span ng-if="data.dataRow.dataType==='Number'">
                                                         <!--<input type="number" placeholder="{{data.fieldText}}" ng-model="data.fieldInput" />-->
-                                                        <input placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" required />
+                                                        <input placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" required />
                                                     </span>
-
                                                         <span ng-if="data.dataRow.dataType==='Date'">
-                                                        <md-datepicker md-placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" ng-required ></md-datepicker>
+                                                        <md-datepicker md-placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" ng-required ></md-datepicker>
                                                     </span>
+                                                    </td>
+                                                    <td>
+                                                        <span>&nbsp&nbspאושר:</span>
+                                                        <span ng-show="dataRow.rowValidated" style="color:green;" class="glyphicon glyphicon-ok"></span>
+                                                        <span ng-hide="dataRow.rowValidated" style="color:red;" class="glyphicon glyphicon-remove"></span>
                                                     </td>
                                                 </tr>
                                             </table>
                                         </td>
-
                                     </tr>
                                     <tr>
                                         <td>
                                             <input type="button" class="btn btn-primary" ng-click="addNewField(formatCriteria.fields, formatCriteria)" value="הוספה">
                                         </td>
                                     </tr>
-
                                 </table>
-
                             </div>
                             <md-divider></md-divider>
                         </div>

@@ -6,6 +6,8 @@
  * userForm - reference to the form the filled criteria belongs to
  * formatCriteria - reference to the format of the criteria
  * dataRows - list of lists of filled data by the user (each inner lists defines a row in a filled criteria)
+ * rowValidated - indicates whether the row of data is validated or not
+ * dataRow inside dataRows - row of fields representing a user input in the criteria
  */
 
 var mongoose = require('mongoose');

@@ -384,7 +384,6 @@ app.factory('userCriterias', ['$http', 'auth', function($http, auth) {
     var obj = {
         userCriterias: []
     };
-    // ALL METHODS NEED TO BE IMPLEMENTED IN ROUTES!!!!
     obj.getAll = function() {
         // get all user criterias from server and deep copy the data
         return $http.get('/usercriterias').success(function(data) {
