@@ -1,3 +1,10 @@
+/**
+ * Status model
+ * define a dynamic status:
+ * 
+ * 
+ */
+
 var mongoose = require('mongoose');
 
 var StatusSchema = new mongoose.Schema({

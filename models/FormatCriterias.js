@@ -1,7 +1,15 @@
+/**
+ * FormatCriteria model
+ * defines a dynamic criteria structure:
+ * 
+ * weight - the weight of criteria on evaluation
+ * section - references to the section for which the criteria belongs to
+ * fields - the field names and types of the criteria 
+ */
+
 var mongoose = require('mongoose');
 var AutoIncrement = require('mongoose-sequence'); // require auto-increment plugin
 require('mongoose-double')(mongoose); // require Double data type
-// IMPLEMENT AUTO-INCREMENT FOR FIELD num
 
 var FormatCriteriaSchema = new mongoose.Schema({
     num: { type: Number, default: 1 },
@@ -25,10 +33,7 @@ FormatCriteriaSchema.methods.edit = function(params, cb) {
     this.save(cb);
 };
 
-// unsure if this will work
+// apply auto increment on field 'num' with reference to 'section' field
 FormatCriteriaSchema.plugin(AutoIncrement, { id: 'format_criteria_seq', inc_field: 'num', reference_fields: ['section'] });
 
-
 mongoose.model('FormatCriteria', FormatCriteriaSchema);
-
-// exports.FormatCriteriaSchema = mongoose.model('FormatCriteria', FormatCriteriaSchema);

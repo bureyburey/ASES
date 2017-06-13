@@ -1,6 +1,12 @@
+/**
+ * Section model
+ * define a dynamic section:
+ * 
+ * staffGroups - list of references for staff groups criterias which require to fill the section criterias
+ */
+
 var mongoose = require('mongoose');
 var AutoIncrement = require('mongoose-sequence'); // require auto-increment plugin
-// IMPLEMENT AUTO-INCREMENT FOR FIELD num
 
 var SectionSchema = new mongoose.Schema({
     num: { type: Number, default: 1, unique: true },

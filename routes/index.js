@@ -566,7 +566,7 @@ router.post('/usercriterias/save', auth, function(req, res, next) {
             // existing entry (update)
             userCriteriaIds.push(req.body[i]._id); // push existing id to array
             var objId = new ObjectId(req.body[i]._id);
-            bulk.find({ _id: objId }).update({ $set: { data: req.body[i].data } });
+            bulk.find({ _id: objId }).update({ $set: { dataRows: req.body[i].dataRows } });
             console.log("Updating Record " + req.body[i]._id);
         }
     }
@@ -604,21 +604,17 @@ router.post('/usercriterias', auth, function(req, res, next) {
 
 
 
-router.post('/usercriteriasbyform', auth, function(req, res, next) {
-    console.log("INVOKED: router.post(usercriteriasbyform)");
+router.post('/usercriterias/byform', auth, function(req, res, next) {
+    console.log("INVOKED: router.post(usercriterias/byform)");
 
-
-    // console.log(req.headers.id);
-
-    UserCriteria.find({ userForm: req.headers.id }).populate('formatForm').exec(function(err, userForm) {
+    UserCriteria.find({ userForm: req.headers.id }).populate('formatCriteria').exec(function(err, userCriteria) {
         if (err) { return next(err); }
-        // console.log(JSON.stringify(userForm, null, 2));
-        res.json(userForm);
+        // console.log(JSON.stringify(userCriteria, null, 2));
+        res.json(userCriteria);
     });
 
 
 });
-
 
 // preloading user criteria
 router.param('usercriterias', function(req, res, next, id) {

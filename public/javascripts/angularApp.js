@@ -117,11 +117,11 @@ app.config([
                     return sections.getAll();
                 }],
                 userForm: ['$stateParams', 'userForms', function($stateParams, userForms) {
-                    return userForms.get($stateParams.id);
-                }],
-                userCriteriasData: ['$stateParams', 'userCriterias', function($stateParams, userCriterias) {
-                    return userCriterias.getByForm($stateParams.id);
-                }]
+                        return userForms.get($stateParams.id);
+                    }]
+                    // userCriteriasData: ['$stateParams', 'userCriterias', function($stateParams, userCriterias) {
+                    //     return userCriterias.getByForm($stateParams.id);
+                    // }]
             }
         })
 
@@ -396,8 +396,7 @@ app.factory('userCriterias', ['$http', 'auth', function($http, auth) {
     };
 
     obj.getByForm = function(id) {
-        // create a new user criteria and upload to server
-        return $http.post('/usercriteriasbyform', null, {
+        return $http.post('/usercriterias/byform', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken(), id: id }
         }).success(function(data) {
             obj.userCriterias.push(data);
@@ -1075,11 +1074,10 @@ app.controller('FormFillCtrl', [
     'userForms',
     'userForm',
     'userCriterias',
-    'userCriteriasData',
     'auth',
-    function($scope, sections, userForms, userForm, userCriterias, userCriteriasData, auth) {
+    function($scope, sections, userForms, userForm, userCriterias, auth) {
 
-
+        // alert(JSON.stringify(userForm, null, 2));
         $scope.sections = sections.sections;
         $scope.userForm = userForm;
         $scope.formatForm = userForm.formatForm;
@@ -1092,6 +1090,7 @@ app.controller('FormFillCtrl', [
         $scope.addNewField = function(fieldsUser, formatCriteria) {
 
             var data = [];
+
             for (var i = 0; i < fieldsUser.length; i++) {
                 var field = {
                     fieldText: fieldsUser[i].name,
@@ -1099,15 +1098,19 @@ app.controller('FormFillCtrl', [
                     dataType: fieldsUser[i].dataType,
                     note: ""
                 }
-                data.push(field);
+                data.push({
+                    rowValidated: false,
+                    dataRow: field
+                });
             }
 
             var arrRefrence = $scope.userCriterias;
             var index = arrRefrence.findIndex(function(el) {
                 return el.formatCriteria === formatCriteria._id;
             });
+
             if (index > -1) {
-                arrRefrence[index].data.push(data);
+                arrRefrence[index].dataRows.push(data);
             } else {
                 arrRefrence.push({
                     name: "",
@@ -1115,7 +1118,8 @@ app.controller('FormFillCtrl', [
                     owner: $scope.userId(),
                     userForm: $scope.userForm._id,
                     formatCriteria: formatCriteria._id,
-                    data: [data]
+                    // status: null,
+                    dataRows: [data]
                 });
             }
         };
@@ -1125,10 +1129,10 @@ app.controller('FormFillCtrl', [
             userCriteria.splice(ind, 1);
             var count = 0;
             for (var i = $scope.userCriterias.length - 1; i >= 0; i--) {
-                if ($scope.userCriterias[i].data.length === 0) {
+                if ($scope.userCriterias[i].dataRows.length === 0) {
                     // $scope.userCriterias[i].data = null;
                     count++;
-                    $scope.userCriterias[i].data = [];
+                    $scope.userCriterias[i].dataRows = [];
                 }
             }
             // if (count === 0) { $scope.userCriterias = []; }
@@ -1142,7 +1146,10 @@ app.controller('FormFillCtrl', [
             form.formatForm = $scope.formatForm;
             form.userCriterias = $scope.userCriterias;
 
+            // alert(JSON.stringify(form.userCriterias, null, 2));
+
             userCriterias.save($scope.userCriterias).then(function(data) {
+
                 // all the user criteria ids of the form are inside data.data
                 userForms.update(userForm, {
                     _id: userForm._id,
@@ -1153,7 +1160,15 @@ app.controller('FormFillCtrl', [
                     userCriterias: data.data,
                     dateCreated: userForm.dateCreated,
                     dateModified: new Date()
+                }).then(function() {
+
+                    userForms.get($scope.userForm._id).then(function(userForm) {
+                        $scope.userCriterias = userForm.userCriterias;
+                        $scope.$apply(function() {});
+                    });
+
                 });
+
             });
 
             // status: { type: mongoose.Schema.Types.ObjectId, ref: 'Status' },

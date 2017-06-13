@@ -1,6 +1,18 @@
+/**
+ * StaffGroup model
+ * define a dynamic staff group:
+ * 
+ * group - the group number
+ * name - the group name
+ * 
+ * currently existing group names:
+ * בעלי תפקיד מנהלי בנוסף להשתייכות לסגל המחקרי/הוראתי
+ * חברי סגל מחקרי
+ * חברי סגל הוראה
+ */
+
 var mongoose = require('mongoose');
 var AutoIncrement = require('mongoose-sequence'); // require auto-increment plugin
-// IMPLEMENT AUTO-INCREMENT FOR FIELD num
 
 var StaffGroupSchema = new mongoose.Schema({
     group: { type: Number, default: 1, unique: true },
@@ -20,6 +32,7 @@ StaffGroupSchema.methods.edit = function(params, cb) {
     this.save(cb);
 };
 
+// apply auto increment on field 'group'
 StaffGroupSchema.plugin(AutoIncrement, { id: 'staff_group_seq', inc_field: 'group' });
 
 mongoose.model('StaffGroup', StaffGroupSchema);
