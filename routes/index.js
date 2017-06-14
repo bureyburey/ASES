@@ -351,16 +351,6 @@ router.get('/formatcriterias', function(req, res, next) {
         res.json(formatCriteria);
     });
 });
-
-// fetch all format criterias (sections stays as refrences)
-// router.get('/format_criterias', function (req, res, next) {
-//   console.log("INVOKED: router.get(format_criterias)");
-//   FormatCriteria.find(function (err, formatCriteria) {
-//     if (err) { return next(err); }
-//     res.json(formatCriteria);
-//   });
-// });
-
 // add a new format criteria
 router.post('/formatcriterias', auth, function(req, res, next) {
     console.log("INVOKED: router.post(formatcriterias)");
@@ -424,7 +414,6 @@ router.put('/formatcriterias/:formatcriteria/delete', auth, function(req, res, n
 // fetch all format forms with format criteria refrences populated
 router.get('/formatforms', function(req, res, next) {
     console.log("INVOKED: router.get(formatforms)");
-
     // deep populate format criteria and each format criteria section
     FormatForm.find({}).
     populate({ path: 'formatCriterias', populate: { path: 'section', model: 'Section' } }).
