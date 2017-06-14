@@ -522,7 +522,6 @@ router.get('/usercriterias', function(req, res, next) {
         res.json(userCriteria);
     });
 });
-
 // add/update multiple user criteria
 router.post('/usercriterias/save', auth, function(req, res, next) {
     console.log("INVOKED: router.post(usercriterias/save)");
@@ -552,38 +551,26 @@ router.post('/usercriterias/save', auth, function(req, res, next) {
         res.json(userCriteriaIds);
     });
 });
-
-
 // add a new user criteria
 router.post('/usercriterias', auth, function(req, res, next) {
     console.log("INVOKED: router.post(usercriterias)");
     // create new FormCriteria object
     var userCriteria = new UserCriteria(req.body);
-
     // save the newly created object to the database
     userCriteria.save(function(err, userCriteria) {
         if (err) { return next(err); }
-
         res.json(userCriteria);
-
-        // populate the section field of the returned saved object (needed as it is passed back to the client side)
-        // UserCriteria.populate(userCriteria, { path: "section" }, function(err, userCriteria) {
-        //     if (err) { return next(err); }
-
-        //     res.json(userCriteria);
-        // });
     });
 });
-
 // preloading user criteria
-router.param('usercriterias', function(req, res, next, id) {
-    console.log("INVOKED: router.param(usercriterias)");
+router.param('usercriteria', function(req, res, next, id) {
+    console.log("INVOKED: router.param(usercriteria)");
     var query = UserCriteria.findById(id);
 
     query.exec(function(err, userCriteria) {
         if (err) { return next(err); }
         if (!userCriteria) { return next(new Error('can\'t find usercriterias')); }
-        // save the found section to the request
+        // save the user criteria to the request
         req.userCriteria = userCriteria;
         return next();
     });
@@ -593,7 +580,6 @@ router.put('/usercriterias/:usercriteria/edit', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/usercriterias/" + req.userCriteria._id + "/edit)");
     req.userCriteria.edit(req.body, function(err, userCriteria) {
         if (err) { return next(err); }
-
         res.json(formatCriteria);
 
         // populate the section field of the returned saved object (needed as it is passed back to the client side)
@@ -612,7 +598,6 @@ router.put('/usercriterias/:usercriteria/delete', auth, function(req, res, next)
         if (err) { return next(err) };
         res.json("format criteria deleted");
     });
-
 });
 //////////////// UserCriteria API END
 
@@ -629,7 +614,6 @@ router.get('/userforms', function(req, res, next) {
     });
 
 
-
     // deep populate format criteria and each format criteria section
     // UserForm.find({}).
     // populate({ path: 'formatForm', populate: { path: 'section', model: 'Section' } }).
@@ -638,11 +622,8 @@ router.get('/userforms', function(req, res, next) {
     //     res.json(formatForms);
     // });
 });
-
-
 router.post('/userformspost', auth, function(req, res, next) {
     console.log("INVOKED: router.get(userformspost)");
-
 
     if (req.payload.username === 'admin') {
         // change to permission check once implemented
@@ -679,15 +660,12 @@ router.post('/userformspost', auth, function(req, res, next) {
         // });
     }
 });
-
-
 router.get('/userforms/:userform', function(req, res, next) {
     console.log("INVOKED: router.get(/formatforms/" + req.userForm._id + ")");
     UserForm.populate(req.userForm, { path: "userCriterias" }, function(err, userForm) {
         if (err) { return next(err); }
         res.json(userForm);
     });
-    // res.json(req.userForm);
 });
 // add a new user form
 router.post('/userforms', auth, function(req, res, next) {
@@ -733,7 +711,7 @@ router.put('/userforms/:userform/edit', auth, function(req, res, next) {
 
     req.userForm.edit(req.body, function(err, userForm) {
         if (err) { return next(err); }
-        // populate the section field of the returned saved object (needed as it is passed back to the client side)
+        // populate the formatForm field of the returned saved object (needed as it is passed back to the client side)
         UserForm.populate(userForm, { path: "formatForm" }, function(err, userForm) {
             if (err) { return next(err); }
 
