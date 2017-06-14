@@ -603,9 +603,11 @@
                         </span>
                     </div>
 
-                    <span ng-repeat="userForm in userForms">
-                        <a href="#/form_fill/{{currentUser()}}/{{userForm._id}}">{{userForm.formatForm.name}} מילוי טופס</a>
-                    </span>
+                    <div ng-repeat="userForm in userForms">
+                        <div>
+                            <a href="#/form_fill/{{currentUser()}}/{{userForm._id}}">{{getUsername(userForm.owner)}} - {{userForm.formatForm.name}}</a>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -626,13 +628,24 @@
                 <div ng-hide="!isLoggedIn()">
                     <!--{{formatForm}}-->
                     <!--{{userCriterias}}-->
+
+                    <div>
+                        אישור אוטומטי:
+                        <span ng-if="getApproved()" style="color:green;" class="glyphicon glyphicon-ok"></span>
+                        <span ng-if="!getApproved()" style="color:red;" class="glyphicon glyphicon-remove"></span>
+                    </div>
+                    <div>
+                        אישור ממונה:
+                        <span ng-if="userForm.approved" style="color:green;" class="glyphicon glyphicon-ok"></span>
+                        <span ng-if="!userForm.approved" style="color:red;" class="glyphicon glyphicon-remove"></span>
+                    </div>
                     <form ng-submit="saveForm()">
                         <div ng-repeat="section in sections">
                             <b><h3>{{section.num+'.'+section.name}}</h3></b>
                             <div ng-if="section._id===formatCriteria.section" ng-repeat="formatCriteria in formatForm.formatCriterias">
                                 <md-divider></md-divider>
                                 <b>{{formatCriteria.name}}</b>
-
+                                <span>משקל - {{formatCriteria.weight}}</span>
                                 <table>
                                     <!--iterate on all form criteria-->
                                     <tr ng-show="userCriteria.formatCriteria===formatCriteria._id" ng-repeat="userCriteria in userCriterias">
@@ -641,31 +654,38 @@
                                             <table>
                                                 <tr>
                                                     <th></th>
+                                                    <th style="border:2px solid black;">
+                                                        <center>סטטוס</center>
+                                                    </th>
                                                     <th style="border:2px solid black;" ng-repeat="field in formatCriteria.fields">
                                                         <center>{{field.name}}</center>
                                                     </th>
+
                                                 </tr>
                                                 <tr ng-repeat="dataRow in userCriteria.dataRows track by $index">
+                                                    <!--<td>{{userCriteria}}</td>-->
                                                     <td><button class="btn-danger" ng-click="removeRow(dataRow, userCriteria.dataRows)">הסר</button></td>
-                                                    <td ng-repeat="data in dataRow">
-                                                        <span ng-if="data.dataRow.dataType==='String'">
-                                                        <input type="text" placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" required />
-                                                    </span>
-                                                        <span ng-if="data.dataRow.dataType==='Link'">
-                                                        <input type="text" placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" required />
-                                                    </span>
-                                                        <span ng-if="data.dataRow.dataType==='Number'">
-                                                        <!--<input type="number" placeholder="{{data.fieldText}}" ng-model="data.fieldInput" />-->
-                                                        <input placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" required />
-                                                    </span>
-                                                        <span ng-if="data.dataRow.dataType==='Date'">
-                                                        <md-datepicker md-placeholder="{{data.dataRow.fieldText}}" ng-model="data.dataRow.fieldInput" title="{{data.dataRow.note}}" ng-required ></md-datepicker>
-                                                    </span>
-                                                    </td>
                                                     <td>
-                                                        <span>&nbsp&nbspאושר:</span>
-                                                        <span ng-show="dataRow.rowValidated" style="color:green;" class="glyphicon glyphicon-ok"></span>
-                                                        <span ng-hide="dataRow.rowValidated" style="color:red;" class="glyphicon glyphicon-remove"></span>
+                                                        <!--<span>&nbsp&nbspאושר:</span>-->
+                                                        <center>
+                                                            <span ng-if="dataRow.rowValidated" style="color:green;" class="glyphicon glyphicon-ok"></span>
+                                                            <span ng-if="!dataRow.rowValidated" style="color:red;" class="glyphicon glyphicon-remove"></span>
+                                                        </center>
+                                                    </td>
+                                                    <td ng-repeat="data in dataRow.dataRow">
+                                                        <span ng-if="data.dataType==='String'">
+                                                            <input type="text" placeholder="{{data.fieldText}}" ng-model="data.fieldInput" title="{{data.note}}" required />
+                                                        </span>
+                                                        <span ng-if="data.dataType==='Link'">
+                                                            <input type="text" placeholder="{{data.fieldText}}" ng-model="data.fieldInput" title="{{data.note}}" required />
+                                                        </span>
+                                                        <span ng-if="data.dataType==='Number'">
+                                                        <!--<input type="number" placeholder="{{data.fieldText}}" ng-model="data.fieldInput" />-->
+                                                            <input placeholder="{{data.fieldText}}" ng-model="data.fieldInput" title="{{data.note}}" required />
+                                                        </span>
+                                                        <span ng-if="data.dataType==='Date'">
+                                                            <md-datepicker md-placeholder="{{data.fieldText}}" ng-model="data.fieldInput" title="{{data.note}}" ng-required ></md-datepicker>
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             </table>

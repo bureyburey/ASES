@@ -30,16 +30,6 @@ router.get('/', function(req, res, next) {
 });
 
 //////////////// POSTS+COMMENTS API START
-// fetch all posts
-// router.get('/posts', function (req, res, next) {
-//   console.log("INVOKED: router.get(posts)");
-//   Post.find(function (err, posts) {
-//     if (err) { return next(err); }
-
-//     res.json(posts);
-//   });
-// });
-
 /* GET all posts from db INCLUDING comments */
 router.get('/posts', function(req, res, next) {
     console.log("INVOKED: router.get(posts)");
@@ -165,7 +155,7 @@ router.get('/users', function(req, res, next) {
     console.log("INVOKED: router.get(users)");
     User.find(function(err, user) {
         if (err) { return next(err); }
-        res.json(user);
+        res.json("UNAUTHORIZED ACCESS, PLEASE USE post('/userspost')");
     });
 });
 
@@ -174,7 +164,7 @@ router.post('/userspost', auth, function(req, res, next) {
 
     if (req.payload.username === 'admin') {
         // return all users if admin
-        // change to permission check once implemented
+        // change to permission check once permissions are implemented
         /*
         if (req.payload.permission === 'admin'){....}
         */
@@ -208,6 +198,7 @@ router.param('user', function(req, res, next, id) {
         return next();
     });
 });
+
 router.put('/users/:user/edit', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/users/" + req.user._id + "/edit)");
     console.log("request body: " + JSON.stringify(req.body));

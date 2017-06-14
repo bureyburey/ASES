@@ -14,6 +14,7 @@ require('mongoose-double')(mongoose); // require Double data type
 var UserFormSchema = new mongoose.Schema({
     name: String,
     slug: String,
+    approved: { type: Boolean, default: false },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     formatForm: { type: mongoose.Schema.Types.ObjectId, ref: 'FormatForm' },
     userCriterias: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserCriteria' }],

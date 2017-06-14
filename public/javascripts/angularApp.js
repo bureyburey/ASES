@@ -1,10 +1,27 @@
+/**
+ * main app variable
+ * in the square brackets [] of the first line we inject services that will be used in the app
+ * ui.router - page routing
+ * ngCsvImport - convert .csv file into JSON
+ * ngCsv - convert JSON into .csv file
+ * ngSanitize - required for ngCsv
+ * ngMaterial - Angular Material https://material.angularjs.org/latest/
+ * toastr - toaster notifications
+ * ngAnimate - required for toastr
+ */
 var app = angular.module('ases', ['ui.router', 'ngCsvImport', 'ngCsv', 'ngSanitize', 'ngMaterial', 'toastr', 'ngAnimate']);
+
+/**
+ * app.config is the router configuration
+ * each state corresponds to a template in the index.ejs view:
+ * for example: .state('form_fill', {.....})
+ * <script type="text/ng-template" id="/form_fill.html">
+ */
 
 app.config([
     '$stateProvider',
     '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
-
         $stateProvider
             .state('home', {
                 url: '/home',
@@ -85,44 +102,41 @@ app.config([
                     }]
                 }
             })
-
-        .state('form_select', {
-            url: '/form_select',
-            templateUrl: '/form_select.html',
-            controller: 'FormSelectCtrl',
-            resolve: {
-                // make sure to load format forms on startup
-                formatFormsPromise: ['formatForms', function(formatForms) {
-                    return formatForms.getAll();
-                }],
-                userFormsPromise: ['userForms', function(userForms) {
-                    return userForms.getAllPost();
-                }],
-                usersPromise: ['users', function(users) {
-                    return users.getAllPost();
-                    // return users.getAll();
-                }]
-            }
-        })
-
-        .state('form_fill', {
-            url: '/form_fill/{currentUser}/{id}',
-            templateUrl: '/form_fill.html',
-            controller: 'FormFillCtrl',
-            resolve: {
-                // formatForm: ['$stateParams', 'formatForms', function($stateParams, formatForms) {
-                //     return formatForms.get($stateParams.id);
-                // }],
-                sectionsPromise: ['sections', function(sections) {
-                    return sections.getAll();
-                }],
-                userForm: ['$stateParams', 'userForms', function($stateParams, userForms) {
-                    return userForms.get($stateParams.id);
-                }]
-            }
-        })
-
-        .state('posts', {
+            .state('form_select', {
+                url: '/form_select',
+                templateUrl: '/form_select.html',
+                controller: 'FormSelectCtrl',
+                resolve: {
+                    // make sure to load format forms on startup
+                    formatFormsPromise: ['formatForms', function(formatForms) {
+                        return formatForms.getAll();
+                    }],
+                    userFormsPromise: ['userForms', function(userForms) {
+                        return userForms.getAllPost();
+                    }],
+                    usersPromise: ['users', function(users) {
+                        return users.getAllPost();
+                        // return users.getAll();
+                    }]
+                }
+            })
+            .state('form_fill', {
+                url: '/form_fill/{currentUser}/{id}',
+                templateUrl: '/form_fill.html',
+                controller: 'FormFillCtrl',
+                resolve: {
+                    // formatForm: ['$stateParams', 'formatForms', function($stateParams, formatForms) {
+                    //     return formatForms.get($stateParams.id);
+                    // }],
+                    sectionsPromise: ['sections', function(sections) {
+                        return sections.getAll();
+                    }],
+                    userForm: ['$stateParams', 'userForms', function($stateParams, userForms) {
+                        return userForms.get($stateParams.id);
+                    }]
+                }
+            })
+            .state('posts', {
                 url: '/posts/{id}',
                 templateUrl: '/posts.html',
                 controller: 'PostsCtrl',
@@ -159,43 +173,45 @@ app.config([
 
 
 // SERVICE FACTORIES START
-
+/**
+ * each factory is essentially a service to that communicate with between the client and the API server
+ * each factory store an obj variable with an array of the object the factory provides
+ * and methods to communicate with the API using $http service
+ */
 app.factory('users', ['$http', 'auth', function($http, auth) {
     var obj = {
         users: []
     };
     obj.getAll = function() {
-        // get all sections from server and deep copy the data
+        // please use post('/userspost') instead
         return $http.get('/users').success(function(data) {
             angular.copy(data, obj.users);
         });
     };
-
     obj.getAllPost = function() {
-        // create a new section and upload to server
+        // get all users from the server if permission is sufficent
         return $http.post('/userspost', null, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
             angular.copy(data, obj.users);
         });
     };
-
-    obj.create = function(users) {
+    obj.create = function(user) {
         // create a new section and upload to server
-        return $http.post('/users', staffGroup, {
+        return $http.post('/users', user, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
             obj.users.push(data);
         });
     };
     obj.get = function(id) {
-        // get a section from the server
+        // get a user from the server
         return $http.get('/users/' + id).then(function(res) {
             return res.data;
         });
     };
     obj.update = function(user, userEdit) {
-        return $http.put('/users/' + users._id + '/edit', staffGroupEdit, {
+        return $http.put('/users/' + user._id + '/edit', userEdit, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
             obj.users[obj.users.indexOf(user)] = data;
@@ -210,7 +226,6 @@ app.factory('users', ['$http', 'auth', function($http, auth) {
     };
     return obj;
 }]);
-
 
 app.factory('staffGroups', ['$http', 'auth', function($http, auth) {
     var obj = {
@@ -1060,7 +1075,14 @@ app.controller('FormSelectCtrl', [
             userForms.create(data);
         }
 
-        // alert(JSON.stringify($scope.userForms, null, 2));
+        $scope.getUsername = function(id) {
+                if ($scope.currentUser() !== 'admin') { return $scope.currentUser(); }
+                var index = $scope.users.findIndex(function(el) {
+                    return el._id === id;
+                });
+                return $scope.users[index].username;
+            }
+            // alert(JSON.stringify($scope.userForms, null, 2));
     }
 ]);
 
@@ -1084,28 +1106,40 @@ app.controller('FormFillCtrl', [
         $scope.currentUser = auth.currentUser;
         $scope.userId = auth.userId;
 
-        $scope.addNewField = function(fieldsUser, formatCriteria) {
+        $scope.getApproved = function() {
+            for (var i = 0; i < $scope.userCriterias.length; i++) {
+                // alert($scope.userCriterias[i].dataRows.length);
+                for (var j = 0; j < $scope.userCriterias[i].dataRows.length; j++) {
+                    if ($scope.userCriterias[i].dataRows[j].rowValidated === false) { return false; }
+                }
+            }
+            return $scope.userCriterias.length > 0;
+        }
 
-            var data = [];
-
-            for (var i = 0; i < fieldsUser.length; i++) {
+        $scope.addNewField = function(criteriaFields, formatCriteria) {
+            /**
+             * 
+             */
+            var data = {
+                rowValidated: false,
+                dataRow: null
+            };
+            var dataRow = [];
+            // build empty row for criteria filling
+            for (var i = 0; i < criteriaFields.length; i++) {
                 var field = {
-                    fieldText: fieldsUser[i].name,
+                    fieldText: criteriaFields[i].name,
                     fieldInput: "",
-                    dataType: fieldsUser[i].dataType,
+                    dataType: criteriaFields[i].dataType,
                     note: ""
                 }
-                data.push({
-                    rowValidated: false,
-                    dataRow: field
-                });
+                dataRow.push(field);
             }
-
+            data.dataRow = dataRow;
             var arrRefrence = $scope.userCriterias;
             var index = arrRefrence.findIndex(function(el) {
                 return el.formatCriteria === formatCriteria._id;
             });
-
             if (index > -1) {
                 arrRefrence[index].dataRows.push(data);
             } else {
