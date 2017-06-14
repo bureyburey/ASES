@@ -639,6 +639,12 @@
                                         <!--iterate on each row inside each criteria-->
                                         <td>
                                             <table>
+                                                <tr>
+                                                    <th></th>
+                                                    <th style="border:2px solid black;" ng-repeat="field in formatCriteria.fields">
+                                                        <center>{{field.name}}</center>
+                                                    </th>
+                                                </tr>
                                                 <tr ng-repeat="dataRow in userCriteria.dataRows track by $index">
                                                     <td><button class="btn-danger" ng-click="removeRow(dataRow, userCriteria.dataRows)">הסר</button></td>
                                                     <td ng-repeat="data in dataRow">
