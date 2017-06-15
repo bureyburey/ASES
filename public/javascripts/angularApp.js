@@ -394,7 +394,6 @@ app.factory('formatForms', ['$http', 'auth', function($http, auth) {
     return obj;
 }]);
 
-
 app.factory('userCriterias', ['$http', 'auth', function($http, auth) {
     var obj = {
         userCriterias: []
@@ -446,7 +445,6 @@ app.factory('userCriterias', ['$http', 'auth', function($http, auth) {
     return obj;
 }]);
 
-
 app.factory('userForms', ['$http', 'auth', function($http, auth) {
     var obj = {
         userForms: []
@@ -497,7 +495,6 @@ app.factory('userForms', ['$http', 'auth', function($http, auth) {
     };
     return obj;
 }]);
-
 
 app.factory('posts', ['$http', 'auth', function($http, auth) {
     var obj = {
