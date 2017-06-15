@@ -590,7 +590,7 @@
                     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.</h3>
                 </div>
 
-                <div ng-hide="!isLoggedIn()">
+                <div style="font-size:20px" ng-hide="!isLoggedIn()">
                     <div ng-show="currentUser()==='admin'">
                         <span ng-repeat="user in users">
                             {{user.username}}
@@ -618,17 +618,15 @@
             <div>
                 <div class="page-header">
                     <h1>ASES - מילוי טופס הערכה</h1>
-                    <h3>{{currentUser()}} - {{userForm.formatForm.name}}</h3>
+
                 </div>
                 <!-- rest of template -->
                 <div ng-hide="isLoggedIn()">
                     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.</h3>
                 </div>
 
-                <div ng-hide="!isLoggedIn()">
-                    <!--{{formatForm}}-->
-                    <!--{{userCriterias}}-->
-
+                <div style="font-size:20px" ng-hide="!isLoggedIn()">
+                    <h3>{{currentUser()}} - {{userForm.formatForm.name}}</h3>
                     <div>
                         אישור אוטומטי:
                         <span ng-if="getApproved()" style="color:green;" class="glyphicon glyphicon-ok"></span>
@@ -638,6 +636,9 @@
                         אישור ממונה:
                         <span ng-if="userForm.approved" style="color:green;" class="glyphicon glyphicon-ok"></span>
                         <span ng-if="!userForm.approved" style="color:red;" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="currentUser() === 'admin'">
+                            <md-checkbox ng-model="userForm.approved"></md-checkbox>
+                        </span>
                     </div>
                     <form ng-submit="saveForm()">
                         <div ng-repeat="section in sections">
@@ -686,6 +687,9 @@
                                                         <span ng-if="data.dataType==='Date'">
                                                             <md-datepicker md-placeholder="{{data.fieldText}}" ng-model="data.fieldInput" title="{{data.note}}" ng-required ></md-datepicker>
                                                         </span>
+                                                    </td>
+                                                    <td ng-if="currentUser() === 'admin'">
+                                                        <md-checkbox ng-model="dataRow.rowValidated"></md-checkbox>
                                                     </td>
                                                 </tr>
                                             </table>

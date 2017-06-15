@@ -1170,22 +1170,14 @@ app.controller('FormFillCtrl', [
         }
 
         $scope.saveForm = function() {
-            var form = {};
-            form.name = "";
-            form.slug = "";
-            form.owner = $scope.userId();
-            form.formatForm = $scope.formatForm;
-            form.userCriterias = $scope.userCriterias;
-
-            // alert(JSON.stringify(form.userCriterias, null, 2));
 
             userCriterias.save($scope.userCriterias).then(function(data) {
-
                 // all the user criteria ids of the form are inside data.data
                 userForms.update(userForm, {
                     _id: userForm._id,
                     name: userForm.name,
                     slug: userForm.slug,
+                    approved: userForm.approved,
                     owner: userForm.owner,
                     formatForm: userForm.formatForm._id,
                     userCriterias: data.data,
@@ -1198,14 +1190,8 @@ app.controller('FormFillCtrl', [
                         toastr.success("", "שינויים נשמרו!");
                         $scope.$apply(function() {});
                     });
-
                 });
-
             });
-
-            // status: { type: mongoose.Schema.Types.ObjectId, ref: 'Status' },
-            // alert(JSON.stringify($scope.userForm, null, 2));
-            // alert(JSON.stringify($scope.userCriterias, null, 2));
         }
     }
 ]);

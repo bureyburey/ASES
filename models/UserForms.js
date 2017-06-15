@@ -26,6 +26,7 @@ var UserFormSchema = new mongoose.Schema({
 UserFormSchema.methods.edit = function(params, cb) {
     this.name = params.name || this.name;
     this.slug = params.slug;
+    this.approved = params.approved || this.approved;
     this.owner = params.owner || this.owner;
     this.formatForm = params.formatForm || this.formatForm;
     this.userCriterias = params.userCriterias || this.userCriterias;

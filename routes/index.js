@@ -1,3 +1,8 @@
+/**
+ * API script file
+ * handles requests from angularApp.js from each service factory
+ */
+
 var express = require('express');
 var router = express.Router();
 
@@ -11,17 +16,13 @@ var ObjectId = require('mongodb').ObjectId;
 var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
-
 var Status = mongoose.model('Status');
-
 var StaffGroup = mongoose.model('StaffGroup');
 var Section = mongoose.model('Section');
 var FormatCriteria = mongoose.model('FormatCriteria');
 var FormatForm = mongoose.model('FormatForm');
-
 var UserCriteria = mongoose.model('UserCriteria');
 var UserForm = mongoose.model('UserForm');
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -148,9 +149,8 @@ router.post('/login', function(req, res, next) {
 });
 //////////////// REGISTERATION+AUTHENTICATION API ENDS
 
-
 //////////////// USERS API START
-// fetch all users
+// fetch all users (DISABLED, use /userspost for admin validation)
 router.get('/users', function(req, res, next) {
     console.log("INVOKED: router.get(users)");
     User.find(function(err, user) {
@@ -178,6 +178,7 @@ router.post('/userspost', auth, function(req, res, next) {
     }
 });
 
+// create user (use /register instead)
 router.post('/users', auth, function(req, res, next) {
     console.log("INVOKED: router.post(users)");
     var user = new User(req.body);
@@ -198,7 +199,7 @@ router.param('user', function(req, res, next, id) {
         return next();
     });
 });
-
+// edit user
 router.put('/users/:user/edit', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/users/" + req.user._id + "/edit)");
     console.log("request body: " + JSON.stringify(req.body));
@@ -207,6 +208,7 @@ router.put('/users/:user/edit', auth, function(req, res, next) {
         res.json(user);
     });
 });
+// delete user
 router.put('/users/:user/delete', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/users/" + req.user._id + "/delete)");
     req.user.remove(function(err) {
@@ -217,15 +219,12 @@ router.put('/users/:user/delete', auth, function(req, res, next) {
 //////////////// USERS API END
 
 
-
 //////////////// STAFF GROUP API START
 // fetch all staff groups
 router.get('/staffgroups', function(req, res, next) {
     console.log("INVOKED: router.get(staffgroups)");
     StaffGroup.find(function(err, staffGroups) {
         if (err) { return next(err); }
-
-        // console.log("Found "+staffGroups.length+" records");
         res.json(staffGroups);
     });
 });
@@ -246,7 +245,7 @@ router.param('staffgroup', function(req, res, next, id) {
     query.exec(function(err, staffGroup) {
         if (err) { return next(err); }
         if (!staffGroup) { return next(new Error('can\'t find staff group')); }
-        // save the found staff group to the request
+        // attach the found staff group to the request
         req.staffGroup = staffGroup;
         return next();
     });
@@ -254,7 +253,6 @@ router.param('staffgroup', function(req, res, next, id) {
 // edit a staff group
 router.put('/staffgroups/:staffgroup/edit', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/staffgroups/" + req.staffGroup._id + "/edit)");
-    console.log("request body: " + JSON.stringify(req.body));
     req.staffGroup.edit(req.body, function(err, staffGroup) {
         if (err) { return next(err); }
         res.json(staffGroup);
@@ -263,7 +261,6 @@ router.put('/staffgroups/:staffgroup/edit', auth, function(req, res, next) {
 // delete a staff group
 router.put('/staffgroups/:staffgroup/delete', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/staffgroups/" + req.staffGroup._id + "/delete)");
-
     req.staffGroup.remove(function(err) {
         if (err) { return next(err) };
         res.json("staff group deleted");
@@ -276,13 +273,11 @@ router.put('/staffgroups/:staffgroup/delete', auth, function(req, res, next) {
 // fetch all sections
 router.get('/sections', function(req, res, next) {
     console.log("INVOKED: router.get(sections)");
-
+    // find all section objects and populate each with its staffGroup field reference
     Section.find({}).populate('staffGroups').exec(function(err, sections) {
         if (err) { return next(err); }
-
         res.json(sections);
     });
-
 });
 // add a new section
 router.post('/sections', auth, function(req, res, next) {
@@ -291,11 +286,9 @@ router.post('/sections', auth, function(req, res, next) {
     console.log(req.body);
     section.save(function(err, section) {
         if (err) { return next(err); }
-
-        // populate section before returning
+        // populate the section's staffGroup before returning the object
         Section.populate(section, { path: "staffGroups" }, function(err, section) {
             if (err) { return next(err); }
-
             res.json(section);
         });
     });
@@ -304,13 +297,12 @@ router.post('/sections', auth, function(req, res, next) {
 router.param('section', function(req, res, next, id) {
     console.log("INVOKED: router.param(section)");
     var query = Section.findById(id);
-
     query.exec(function(err, section) {
         if (err) { return next(err); }
         if (!section) { return next(new Error('can\'t find section')); }
-        // save the found section to the request
+        // attach the found section to the request
         req.section = section;
-        return next();
+        return next(); // call next method
     });
 });
 // edit a section
@@ -318,10 +310,9 @@ router.put('/sections/:section/edit', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/sections/" + req.section._id + "/edit)");
     req.section.edit(req.body, function(err, section) {
         if (err) { return next(err); }
-        // populate secion before returning
+        // populate section's staffGroup field before returning the object
         Section.populate(section, { path: "staffGroups" }, function(err, section) {
             if (err) { return next(err); }
-
             res.json(section);
         });
     });
@@ -329,25 +320,20 @@ router.put('/sections/:section/edit', auth, function(req, res, next) {
 // delete a section
 router.put('/sections/:section/delete', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/sections/" + req.section._id + "/delete)");
-
     req.section.remove(function(err) {
         if (err) { return next(err) };
         res.json("section deleted");
     });
-
 });
 //////////////// SECTION API END
-
 
 
 //////////////// FormatCriteria API START
 // fetch all format criterias with sections refrences populated
 router.get('/formatcriterias', function(req, res, next) {
     console.log("INVOKED: router.get(formatcriterias)");
-
     FormatCriteria.find({}).populate('section').exec(function(err, formatCriteria) {
         if (err) { return next(err); }
-
         res.json(formatCriteria);
     });
 });
@@ -356,15 +342,12 @@ router.post('/formatcriterias', auth, function(req, res, next) {
     console.log("INVOKED: router.post(formatcriterias)");
     // create new FormCriteria object
     var formatCriteria = new FormatCriteria(req.body);
-
     // save the newly created object to the database
     formatCriteria.save(function(err, formatCriteria) {
         if (err) { return next(err); }
-
         // populate the section field of the returned saved object (needed as it is passed back to the client side)
         FormatCriteria.populate(formatCriteria, { path: "section" }, function(err, formatCriteria) {
             if (err) { return next(err); }
-
             res.json(formatCriteria);
         });
     });
@@ -373,11 +356,10 @@ router.post('/formatcriterias', auth, function(req, res, next) {
 router.param('formatcriteria', function(req, res, next, id) {
     console.log("INVOKED: router.param(formatcriteria)");
     var query = FormatCriteria.findById(id);
-
     query.exec(function(err, formatCriteria) {
         if (err) { return next(err); }
         if (!formatCriteria) { return next(new Error('can\'t find formatcriteria')); }
-        // save the found section to the request
+        // attach the found section to the request
         req.formatCriteria = formatCriteria;
         return next();
     });
@@ -390,22 +372,17 @@ router.put('/formatcriterias/:formatcriteria/edit', auth, function(req, res, nex
         // populate the section field of the returned saved object (needed as it is passed back to the client side)
         FormatCriteria.populate(formatCriteria, { path: "section" }, function(err, formatCriteria) {
             if (err) { return next(err); }
-
             res.json(formatCriteria);
         });
-
-        // res.json(formatCriteria);
     });
 });
 // delete a format criteria
 router.put('/formatcriterias/:formatcriteria/delete', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/formatcriterias/" + req.formatCriteria._id + "/delete)");
-    console.log(JSON.stringify(req.formatCriteria));
     req.formatCriteria.remove(function(err) {
         if (err) { return next(err) };
         res.json("format criteria deleted");
     });
-
 });
 //////////////// FormatCriteria API END
 
@@ -415,6 +392,7 @@ router.put('/formatcriterias/:formatcriteria/delete', auth, function(req, res, n
 router.get('/formatforms', function(req, res, next) {
     console.log("INVOKED: router.get(formatforms)");
     // deep populate format criteria and each format criteria section
+    // populate formatCriterias list, and for each formatCriteria in the list, populate its section (nested populate)
     FormatForm.find({}).
     populate({ path: 'formatCriterias', populate: { path: 'section', model: 'Section' } }).
     exec(function(err, formatForms) {
@@ -428,20 +406,15 @@ router.get('/formatforms/:formatform', function(req, res, next) {
 
     req.formatForm.populate('formatCriterias', function(err, formatForm) {
         if (err) { return next(err); }
-        // console.log(formatForm)
         res.json(formatForm);
     });
 
-
     // req.formatForm.populate({ path: 'formatCriterias', populate: { path: 'section', model: 'Section' } }).
     // exec(function(err, formatForm) {
-
     //     if (err) { return next(err); }
-
     //     console.log(JSON.stringify(formatForm, null, 2));
     //     res.json(formatForm);
     // });
-
 });
 // add a new format form
 router.post('/formatforms', auth, function(req, res, next) {
@@ -449,15 +422,12 @@ router.post('/formatforms', auth, function(req, res, next) {
     // create new FormCriteria object
     console.log(JSON.stringify(req.body, null, 2));
     var formatForm = new FormatForm(req.body);
-
     // save the newly created object to the database
     formatForm.save(function(err, formatForm) {
         if (err) { return next(err); }
-
         // populate the formatCriterias field of the returned saved object (needed as it is passed back to the client side)
         FormatForm.populate(formatForm, { path: "formatCriterias" }, function(err, formatForm) {
             if (err) { return next(err); }
-
             res.json(formatForm);
         });
     });
@@ -483,7 +453,6 @@ router.put('/formatforms/:formatform/edit', auth, function(req, res, next) {
         // populate the formatCriterias field of the returned saved object (needed as it is passed back to the client side)
         FormatForm.populate(formatForm, { path: "formatCriterias" }, function(err, formatForm) {
             if (err) { return next(err); }
-
             res.json(formatForm);
         });
     });
@@ -491,7 +460,6 @@ router.put('/formatforms/:formatform/edit', auth, function(req, res, next) {
 // delete a format form
 router.put('/formatforms/:formatform/delete', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/formatforms/" + req.formatForm._id + "/delete)");
-    console.log(JSON.stringify(req.formatForm));
     req.formatForm.remove(function(err) {
         if (err) { return next(err) };
         res.json("format form deleted");
@@ -500,20 +468,7 @@ router.put('/formatforms/:formatform/delete', auth, function(req, res, next) {
 //////////////// FormatForm API END
 
 
-
-
 //////////////// UserCriteria API START
-// fetch all user criterias with sections refrences populated
-// router.get('/usercriterias', function(req, res, next) {
-//     console.log("INVOKED: router.get(usercriterias)");
-
-//     FormatCriteria.find({}).populate('section').exec(function(err, formatCriteria) {
-//         if (err) { return next(err); }
-
-//         res.json(formatCriteria);
-//     });
-// });
-
 // fetch all user criterias (sections stays as refrences)
 router.get('/usercriterias', function(req, res, next) {
     console.log("INVOKED: router.get(usercriterias)");
@@ -524,37 +479,39 @@ router.get('/usercriterias', function(req, res, next) {
 });
 // add/update multiple user criteria
 router.post('/usercriterias/save', auth, function(req, res, next) {
-    console.log("INVOKED: router.post(usercriterias/save)");
+    console.log("INVOKED: router.post(/usercriterias/save)");
 
+    // create a mongodb bulk operation object
     var bulk = UserCriteria.collection.initializeOrderedBulkOp();
-
+    // list for all the user criteria ids of the form
     var userCriteriaIds = [];
     for (var i = 0; i < req.body.length; i++) {
         if (req.body[i]._id === undefined) {
-            // new entry (insert)
-            bulk.insert(req.body[i]);
+            // new user criteria entry (insert new to the database, id will be retreived later)
+            bulk.insert(req.body[i]); // insert command will occur on execute
             console.log("Inserting new Record");
         } else {
-            // existing entry (update)
+            // existing user criteria entry (find by object id and update the dataRows field)
             userCriteriaIds.push(req.body[i]._id); // push existing id to array
-            var objId = new ObjectId(req.body[i]._id);
-            bulk.find({ _id: objId }).update({ $set: { dataRows: req.body[i].dataRows } });
+            var objId = new ObjectId(req.body[i]._id); // create ObjectId object with the requested id
+            bulk.find({ _id: objId }).update({ $set: { dataRows: req.body[i].dataRows } }); // find and update will occur on execute
             console.log("Updating Record " + req.body[i]._id);
         }
     }
-
+    // execute the operations (insert/update)
     bulk.execute(function(err, result) {
-        // get new inserted ids
+        // get new inserted ids (updated already inserted in the for loop above)
         for (var i = 0; i < result.getInsertedIds().length; i++) {
             userCriteriaIds.push(result.getInsertedIds()[i]._id);
         }
+        // return the array of ids to client side
         res.json(userCriteriaIds);
     });
 });
 // add a new user criteria
 router.post('/usercriterias', auth, function(req, res, next) {
     console.log("INVOKED: router.post(usercriterias)");
-    // create new FormCriteria object
+    // create new UserCriteria object
     var userCriteria = new UserCriteria(req.body);
     // save the newly created object to the database
     userCriteria.save(function(err, userCriteria) {
@@ -569,8 +526,8 @@ router.param('usercriteria', function(req, res, next, id) {
 
     query.exec(function(err, userCriteria) {
         if (err) { return next(err); }
-        if (!userCriteria) { return next(new Error('can\'t find usercriterias')); }
-        // save the user criteria to the request
+        if (!userCriteria) { return next(new Error('can\'t find usercriteria')); }
+        // attach the user criteria to the request
         req.userCriteria = userCriteria;
         return next();
     });
@@ -580,23 +537,15 @@ router.put('/usercriterias/:usercriteria/edit', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/usercriterias/" + req.userCriteria._id + "/edit)");
     req.userCriteria.edit(req.body, function(err, userCriteria) {
         if (err) { return next(err); }
-        res.json(formatCriteria);
-
-        // populate the section field of the returned saved object (needed as it is passed back to the client side)
-        // UserCriteria.populate(userCriteria, { path: "section" }, function(err, userCriteria) {
-        //     if (err) { return next(err); }
-
-        //     res.json(userCriteria);
-        // });
+        res.json(userCriteria);
     });
 });
 // delete a format criteria
 router.put('/usercriterias/:usercriteria/delete', auth, function(req, res, next) {
     console.log("INVOKED: router.put(/usercriterias/" + req.userCriteria._id + "/delete)");
-    console.log(JSON.stringify(req.userCriteria));
     req.userCriteria.remove(function(err) {
         if (err) { return next(err) };
-        res.json("format criteria deleted");
+        res.json("user criteria deleted");
     });
 });
 //////////////// UserCriteria API END
@@ -606,10 +555,8 @@ router.put('/usercriterias/:usercriteria/delete', auth, function(req, res, next)
 // fetch all user forms with format form refrences populated
 router.get('/userforms', function(req, res, next) {
     console.log("INVOKED: router.get(userforms)");
-
     UserForm.find({}).populate('formatForm').exec(function(err, userForm) {
         if (err) { return next(err); }
-
         res.json(userForm);
     });
 
@@ -637,22 +584,16 @@ router.post('/userformspost', auth, function(req, res, next) {
             res.json(userForm);
         });
 
-
-
-
         // UserForm.find(function(err, userForm) {
         //     if (err) { return next(err); }
         //     res.json(userForm);
         // });
     } else {
-
         UserForm.find({ owner: req.payload._id }).populate('formatForm').exec(function(err, userForm) {
             if (err) { return next(err); }
 
             res.json(userForm);
         });
-
-
 
         // UserForm.find({ owner: req.payload._id }, function(err, userForm) {
         //     if (err) { return next(err); }
@@ -671,14 +612,13 @@ router.get('/userforms/:userform', function(req, res, next) {
 router.post('/userforms', auth, function(req, res, next) {
     console.log("INVOKED: router.post(userforms)");
     // create new user form object
-    console.log(JSON.stringify(req.body, null, 2));
     var userForm = new UserForm(req.body);
 
     // save the newly created object to the database
     userForm.save(function(err, userForm) {
         if (err) { return next(err); }
 
-        // populate the section field of the returned saved object (needed as it is passed back to the client side)
+        // populate the formatForm field of the returned saved object (needed as it is passed back to the client side)
         UserForm.populate(userForm, { path: "formatForm" }, function(err, userForm) {
             if (err) { return next(err); }
             res.json(userForm);
@@ -714,7 +654,6 @@ router.put('/userforms/:userform/edit', auth, function(req, res, next) {
         // populate the formatForm field of the returned saved object (needed as it is passed back to the client side)
         UserForm.populate(userForm, { path: "formatForm" }, function(err, userForm) {
             if (err) { return next(err); }
-
             res.json(userForm);
         });
     });
@@ -727,15 +666,14 @@ router.put('/userforms/:userform/delete', auth, function(req, res, next) {
         if (err) { return next(err) };
         res.json("user form deleted");
     });
-
 });
 //////////////// UserForm API END
 
 
 
-//////////////// 2 API START
+//////////////// ? API START
 
-//////////////// 2 API END
+//////////////// ? API END
 
 
 module.exports = router;
