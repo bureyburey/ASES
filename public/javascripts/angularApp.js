@@ -881,6 +881,11 @@ app.controller('FormatCriteriaCtrl', [
             { id: 4, placeholder: "תאריך", dataType: "Date" }
         ];
 
+        $scope.toggle = function(element) {
+            if (element.toggle === undefined) { element.toggle = false; }
+            element.toggle = !element.toggle;
+        }
+
         $scope.fields = [];
 
         $scope.addNewField = function(fieldsUser) {

@@ -476,10 +476,6 @@
                 <form ng-submit="addFormatForm()" ng-show="isLoggedIn()" style="margin-top:30px;">
                     <h3>הוספת טופס הערכה חדש</h3>
 
-
-                    <!--<div class="form-group">
-                    <input type="num" class="form-control" placeholder="מספר" ng-model="num"></input>
-                </div>-->
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="שם" ng-model="name" ng-required="true"></input>
                     </div>
@@ -487,79 +483,73 @@
                         <input type="text" class="form-control" placeholder="תיאור" ng-model="slug"></input>
                     </div>
 
-
-
                     <div ng-repeat="section in sections">
+
                         {{section.num+'.'+section.name}}
                         <button type="button" ng-click="toggle(section)" ng-show="!section.toggle" class="btn-primary">הצג קריטריונים</button>
                         <button type="button" ng-click="toggle(section)" ng-show="section.toggle" class="btn-warning">הסתר קריטריונים</button>
                         <div ng-if="section.num===formatCriteria.section.num" ng-hide="!section.toggle" ng-repeat="formatCriteria in formatCriterias | orderBy:'section.num'">
 
-                            <!--<div class="checkbox checkbox-warning">-->
+
                             <div>
                                 <input type="checkbox" class="styled" ng-click="toggleCheck(formatCriteria)" /> {{formatCriteria.name}}
                                 <!--<input type="checkbox" ng-checked="checkedStaffGroups.indexOf(staffGroup) != -1" ng-click="toggleCheck(staffGroup)" /> {{formatCriteria.name}}-->
                             </div>
+
+                            <md-divider></md-divider>
                         </div>
-                        <!--<hr>-->
-                        <md-divider></md-divider>
                     </div>
-
-
-                    <br />
                     <button type="submit" class="btn btn-primary">הוספה</button>
+
                 </form>
 
 
-
-            </div>
-            <!-- REQUIRED IMPLEMENTATION -->
-            <!-- EXISTING Format Forms -->
-            <label>עריכת טפסים</label>
-            <div ng-repeat="formatForm in formatForms | orderBy:'num'">
-                <!--<hr width="100%" size="8" align="center" noshade>-->
-                <md-divider></md-divider>
-                <button class="btn-primary" ng-click="toggle(formatForm)">{{formatForm.name}}</button>
-                <div ng-show="formatForm.toggle">
-                    <div style=" font-size:20px; margin-left:10px;">
-                        <div>
-                            <label class="label-field">מספר: </label>
-                            <input class="editable-field" ng-model="formatForm.num" ng-disabled="!edit" value="{{formatForm.num}}" />
-                        </div>
-                        <div>
-                            <label class="label-field">שם: </label>
-                            <input class="editable-field" ng-model="formatForm.name" ng-disabled="!edit" value="{{formatForm.name}}" />
-                        </div>
-                        <div ng-show="formatForm.slug || edit">
-                            <label class="label-field">תיאור: </label>
-                            <input class="editable-field" ng-model="formatForm.slug" ng-disabled="!edit" value="{{formatForm.slug}}" />
-                        </div>
-
-
-                        <div ng-repeat="sectionUser in sections">
-                            {{sectionUser.num+'.'+sectionUser.name}}
-                            <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
-                            <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
-                            <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
-                                <!--{{formatCriteriaUser}}-->
-                                <div>
-                                    <input type="checkbox" ng-disabled="!edit" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" />
-                                    <span>{{formatCriteriaUser.name}}</span>
-                                </div>
+                <!-- EXISTING Format Forms -->
+                <label>עריכת טפסים</label>
+                <div ng-repeat="formatForm in formatForms | orderBy:'num'">
+                    <!--<hr width="100%" size="8" align="center" noshade>-->
+                    <md-divider></md-divider>
+                    <button class="btn-primary" ng-click="toggle(formatForm)">{{formatForm.name}}</button>
+                    <div ng-show="formatForm.toggle">
+                        <div style=" font-size:20px; margin-left:10px;">
+                            <div>
+                                <label class="label-field">מספר: </label>
+                                <input class="editable-field" ng-model="formatForm.num" ng-disabled="!edit" value="{{formatForm.num}}" />
                             </div>
-                            <md-divider></md-divider>
-                        </div>
+                            <div>
+                                <label class="label-field">שם: </label>
+                                <input class="editable-field" ng-model="formatForm.name" ng-disabled="!edit" value="{{formatForm.name}}" />
+                            </div>
+                            <div ng-show="formatForm.slug || edit">
+                                <label class="label-field">תיאור: </label>
+                                <input class="editable-field" ng-model="formatForm.slug" ng-disabled="!edit" value="{{formatForm.slug}}" />
+                            </div>
 
 
-                        <div>
-                            <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
-                        </div>
-                        <div ng-hide="formatForm.dateCreated===formatForm.dateModified">
-                            <label>נערך לאחרונה:</label> {{formatForm.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
-                            <br />
-                        </div>
+                            <div ng-repeat="sectionUser in sections">
+                                {{sectionUser.num+'.'+sectionUser.name}}
+                                <!--<button type="button" ng-click="toggle(sectionUser)" ng-show="!sectionUser.toggle" class="btn-primary">הצג קריטריונים</button>
+                            <button type="button" ng-click="toggle(sectionUser)" ng-show="sectionUser.toggle" class="btn-warning">הסתר קריטריונים</button>-->
+                                <div ng-if="sectionUser.num===formatCriteriaUser.section.num" ng-repeat="formatCriteriaUser in formatCriterias | orderBy:'sectionUser.num'">
+                                    <!--{{formatCriteriaUser}}-->
+                                    <div>
+                                        <input type="checkbox" ng-disabled="!edit" ng-click="toggleCheck(formatCriteriaUser, formatForm.formatCriterias)" ng-checked="formatCriteriaIndex(formatCriteriaUser, formatForm.formatCriterias) > -1" />
+                                        <span>{{formatCriteriaUser.name}}</span>
+                                    </div>
+                                </div>
+                                <md-divider></md-divider>
+                            </div>
 
-                        <span>
+
+                            <div>
+                                <label>תאריך הוספה:</label> {{formatCriteria.dateCreated | date:'dd/MM/yyyy - HH:mm:ss'}}
+                            </div>
+                            <div ng-hide="formatForm.dateCreated===formatForm.dateModified">
+                                <label>נערך לאחרונה:</label> {{formatForm.dateModified | date:'dd/MM/yyyy - HH:mm:ss'}}
+                                <br />
+                            </div>
+
+                            <span>
                             <md-switch class="md-primary" ng-model="edit">
                             <label ng-show="!edit">מצב עריכה</label>
                             <label ng-hide="!edit">צא ממצב עריכה</label>
@@ -569,10 +559,10 @@
                             <button ng-click="deleteFormatForm(formatForm)" class="btn btn-danger" ng-disabled="!edit">מחק טופס זה</button>
                             <br />
                         </span>
-                    </div>
+                        </div>
 
+                    </div>
                 </div>
-            </div>
 
 
             </div>
