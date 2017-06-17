@@ -21,6 +21,7 @@ var UserCriteriaSchema = new mongoose.Schema({
     formatCriteria: { type: mongoose.Schema.Types.ObjectId, ref: 'FormatCriteria' },
     // status: { type: mongoose.Schema.Types.ObjectId, ref: 'Status' },
     dataRows: [{
+        grade: { type: Number, default: -1 },
         rowValidated: { type: Boolean, default: false },
         dataRow: [{ fieldText: String, fieldInput: String, dataType: String, note: String }]
     }], // id: data type id, name: name of field, dataType: type of data to be stored

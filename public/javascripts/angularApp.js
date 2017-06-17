@@ -1132,6 +1132,7 @@ app.controller('FormFillCtrl', [
         $scope.addNewField = function(criteriaFields, formatCriteria) {
             // build data container for a single data row
             var data = {
+                grade: -1,
                 rowValidated: false,
                 dataRow: null
             };
@@ -1199,7 +1200,6 @@ app.controller('FormFillCtrl', [
                     dateCreated: userForm.dateCreated,
                     dateModified: new Date()
                 }).then(function() {
-
                     userForms.get($scope.userForm._id).then(function(userForm) {
                         $scope.userCriterias = userForm.userCriterias;
                         toastr.success("", "שינויים נשמרו!");
@@ -1210,8 +1210,6 @@ app.controller('FormFillCtrl', [
         }
     }
 ]);
-// WORK IN PROGRESS
-
 
 app.controller('MainCtrl', [
     '$scope',

@@ -689,6 +689,9 @@
                                                     <td ng-if="currentUser() === 'admin'">
                                                         <md-checkbox ng-model="dataRow.rowValidated"></md-checkbox>
                                                     </td>
+                                                    <td ng-if="currentUser() === 'admin'">
+                                                        <input type="number" ng-model="dataRow.grade" />
+                                                    </td>
                                                 </tr>
                                             </table>
                                         </td>
