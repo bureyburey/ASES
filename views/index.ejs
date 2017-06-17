@@ -583,9 +583,7 @@
                         <span ng-repeat="user in users">
                             {{user.username}}
                             <span ng-repeat="form in formatForms">
-                            
-                                <button ng-click="addUserForm(form,user)">הפץ {{form.name}}</button>
-                                
+                                <button ng-class="{ 'btn-primary': !userHasForm(form,user), 'btn-danger':userHasForm(form,user) }" ng-disabled="userHasForm(form,user)" ng-click="addUserForm(form,user)">הפץ {{form.name}}</button> 
                             </span>
                         <md-divider></md-divider>
                         </span>
@@ -614,7 +612,7 @@
                 </div>
 
                 <div style="font-size:20px" ng-hide="!isLoggedIn()">
-                    <h3>{{currentUser()}} - {{userForm.formatForm.name}}</h3>
+                    <h3>{{userForm.owner.username}} - {{userForm.formatForm.name}}</h3>
                     <div>
                         אישור אוטומטי:
                         <span ng-if="getApproved()" style="color:green;" class="glyphicon glyphicon-ok"></span>

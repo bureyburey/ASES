@@ -1075,6 +1075,14 @@ app.controller('FormSelectCtrl', [
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.currentUser = auth.currentUser;
 
+
+        $scope.userHasForm = function(form, user) {
+            var index = $scope.userForms.findIndex(function(userForm) {
+                return userForm.owner === user._id && userForm.formatForm._id === form._id;
+            });
+            return index > -1;
+        }
+
         $scope.addUserForm = function(form, user) {
 
             var index = $scope.userForms.findIndex(function(userForm) {
@@ -1115,7 +1123,6 @@ app.controller('FormFillCtrl', [
     'toastr',
     'auth',
     function($scope, sections, userForms, userForm, userCriterias, toastr, auth) {
-
         $scope.sections = sections.sections;
         $scope.userForm = userForm;
         $scope.formatForm = userForm.formatForm;
@@ -1191,7 +1198,6 @@ app.controller('FormFillCtrl', [
         }
 
         $scope.saveForm = function() {
-
             userCriterias.save($scope.userCriterias).then(function(data) {
                 // all the user criteria ids of the form are inside data.data
                 userForms.update(userForm, {
@@ -1199,7 +1205,7 @@ app.controller('FormFillCtrl', [
                     name: userForm.name,
                     slug: userForm.slug,
                     approved: userForm.approved,
-                    owner: userForm.owner,
+                    owner: userForm.owner._id,
                     formatForm: userForm.formatForm._id,
                     userCriterias: data.data,
                     dateCreated: userForm.dateCreated,

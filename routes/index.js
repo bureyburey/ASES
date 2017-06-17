@@ -603,7 +603,7 @@ router.post('/userformspost', auth, function(req, res, next) {
 });
 router.get('/userforms/:userform', function(req, res, next) {
     console.log("INVOKED: router.get(/formatforms/" + req.userForm._id + ")");
-    UserForm.populate(req.userForm, { path: "userCriterias" }, function(err, userForm) {
+    UserForm.populate(req.userForm, { path: "userCriterias owner" }, function(err, userForm) {
         if (err) { return next(err); }
         res.json(userForm);
     });
