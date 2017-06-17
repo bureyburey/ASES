@@ -12,7 +12,8 @@
 var app = angular.module('ases', ['ui.router', 'ngCsvImport', 'ngCsv', 'ngSanitize', 'ngMaterial', 'toastr', 'ngAnimate']);
 
 /**
- * app.config is the router configuration
+ * app.config holds various application configurations
+ * the routing configuration is the only one currently needed
  * each state corresponds to a template in the index.ejs view:
  * for example: .state('form_fill', {.....})
  * <script type="text/ng-template" id="/form_fill.html">
@@ -470,7 +471,7 @@ app.factory('userForms', ['$http', 'auth', function($http, auth) {
         return $http.post('/userforms', formatForm, {
             headers: { Authorization: 'Bearer ' + auth.getToken() }
         }).success(function(data) {
-            obj.userforms.push(data);
+            obj.userForms.push(data);
         });
     };
     obj.get = function(id) {
@@ -594,6 +595,14 @@ app.factory('auth', ['$http', '$window', function($http, $window) {
 }]);
 // SERVICE FACTORIES END
 
+
+
+// APP CONTROLLERS START
+/**
+ * each controller is controls a template in the index.ejs page.
+ * the controller deleration is made in the route configuration app.config(....)
+ * in the 'controller' field of each of the states
+ */
 app.controller('AdminCtrl', [
     '$scope',
     '$parse',
@@ -606,6 +615,7 @@ app.controller('AdminCtrl', [
         $scope.csvHeader = ['username', 'password'];
 
         $scope.generatePassword = function() {
+            // generates random 8 characters password
             var length = 8,
                 charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
                 retVal = "";
@@ -619,13 +629,14 @@ app.controller('AdminCtrl', [
             // register user from CSV file
             if ($scope.exportToCSV.findIndex(function(el) { return el.username === user.username }) > -1) { return; }
             user.password = $scope.generatePassword(); // generate random password
+            // call factory service which registers the user
             auth.registerFromCSV(user).success(function() {
                 // add the newly added user to an array which will be exported back to csv with password
                 $scope.exportToCSV.push(user);
-                user.status = 0;
+                user.status = 0; // no error
             }).error(function(error) {
                 $scope.error = error;
-                user.status = 1;
+                user.status = 1; // error occured
                 return;
             }).then(function() {
                 $state.go('home');
@@ -633,7 +644,7 @@ app.controller('AdminCtrl', [
         };
 
         $scope.registerSelectedFromCSV = function() {
-            // alert(JSON.stringify($scope.csv.result, null, 2));
+            // register users list one by one
             for (var i = 0; i < $scope.csv.result.length; i++) {
                 var user = $scope.csv.result[i];
                 if (user.selected) { $scope.registerFromCSV(user); }
@@ -647,7 +658,7 @@ app.controller('AdminCtrl', [
         }
 
         $scope.checkAll = function() {
-
+            // select all users
             if ($scope.primitives.selectedAll) {
                 $scope.primitives.selectedAll = true;
             } else {
@@ -657,7 +668,6 @@ app.controller('AdminCtrl', [
                 user.selected = $scope.primitives.selectedAll;
             });
         };
-
 
         // cvs extraction variables/methods
         $scope.Math = window.Math;
@@ -701,19 +711,16 @@ app.controller('AdminCtrl', [
             _lastGoodResult = result;
             return result;
         };
-
-
-
-
     }
 ]);
 
-// APP CONTROLLERS START
 app.controller('StaffGroupsCtrl', [
     '$scope',
     'staffGroups',
+    'toastr',
     'auth',
-    function($scope, staffGroups, auth) {
+    '$mdDialog',
+    function($scope, staffGroups, toastr, auth, $mdDialog) {
         $scope.staffGroups = staffGroups.staffGroups;
         $scope.isLoggedIn = auth.isLoggedIn;
 
@@ -723,14 +730,17 @@ app.controller('StaffGroupsCtrl', [
                 group: $scope.group,
                 name: $scope.name,
                 slug: $scope.slug
-            });
+            }).error(function() {
+                // do nothing
+            }).success(function() {
+                toastr.success($scope.name, "קבוצת סגל התווספה!");
+            });;
             $scope.group = '';
             $scope.name = '';
             $scope.slug = '';
         };
 
         $scope.editStaffGroup = function(index, staffGroup) {
-            // alert(JSON.stringify(staffGroup));
             if (staffGroup.name === '' || staffGroup.name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
             staffGroups.update(staffGroup, {
@@ -741,6 +751,24 @@ app.controller('StaffGroupsCtrl', [
                 dateCreated: staffGroup.dateCreated,
                 dateModified: new Date()
             });
+
+            // alternative implementation with ngMaterial confirm dialog
+            // var confirmDialog = $mdDialog.confirm()
+            //     .title("החל שינויים?")
+            //     .ok('בצע')
+            //     .cancel('בטל');
+            // $mdDialog.show(confirmDialog).then(function() {
+            //     staffGroups.update(staffGroup, {
+            //         _id: staffGroup._id,
+            //         group: staffGroup.group,
+            //         name: staffGroup.name,
+            //         slug: staffGroup.slug,
+            //         dateCreated: staffGroup.dateCreated,
+            //         dateModified: new Date()
+            //     });
+            // }, function() {
+            //    // do nothing
+            // });
         }
 
         $scope.deleteStaffGroup = function(staffGroup) {
@@ -754,8 +782,9 @@ app.controller('SectionsCtrl', [
     '$scope',
     'staffGroups',
     'sections',
+    'toastr',
     'auth',
-    function($scope, staffGroups, sections, auth) {
+    function($scope, staffGroups, sections, toastr, auth) {
         $scope.staffGroups = staffGroups.staffGroups;
         $scope.sections = sections.sections;
         $scope.isLoggedIn = auth.isLoggedIn;
@@ -765,7 +794,6 @@ app.controller('SectionsCtrl', [
 
         $scope.toggleCheck = function(staffGroup, staffGroupsUser) {
             // assign the checked groups array to the argument array or the global checked groups (prioritize argument array)
-
             arrRefrence = staffGroupsUser || $scope.checkedStaffGroups;
             staffGroupIndex = $scope.staffGroupIndex(staffGroup, arrRefrence);
             if (staffGroupIndex === -1) {
@@ -775,18 +803,6 @@ app.controller('SectionsCtrl', [
                 // remove the group from the checked array
                 arrRefrence.splice(staffGroupIndex, 1);
             }
-
-
-            // $scope.checkedStaffGroups = staffGroupsUser || $scope.checkedStaffGroups;
-            // // find the index of the staff group by its _id
-            // staffGroupIndex = $scope.staffGroupIndex(staffGroup, $scope.checkedStaffGroups);
-            // if (staffGroupIndex === -1) {
-            //     // group was not found --> add it to the list
-            //     $scope.checkedStaffGroups.push(staffGroup);
-            // } else {
-            //     // remove the group from the checked array
-            //     $scope.checkedStaffGroups.splice(staffGroupIndex, 1);
-            // }
         };
 
         $scope.staffGroupIndex = function(staffGroup, staffGroupsUser) {
@@ -805,7 +821,6 @@ app.controller('SectionsCtrl', [
         }
 
         $scope.addSection = function() {
-            // alert(JSON.stringify($scope.checkedStaffGroups, null,2));
             if ($scope.name === '' || $scope.name.length === 0) { return; }
 
             // build IDs of selected sections
@@ -814,7 +829,11 @@ app.controller('SectionsCtrl', [
                 name: $scope.name,
                 slug: $scope.slug,
                 staffGroups: $scope.buildStaffGroupsList($scope.checkedStaffGroups)
-            });
+            }).error(function() {
+                // do nothing
+            }).success(function() {
+                toastr.success($scope.name, "תחום פעילות התווסף!");
+            });;
             $scope.num = '';
             $scope.name = '';
             $scope.slug = '';
@@ -822,8 +841,6 @@ app.controller('SectionsCtrl', [
         };
 
         $scope.editSection = function(index, section) {
-
-            // alert(JSON.stringify(section.staffGroups,null,2));
             if (section.name === '' || section.name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
             sections.update(section, {
@@ -866,17 +883,8 @@ app.controller('FormatCriteriaCtrl', [
 
         $scope.fields = [];
 
-        $scope.updateDataType = function(index, dataType, fieldsUser) {
-            // arrRefrence = fieldsUser || $scope.fields;
-
-            // alert(dataType);
-            // alert(JSON.stringify(arrRefrence, null, 2));
-
-            // arrRefrence[i].dataType = dataType;
-        };
-
         $scope.addNewField = function(fieldsUser) {
-            arrRefrence = fieldsUser || $scope.fields;
+            var arrRefrence = fieldsUser || $scope.fields;
             arrRefrence.push({
                 id: 0,
                 name: "",
@@ -885,24 +893,24 @@ app.controller('FormatCriteriaCtrl', [
         };
 
         $scope.removeField = function(i, fieldsUser) {
-            arrRefrence = fieldsUser || $scope.fields;
+            var arrRefrence = fieldsUser || $scope.fields;
             arrRefrence.splice(i, 1);
         };
 
         $scope.buildFieldsData = function(fieldsDataList) {
-            fieldsData = [];
+            var fieldsData = [];
             for (i = 0; i < fieldsDataList.length; i++) {
                 fieldsData.push({
                     id: fieldsDataList[i].dataType.id || fieldsDataList[i].id,
                     name: fieldsDataList[i].name,
-                    // placeholder: fieldsDataList[i].dataType.placeholder || fieldsDataList[i].placeholder,
                     dataType: fieldsDataList[i].dataType.dataType || fieldsDataList[i].dataType
                 });
+                if (fieldsData[i].dataType === undefined ||
+                    fieldsData[i].dataType === null ||
+                    fieldsData[i].dataType.length === 0) { return -1; }
             }
-            // alert("Sending to server: \n" + JSON.stringify(fieldsData, null, 2));
             return fieldsData;
         }
-
 
         $scope.getSectionIndexByNum = function(num) {
             return $scope.sections.findIndex(function(section) {
@@ -916,14 +924,21 @@ app.controller('FormatCriteriaCtrl', [
                 toastr.error('נא לבחור תחום פעילות!', 'שגיאת מילוי!');
                 return;
             }
+            var fields = $scope.buildFieldsData($scope.fields);
+            if (fields === -1) {
+                toastr.error('נא לבחור סוג שדה!', 'שגיאת מילוי!');
+                return;
+            }
             formatCriterias.create({
                 num: $scope.num,
                 name: $scope.name,
                 slug: $scope.slug,
                 weight: $scope.weight,
                 section: $scope.section,
-                fields: $scope.buildFieldsData($scope.fields)
-            }).then(function() {
+                fields: fields
+            }).error(function() {
+                // do nothing
+            }).success(function() {
                 toastr.success($scope.name, "קריטריון הערכה התווסף!");
             });
             // $scope.num = '';
@@ -932,9 +947,11 @@ app.controller('FormatCriteriaCtrl', [
         };
 
         $scope.editFormatCriteria = function(index, formatCriteria) {
-            // alert(JSON.stringify(formatCriteria, null, 2));
-
-            // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
+            var fields = $scope.buildFieldsData(formatCriteria.fields);
+            if (fields === -1) {
+                toastr.error('נא לבחור סוג שדה!', 'שגיאת מילוי!');
+                return;
+            }
             if (!confirm("החל שינויים?")) { return; }
             formatCriterias.update(formatCriteria, {
                 _id: formatCriteria._id,
@@ -943,11 +960,10 @@ app.controller('FormatCriteriaCtrl', [
                 slug: formatCriteria.slug,
                 weight: formatCriteria.weight,
                 section: formatCriteria.section,
-                fields: $scope.buildFieldsData(formatCriteria.fields),
+                fields: fields,
                 dateModified: new Date()
             });
         }
-
         $scope.deleteFormatCriteria = function(formatCriteria) {
             if (!confirm("מחק קריטריון הערכה?")) { return; }
             formatCriterias.delete(formatCriteria);
@@ -960,20 +976,19 @@ app.controller('FormatFormCtrl', [
     'sections',
     'formatCriterias',
     'formatForms',
+    'toastr',
     'auth',
-    function($scope, sections, formatCriterias, formatForms, auth) {
+    function($scope, sections, formatCriterias, formatForms, toastr, auth) {
         $scope.sections = sections.sections;
         $scope.formatCriterias = formatCriterias.formatCriterias;
         $scope.formatForms = formatForms.formatForms;
         $scope.isLoggedIn = auth.isLoggedIn;
-
-
         $scope.checkedFormatCriterias = [];
 
         $scope.toggleCheck = function(formatCriteria, formatCriteriaUser) {
             // assign the checked groups array to the argument array or the global checked groups (prioritize argument array)
-            arrRefrence = formatCriteriaUser || $scope.checkedFormatCriterias;
-            formatCriteriaIndex = $scope.formatCriteriaIndex(formatCriteria, arrRefrence);
+            var arrRefrence = formatCriteriaUser || $scope.checkedFormatCriterias;
+            var formatCriteriaIndex = $scope.formatCriteriaIndex(formatCriteria, arrRefrence);
             if (formatCriteriaIndex === -1) {
                 // group was not found --> add it to the list
                 arrRefrence.push(formatCriteria);
@@ -982,25 +997,20 @@ app.controller('FormatFormCtrl', [
                 arrRefrence.splice(formatCriteriaIndex, 1);
             }
         };
-
-
         $scope.formatCriteriaIndex = function(formatCriteria, formatCriteriasUser) {
             // returns index of criteriaFormat in formatCriteriasUser list, -1 if not exists
             return formatCriteriasUser.findIndex(function(formatCriteriaUser) {
                 return formatCriteria._id === formatCriteriaUser._id;
             });
         }
-
         $scope.toggle = function(element) {
             if (element.toggle === undefined) { element.toggle = false; }
             element.toggle = !element.toggle;
         }
-
         $scope.sectionsUser = function(sectionUser) {
             sectionUser.sections = angular.copy($scope.sections);
             return sectionUser.sections;
         }
-
         $scope.buildFormatCriteriasData = function(criteriasDataList) {
             formatCriteriasData = [];
             for (i = 0; i < criteriasDataList.length; i++) {
@@ -1009,26 +1019,22 @@ app.controller('FormatFormCtrl', [
             // alert("Sending to server: \n" + JSON.stringify(formatCriteriasData, null, 2));
             return formatCriteriasData;
         }
-
         $scope.addFormatForm = function() {
-
             if ($scope.name === '' || $scope.name.length === 0) { return; }
-
             formatForms.create({
                 num: $scope.num,
                 name: $scope.name,
                 slug: $scope.slug,
                 formatCriterias: $scope.buildFormatCriteriasData($scope.checkedFormatCriterias)
-            });
-            // $scope.num = '';
-            // $scope.name = '';
-            // $scope.slug = '';
+            }).error(function() {
+                // do nothing
+            }).success(function() {
+                toastr.success($scope.name, "טופס הערכה התווסף!");
+            });;
+            $scope.name = '';
+            $scope.slug = '';
         };
-
         $scope.editFormatForm = function(index, formatForm) {
-            // alert(JSON.stringify(formatForm, null, 2));
-
-            // if ($scope.formatCriteria[index].name === '' || $scope.formatCriteria[index].name.length === 0) { return; }
             if (!confirm("החל שינויים?")) { return; }
             formatForms.update(formatForm, {
                 _id: formatForm._id,
@@ -1037,9 +1043,12 @@ app.controller('FormatFormCtrl', [
                 slug: formatForm.slug,
                 formatCriterias: $scope.buildFormatCriteriasData(formatForm.formatCriterias),
                 dateModified: new Date()
-            });
+            }).error(function() {
+                // do nothing
+            }).success(function() {
+                toastr.success($scope.name, "טופס הערכה עודכן!");
+            });;
         }
-
         $scope.deleteFormatForm = function(formatForm) {
             if (!confirm("מחק טופס?")) { return; }
             formatForms.delete(formatForm);
@@ -1047,15 +1056,14 @@ app.controller('FormatFormCtrl', [
     }
 ]);
 
-
-// WORK IN PROGRESS
 app.controller('FormSelectCtrl', [
     '$scope',
     'users',
     'formatForms',
     'userForms',
+    'toastr',
     'auth',
-    function($scope, users, formatForms, userForms, auth) {
+    function($scope, users, formatForms, userForms, toastr, auth) {
         $scope.users = users.users;
         $scope.formatForms = formatForms.formatForms;
         $scope.userForms = userForms.userForms;
@@ -1063,13 +1071,23 @@ app.controller('FormSelectCtrl', [
         $scope.currentUser = auth.currentUser;
 
         $scope.addUserForm = function(form, user) {
+
+            var index = $scope.userForms.findIndex(function(userForm) {
+                return userForm.owner === user._id && userForm.formatForm._id === form._id;
+            });
+            if (index > -1) {
+                toastr.error('טופס זה כבר הופץ למשתמש זה!', 'שגיאה בהפצת טופס!');
+                return;
+            }
             var data = {};
             data.name = "";
             data.slug = "";
             data.owner = user._id;
             data.formatForm = form._id;
             data.userCriterias = [];
-            userForms.create(data);
+            userForms.create(data).success(function() {
+                toastr.success('טופס זה הופץ בהצלחה!', 'טופס הופץ!');
+            });
         }
 
         $scope.getUsername = function(id) {
@@ -1093,7 +1111,6 @@ app.controller('FormFillCtrl', [
     'auth',
     function($scope, sections, userForms, userForm, userCriterias, toastr, auth) {
 
-        // alert(JSON.stringify(userForm, null, 2));
         $scope.sections = sections.sections;
         $scope.userForm = userForm;
         $scope.formatForm = userForm.formatForm;
@@ -1105,7 +1122,6 @@ app.controller('FormFillCtrl', [
 
         $scope.getApproved = function() {
             for (var i = 0; i < $scope.userCriterias.length; i++) {
-                // alert($scope.userCriterias[i].dataRows.length);
                 for (var j = 0; j < $scope.userCriterias[i].dataRows.length; j++) {
                     if ($scope.userCriterias[i].dataRows[j].rowValidated === false) { return false; }
                 }
@@ -1114,13 +1130,12 @@ app.controller('FormFillCtrl', [
         }
 
         $scope.addNewField = function(criteriaFields, formatCriteria) {
-            /**
-             * 
-             */
+            // build data container for a single data row
             var data = {
                 rowValidated: false,
                 dataRow: null
             };
+            // array for the elements of the data row
             var dataRow = [];
             // build empty row for criteria filling
             for (var i = 0; i < criteriaFields.length; i++) {
@@ -1134,12 +1149,15 @@ app.controller('FormFillCtrl', [
             }
             data.dataRow = dataRow;
             var arrRefrence = $scope.userCriterias;
+            // check if the criteria already been filled by the user (if so, only need to add row)
             var index = arrRefrence.findIndex(function(el) {
                 return el.formatCriteria === formatCriteria._id;
             });
             if (index > -1) {
+                // criteria been filled already, need to add row
                 arrRefrence[index].dataRows.push(data);
             } else {
+                // criteria is filled for the first time
                 arrRefrence.push({
                     name: "",
                     slug: "",
@@ -1147,7 +1165,9 @@ app.controller('FormFillCtrl', [
                     userForm: $scope.userForm._id,
                     formatCriteria: formatCriteria._id,
                     // status: null,
-                    dataRows: [data]
+                    dataRows: [data],
+                    dateCreated: new Date(),
+                    dateModified: new Date()
                 });
             }
         };
@@ -1158,12 +1178,10 @@ app.controller('FormFillCtrl', [
             var count = 0;
             for (var i = $scope.userCriterias.length - 1; i >= 0; i--) {
                 if ($scope.userCriterias[i].dataRows.length === 0) {
-                    // $scope.userCriterias[i].data = null;
                     count++;
                     $scope.userCriterias[i].dataRows = [];
                 }
             }
-            // if (count === 0) { $scope.userCriterias = []; }
         }
 
         $scope.saveForm = function() {

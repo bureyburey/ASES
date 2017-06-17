@@ -252,7 +252,7 @@
                             </div>
                             <div>
                                 <md-switch class="md-primary" ng-model="edit">
-                                    <label ng-show="!edit">אפשר עריכה</label>
+                                    <label ng-show="!edit">מצב עריכה</label>
                                     <label ng-hide="!edit">צא ממצב עריכה</label>
                                 </md-switch>
                                 <button ng-click="editStaffGroup($index, staffGroup)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
@@ -329,7 +329,7 @@
                             <div>
                                 <!--<label>לחץ לעריכה: <input type="checkbox" ng-model="edit"></label>-->
                                 <md-switch class="md-primary" ng-model="edit">
-                                    <label ng-show="!edit">אפשר עריכה</label>
+                                    <label ng-show="!edit">מצב עריכה</label>
                                     <label ng-hide="!edit">צא ממצב עריכה</label>
                                 </md-switch>
                                 <button ng-click="editSection($index, section)" class="btn btn-primary" ng-disabled="!edit">שמור שינויים</button>
@@ -384,7 +384,7 @@
                                 <input ng-model="field.name" />
                                 <!-- dataType model according to data type -->
                                 <!-- ng-change call is obsolete!!!! -->
-                                <select ng-model="field.dataType" ng-change="updateDataType($index, dataType)" ng-options="dataType.placeholder for dataType in dataTypes">
+                                <select ng-model="field.dataType" ng-options="dataType.placeholder for dataType in dataTypes">
                                     <option value="">סוג הקלט:</option>
                                 </select>
                                 <button type="button" class="btn btn-default btn-sm" ng-click="removeField($index)">
@@ -561,7 +561,7 @@
 
                         <span>
                             <md-switch class="md-primary" ng-model="edit">
-                            <label ng-show="!edit">אפשר עריכה</label>
+                            <label ng-show="!edit">מצב עריכה</label>
                             <label ng-hide="!edit">צא ממצב עריכה</label>
                             </md-switch>
 
@@ -579,7 +579,6 @@
         </script>
 
 
-
         <script type="text/ng-template" id="/form_select.html">
             <div>
                 <div class="page-header">
@@ -589,7 +588,6 @@
                 <div ng-hide="isLoggedIn()">
                     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can enter section manager.</h3>
                 </div>
-
                 <div style="font-size:20px" ng-hide="!isLoggedIn()">
                     <div ng-show="currentUser()==='admin'">
                         <span ng-repeat="user in users">
@@ -735,6 +733,7 @@
                 <button type="submit" class="btn btn-primary">Post</button>
             </form>
         </script>
+
 
         <script type="text/ng-template" id="/register.html">
             <div class="page-header">

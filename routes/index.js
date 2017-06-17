@@ -494,7 +494,7 @@ router.post('/usercriterias/save', auth, function(req, res, next) {
             // existing user criteria entry (find by object id and update the dataRows field)
             userCriteriaIds.push(req.body[i]._id); // push existing id to array
             var objId = new ObjectId(req.body[i]._id); // create ObjectId object with the requested id
-            bulk.find({ _id: objId }).update({ $set: { dataRows: req.body[i].dataRows } }); // find and update will occur on execute
+            bulk.find({ _id: objId }).update({ $set: { dataRows: req.body[i].dataRows, dateModified: new Date() } }); // find and update will occur on execute
             console.log("Updating Record " + req.body[i]._id);
         }
     }
